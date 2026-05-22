@@ -1827,7 +1827,7 @@ var QUESTIONS = [
     ch: 1,
     type: 'A',
     source: "教科書",
-    q: 'Which of these is a transforming resource?',
+    q: 'Pick the one that is a transforming resource?',
     opts: [
       'Raw materials',
       'Information data',
@@ -2197,7 +2197,7 @@ var QUESTIONS = [
     ch: 2,
     type: 'A',
     source: "教科書",
-    q: 'Which of the following is NOT a type of flexibility in operations?',
+    q: 'Identify the one that is NOT a type of flexibility in operations?',
     opts: [
       'Product/service flexibility',
       'Mix flexibility',
@@ -2288,7 +2288,7 @@ var QUESTIONS = [
     ch: 2,
     type: 'B',
     source: "教科書",
-    q: 'What is a key internal benefit of speed in operations?',
+    q: 'Define: a key internal benefit of speed in operations?',
     opts: [
       'It increases the variety of products',
       'It reduces inventories',
@@ -2402,7 +2402,7 @@ var QUESTIONS = [
     ch: 2,
     type: 'B',
     source: "教科書",
-    q: 'What is an external benefit of quality?',
+    q: 'In Slack\'s framework, what is an external benefit of quality?',
     opts: [
       'Reduced internal waste',
       'Customer satisfaction and fewer returns',
@@ -3539,6 +3539,215 @@ function renderMd(str) {
     return safeTags[parseInt(i, 10)];
   });
   return s;
+}
+
+// ═══ RENDER MARKDOWN TABLE (extracted from question text) ═══
+function renderMarkdownTable(mdText) {
+  if (!mdText) return '';
+  var lines = mdText.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
+  if (lines.length < 2) return '';
+  function splitCells(row) {
+    var r = row.replace(/^\|/, '').replace(/\|$/, '');
+    return r.split('|').map(function(c){ return c.trim(); });
+  }
+  var headers = splitCells(lines[0]);
+  // Check separator row (---|---|---)
+  var sepIdx = 1;
+  var bodyStart = 1;
+  if (/^\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?$/.test(lines[1])) {
+    bodyStart = 2;
+  }
+  var h = '<div class="tbl-scroll-hint">← 横スクロール →</div><div class="tbl-scroll">';
+  h += '<table class="vis-compare"><thead><tr>';
+  for (var i = 0; i < headers.length; i++) {
+    var cls = i === 0 ? 'alt-col' : (i % 2 === 1 ? 'good-col' : 'bad-col');
+    h += '<th class="' + cls + '">' + renderMd(headers[i]) + '</th>';
+  }
+  h += '</tr></thead><tbody>';
+  for (var r = bodyStart; r < lines.length; r++) {
+    var cells = splitCells(lines[r]);
+    h += '<tr>';
+    for (var c = 0; c < cells.length; c++) {
+      if (c === 0) h += '<td class="label">' + renderMd(cells[c]) + '</td>';
+      else h += '<td>' + renderMd(cells[c]) + '</td>';
+    }
+    h += '</tr>';
+  }
+  h += '</tbody></table></div>';
+  return h;
+}
+
+// ═══ RENDER STRUCTURED QUESTION VISUAL ═══
+// Reuses the existing renderVisual() (compare-table | flowchart | timeline | ratio-bar | formula)
+// AND adds new visual types: 'polar' (4Vs radar), 'sawtooth' (inventory), 'pareto', 'network'
+function renderQuestionVisual(v) {
+  if (!v || !v.type) return '';
+  // Delegate to existing renderer for known types
+  if (['compare-table', 'flowchart', 'timeline', 'ratio-bar', 'formula'].indexOf(v.type) !== -1) {
+    return renderVisual(v);
+  }
+  var h = '<div class="visual-block">';
+  if (v.title) h += '<div class="visual-title">' + renderMd(v.title) + '</div>';
+
+  if (v.type === 'polar') {
+    // v.axes: [{label, scoreA, scoreB?, maxScore: 5}]   v.legend: [{label, color}]
+    var axes = v.axes || [];
+    var legend = v.legend || [{label: 'A', color: '#f97316'}];
+    var maxScore = v.maxScore || 5;
+    var size = 280, cx = size / 2, cy = size / 2, r = 100;
+    h += '<div style="display:flex;justify-content:center;">';
+    h += '<svg viewBox="0 0 ' + size + ' ' + size + '" style="max-width:300px;width:100%;height:auto;">';
+    // Grid circles
+    for (var lvl = 1; lvl <= maxScore; lvl++) {
+      h += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r * lvl / maxScore) + '" fill="none" stroke="#1e3a5f" stroke-width="1"/>';
+    }
+    // Axes
+    var pts = {};
+    for (var ai = 0; ai < axes.length; ai++) {
+      var angle = (Math.PI * 2 * ai / axes.length) - Math.PI / 2;
+      var ex = cx + Math.cos(angle) * r;
+      var ey = cy + Math.sin(angle) * r;
+      h += '<line x1="' + cx + '" y1="' + cy + '" x2="' + ex + '" y2="' + ey + '" stroke="#334155" stroke-width="1"/>';
+      var lx = cx + Math.cos(angle) * (r + 25);
+      var ly = cy + Math.sin(angle) * (r + 25);
+      h += '<text x="' + lx + '" y="' + ly + '" text-anchor="middle" fill="#cbd5e1" font-size="13" font-weight="700">' + axes[ai].label + '</text>';
+      pts[ai] = { angle: angle };
+    }
+    // Polygons for each series
+    var seriesKeys = legend.map(function(_, i) { return i === 0 ? 'scoreA' : (i === 1 ? 'scoreB' : 'score' + String.fromCharCode(65 + i)); });
+    for (var si = 0; si < legend.length; si++) {
+      var poly = '';
+      for (var ai = 0; ai < axes.length; ai++) {
+        var score = axes[ai][seriesKeys[si]] || 0;
+        var pr = r * score / maxScore;
+        var x = cx + Math.cos(pts[ai].angle) * pr;
+        var y = cy + Math.sin(pts[ai].angle) * pr;
+        poly += x + ',' + y + ' ';
+      }
+      var col = legend[si].color || '#f97316';
+      h += '<polygon points="' + poly.trim() + '" fill="' + col + '" fill-opacity="0.20" stroke="' + col + '" stroke-width="2"/>';
+    }
+    h += '</svg></div>';
+    // Legend below
+    h += '<div style="display:flex;gap:14px;justify-content:center;margin-top:8px;flex-wrap:wrap;font-size:13px;">';
+    for (var li = 0; li < legend.length; li++) {
+      var lc = legend[li].color || '#f97316';
+      h += '<span><span style="display:inline-block;width:12px;height:12px;background:' + lc + ';border-radius:2px;margin-right:6px;"></span>' + legend[li].label + '</span>';
+    }
+    h += '</div>';
+  }
+  else if (v.type === 'sawtooth') {
+    // Inventory profile: v.peak, v.cycles, v.safety (optional)
+    var peak = v.peak || 80;
+    var cycles = v.cycles || 3;
+    var safety = v.safety || 0;
+    var W = 320, H = 180, mx = 30, my = 20;
+    var pw = (W - mx - 10) / cycles;
+    var ph = H - my - 30;
+    h += '<div style="display:flex;justify-content:center;">';
+    h += '<svg viewBox="0 0 ' + W + ' ' + H + '" style="max-width:340px;width:100%;height:auto;">';
+    // Axes
+    h += '<line x1="' + mx + '" y1="' + my + '" x2="' + mx + '" y2="' + (H - 30) + '" stroke="#cbd5e1" stroke-width="1"/>';
+    h += '<line x1="' + mx + '" y1="' + (H - 30) + '" x2="' + (W - 5) + '" y2="' + (H - 30) + '" stroke="#cbd5e1" stroke-width="1"/>';
+    // Y axis labels
+    h += '<text x="' + (mx - 6) + '" y="' + my + '" text-anchor="end" fill="#cbd5e1" font-size="11">' + peak + '</text>';
+    h += '<text x="' + (mx - 6) + '" y="' + (H - 28) + '" text-anchor="end" fill="#cbd5e1" font-size="11">' + safety + '</text>';
+    h += '<text x="6" y="' + (H/2) + '" fill="#94a3b8" font-size="11" transform="rotate(-90 6 ' + (H/2) + ')">Stock</text>';
+    h += '<text x="' + (W/2) + '" y="' + (H - 8) + '" text-anchor="middle" fill="#94a3b8" font-size="11">Time</text>';
+    // Sawtooth
+    var topY = my;
+    var bottomY = my + ph * (1 - safety / peak);
+    if (safety) {
+      h += '<line x1="' + mx + '" y1="' + bottomY + '" x2="' + (W - 5) + '" y2="' + bottomY + '" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,3"/>';
+      h += '<text x="' + (W - 5) + '" y="' + (bottomY - 4) + '" text-anchor="end" fill="#fbbf24" font-size="10">SS = ' + safety + '</text>';
+    }
+    var path = 'M ' + mx + ' ' + topY;
+    for (var ci = 0; ci < cycles; ci++) {
+      var xStart = mx + ci * pw;
+      var xEnd = xStart + pw;
+      path += ' L ' + xEnd + ' ' + bottomY;
+      if (ci < cycles - 1) path += ' L ' + xEnd + ' ' + topY;
+    }
+    h += '<path d="' + path + '" fill="none" stroke="#f97316" stroke-width="2.5"/>';
+    h += '</svg></div>';
+    h += '<div style="text-align:center;color:#94a3b8;font-size:12px;margin-top:6px;">Q (peak) = ' + peak + ', average cycle stock = ' + (peak / 2).toFixed(1) + (safety ? ' + SS ' + safety : '') + '</div>';
+  }
+  else if (v.type === 'pareto') {
+    // v.bars: [{label, value}] sorted desc
+    var bars = (v.bars || []).slice().sort(function(a,b){ return b.value - a.value; });
+    var total = bars.reduce(function(a,b){ return a + b.value; }, 0) || 1;
+    var W = 340, H = 200, mx = 36, my = 16;
+    var bw = (W - mx - 12) / Math.max(1, bars.length);
+    var maxV = bars.length ? bars[0].value : 1;
+    h += '<div style="display:flex;justify-content:center;">';
+    h += '<svg viewBox="0 0 ' + W + ' ' + H + '" style="max-width:360px;width:100%;height:auto;">';
+    h += '<line x1="' + mx + '" y1="' + my + '" x2="' + mx + '" y2="' + (H - 30) + '" stroke="#cbd5e1"/>';
+    h += '<line x1="' + mx + '" y1="' + (H - 30) + '" x2="' + (W - 5) + '" y2="' + (H - 30) + '" stroke="#cbd5e1"/>';
+    var cumPath = '';
+    var cum = 0;
+    for (var bi = 0; bi < bars.length; bi++) {
+      var b = bars[bi];
+      var x = mx + bi * bw + 4;
+      var bh = (H - 30 - my) * (b.value / maxV);
+      var y = (H - 30) - bh;
+      h += '<rect x="' + x + '" y="' + y + '" width="' + (bw - 8) + '" height="' + bh + '" fill="#3b82f6" opacity="0.85"/>';
+      h += '<text x="' + (x + (bw - 8) / 2) + '" y="' + (H - 16) + '" text-anchor="middle" fill="#cbd5e1" font-size="10">' + b.label + '</text>';
+      h += '<text x="' + (x + (bw - 8) / 2) + '" y="' + (y - 3) + '" text-anchor="middle" fill="#cbd5e1" font-size="10">' + b.value + '</text>';
+      cum += b.value;
+      var cumY = (H - 30) - (H - 30 - my) * (cum / total);
+      var cumX = x + (bw - 8) / 2;
+      cumPath += (cumPath ? ' L ' : 'M ') + cumX + ' ' + cumY;
+    }
+    h += '<path d="' + cumPath + '" stroke="#f97316" stroke-width="2" fill="none"/>';
+    h += '<line x1="' + mx + '" y1="' + ((H - 30) - (H - 30 - my) * 0.8) + '" x2="' + (W - 5) + '" y2="' + ((H - 30) - (H - 30 - my) * 0.8) + '" stroke="#ef4444" stroke-dasharray="4,3" stroke-width="1"/>';
+    h += '<text x="' + (W - 6) + '" y="' + ((H - 30) - (H - 30 - my) * 0.8 - 4) + '" text-anchor="end" fill="#ef4444" font-size="10">80% line</text>';
+    h += '</svg></div>';
+  }
+  else if (v.type === 'network') {
+    // PERT/CPM network: v.nodes [{id, x, y, label, duration?}], v.edges [{from, to, label?}]
+    var nodes = v.nodes || [];
+    var edges = v.edges || [];
+    var W = 380, H = 220;
+    var critical = v.criticalPath || [];
+    h += '<div style="display:flex;justify-content:center;">';
+    h += '<svg viewBox="0 0 ' + W + ' ' + H + '" style="max-width:400px;width:100%;height:auto;">';
+    // Edges
+    var nodeMap = {};
+    for (var ni = 0; ni < nodes.length; ni++) nodeMap[nodes[ni].id] = nodes[ni];
+    for (var ei = 0; ei < edges.length; ei++) {
+      var e = edges[ei];
+      var from = nodeMap[e.from], to = nodeMap[e.to];
+      if (!from || !to) continue;
+      var isCrit = critical.indexOf(e.from) !== -1 && critical.indexOf(e.to) !== -1 &&
+        Math.abs(critical.indexOf(e.from) - critical.indexOf(e.to)) === 1;
+      var ec = isCrit ? '#ef4444' : '#64748b';
+      var ew = isCrit ? 2.5 : 1.5;
+      h += '<line x1="' + from.x + '" y1="' + from.y + '" x2="' + to.x + '" y2="' + to.y + '" stroke="' + ec + '" stroke-width="' + ew + '" marker-end="url(#arrow' + (isCrit ? 'C' : '') + ')"/>';
+      if (e.label) {
+        var lx = (from.x + to.x) / 2;
+        var ly = (from.y + to.y) / 2 - 5;
+        h += '<text x="' + lx + '" y="' + ly + '" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="700">' + e.label + '</text>';
+      }
+    }
+    // Arrow markers
+    h += '<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#64748b"/></marker>';
+    h += '<marker id="arrowC" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ef4444"/></marker></defs>';
+    // Nodes
+    for (var ni = 0; ni < nodes.length; ni++) {
+      var n = nodes[ni];
+      var isCrit = critical.indexOf(n.id) !== -1;
+      var nc = isCrit ? '#ef4444' : '#3b82f6';
+      h += '<circle cx="' + n.x + '" cy="' + n.y + '" r="18" fill="#0f1c2e" stroke="' + nc + '" stroke-width="2.5"/>';
+      h += '<text x="' + n.x + '" y="' + (n.y + 4) + '" text-anchor="middle" fill="#cbd5e1" font-size="13" font-weight="700">' + (n.label || n.id) + '</text>';
+    }
+    h += '</svg></div>';
+    if (critical.length) {
+      h += '<div style="text-align:center;color:#fca5a5;font-size:12px;margin-top:6px;">🔴 Critical path: ' + critical.join(' → ') + '</div>';
+    }
+  }
+
+  h += '</div>';
+  return h;
 }
 
 // ═══ RENDER COMPARE TABLE (inline in concept) ═══
@@ -4860,6 +5069,19 @@ function renderQuizHome() {
   var previewPool = buildPool(loadState('ratings', {}));
   html += '<div style="color:#94a3b8;font-size:18px;margin:8px 0 16px;">対象問題数: <strong style="color:#f97316;">' + previewPool.length + '</strong>問</div>';
 
+  // ── AI weak-area prompt button (always accessible if history exists) ──
+  var totalAns = (loadState('answer_history', []) || []).length;
+  if (totalAns >= 10) {
+    html += '<div style="margin:10px 0 18px;padding:12px 14px;background:rgba(249,115,22,0.08);border-radius:10px;border:1px dashed #f97316;">';
+    html += '<div style="font-size:18px;font-weight:700;color:#f97316;margin-bottom:4px;">🤖 AI 苦手分野プロンプト</div>';
+    html += '<div style="color:#94a3b8;font-size:14px;margin-bottom:8px;">解答' + totalAns + '問の履歴から弱点をまとめた AI 用プロンプトを生成 (コピペ可)</div>';
+    html += '<button onclick="showAIPromptModal(\'recent50\')" style="background:#f97316;color:#0f1c2e;border:none;padding:9px 14px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;margin-right:6px;">直近50問</button>';
+    if (totalAns >= 50) {
+      html += '<button onclick="showAIPromptModal(\'all\')" style="background:#1a2940;border:1px solid #f97316;color:#f97316;padding:9px 14px;border-radius:8px;font-size:14px;cursor:pointer;">全' + totalAns + '問</button>';
+    }
+    html += '</div>';
+  }
+
   html += '<button class="start-btn" onclick="startQuiz()">Start Quiz (5 Questions)</button>';
   document.getElementById('quiz-home').innerHTML = html;
   document.getElementById('quiz-home').classList.remove('hidden');
@@ -4995,7 +5217,34 @@ function renderQuestion() {
   html += '</div>';
   html += '<div style="margin-bottom:12px;">' + getSourceBadge(q);
   html += '<span style="color:#94a3b8;font-size:15px;">Ch' + q.ch + ' · ' + weekLabel + '</span></div>';
-  html += '<div class="q-text">' + renderMd(q.q) + '</div>';
+  // Split question text from any embedded ASCII visual blocks (fenced ```)
+  var qText = q.q || '';
+  var stripped = qText;
+  // Extract ALL fenced ASCII blocks ```...``` and render as <pre>
+  var asciiBlocks = [];
+  stripped = stripped.replace(/```([\s\S]*?)```/g, function(_, code) {
+    asciiBlocks.push(code.replace(/^\n+|\n+$/g, ''));
+    return '';
+  });
+  // Extract markdown table blocks (consecutive lines starting with |)
+  var mdTables = [];
+  stripped = stripped.replace(/((?:^\|[^\n]*\|\s*\n){2,})/gm, function(tbl) {
+    mdTables.push(tbl.trim());
+    return '';
+  });
+  html += '<div class="q-text">' + renderMd(stripped.replace(/\n{3,}/g, '\n\n').trim()) + '</div>';
+  // Render structured visual block (interactive)
+  if (q.visual) {
+    html += '<div style="margin:10px 0;">' + renderQuestionVisual(q.visual) + '</div>';
+  }
+  // Render extracted ASCII art
+  for (var ai = 0; ai < asciiBlocks.length; ai++) {
+    html += '<div class="tbl-scroll" style="margin:10px 0;"><pre style="background:#0f1c2e;border:1px solid #1e3a5f;border-radius:10px;padding:14px 16px;color:#cbd5e1;font-size:13px;line-height:1.4;font-family:ui-monospace,Menlo,Consolas,monospace;min-width:max-content;">' + escapeHtml(asciiBlocks[ai]) + '</pre></div>';
+  }
+  // Render extracted markdown tables as proper HTML tables
+  for (var ti = 0; ti < mdTables.length; ti++) {
+    html += renderMarkdownTable(mdTables[ti]);
+  }
   html += '<div class="q-opts" id="q-opts">';
   for (var i = 0; i < optOrder.length; i++) {
     var origIdx = optOrder[i];
@@ -5082,11 +5331,242 @@ function rateAnswer(rating) {
   ratings[q.id] = rating;
   saveState('ratings', ratings);
 
+  // ── Record answered Q + correctness in a history log for AI prompt generation ──
+  var history = loadState('answer_history', []);
+  // Avoid duplicates: only record one entry per question per session
+  var lastResult = quizState.blockResults[quizState.blockResults.length - 1] || {};
+  var correct = !!lastResult.correct;
+  var chosen = lastResult.chosen;
+  // Map chosen (display idx) → original opts idx
+  var chosenOrig = (quizState.currentShuffle && quizState.currentShuffle[chosen] !== undefined) ? quizState.currentShuffle[chosen] : chosen;
+  history.push({
+    qid: q.id,
+    ch: q.ch,
+    week: q.week,
+    source: q.source || '',
+    correct: correct,
+    rating: rating,
+    chosenOrig: chosenOrig,
+    ts: Date.now()
+  });
+  // Keep last 500 entries
+  if (history.length > 500) history = history.slice(-500);
+  saveState('answer_history', history);
+
+  // ── Check for 50-question milestone → show AI prompt offer ──
+  var milestoneShown = loadState('ai_prompt_milestone_shown', 0);
+  var totalAnswered = history.length;
+  var nextMilestone = Math.floor(totalAnswered / 50) * 50;
+  if (nextMilestone >= 50 && nextMilestone > milestoneShown) {
+    saveState('ai_prompt_milestone_shown', nextMilestone);
+    // Defer offer to after the current block to not interrupt mid-block
+    quizState.pendingAIPromptMilestone = nextMilestone;
+  }
+
   quizState.currentIndex++;
   if (quizState.currentIndex >= quizState.currentBlock.length) {
     showBlockReview();
   } else {
     renderQuestion();
+  }
+}
+
+// ═══ AI WEAK-AREA PROMPT GENERATOR ═══
+function generateAIPrompt(scope) {
+  // scope: 'recent50' = last 50 answered Q only; 'all' = full history
+  var history = loadState('answer_history', []);
+  if (history.length === 0) return null;
+  var slice = (scope === 'recent50') ? history.slice(-50) : history;
+
+  // Build a lookup of QUESTIONS by id
+  var qById = {};
+  for (var i = 0; i < QUESTIONS.length; i++) {
+    qById[QUESTIONS[i].id] = QUESTIONS[i];
+  }
+
+  var wrongList = [];
+  var correctList = [];
+  var byChapter = {};
+  var byWeek = {};
+  var byTopic = {};
+
+  for (var i = 0; i < slice.length; i++) {
+    var h = slice[i];
+    var q = qById[h.qid];
+    if (!q) continue;
+    var rec = byChapter[q.ch] = (byChapter[q.ch] || { ch: q.ch, total: 0, wrong: 0 });
+    rec.total++;
+    var wRec = byWeek[q.week] = (byWeek[q.week] || { week: q.week, total: 0, wrong: 0 });
+    wRec.total++;
+    if (!h.correct) {
+      rec.wrong++;
+      wRec.wrong++;
+      wrongList.push({
+        qid: q.id, ch: q.ch, week: q.week, source: q.source || '',
+        q: q.q, opts: q.opts, ans: q.ans,
+        chosenOrig: h.chosenOrig,
+        expl: q.expl || q.exp || '',
+        we: q.we || {}
+      });
+    } else {
+      correctList.push({ qid: q.id, ch: q.ch });
+    }
+  }
+
+  // Sort chapters by wrong rate (descending)
+  var chapterRanking = Object.keys(byChapter).map(function(k){ return byChapter[k]; })
+    .sort(function(a,b){ return (b.wrong / Math.max(1,b.total)) - (a.wrong / Math.max(1,a.total)); });
+
+  // Build the prompt
+  var lines = [];
+  lines.push("# Business Operations 弱点分析リクエスト");
+  lines.push("");
+  lines.push("UvA「Business Operations and Processes」(Slack et al. 教科書) の試験対策で、自作クイズアプリで以下を解答しました。");
+  lines.push("**苦手な分野・概念を体系的に整理して、それぞれに対する明確な学び直しガイドと覚え方を教えてください。**");
+  lines.push("");
+  lines.push("## 解答サマリ (" + slice.length + "問)");
+  lines.push("");
+  lines.push("| 指標 | 値 |");
+  lines.push("|---|---|");
+  lines.push("| 総解答数 | " + slice.length + " |");
+  lines.push("| 正解 | " + correctList.length + " (" + Math.round(100 * correctList.length / slice.length) + "%) |");
+  lines.push("| 不正解 | " + wrongList.length + " |");
+  lines.push("");
+  lines.push("## 章別パフォーマンス (誤答率降順)");
+  lines.push("");
+  lines.push("| Chapter | 総問数 | 誤答 | 誤答率 |");
+  lines.push("|---|---|---|---|");
+  for (var i = 0; i < chapterRanking.length; i++) {
+    var c = chapterRanking[i];
+    var rate = Math.round(100 * c.wrong / Math.max(1,c.total));
+    lines.push("| Ch " + c.ch + " | " + c.total + " | " + c.wrong + " | " + rate + "% |");
+  }
+  lines.push("");
+
+  // List each wrong question with details
+  lines.push("## 間違えた問題の詳細 (" + wrongList.length + "問)");
+  lines.push("");
+  for (var i = 0; i < wrongList.length; i++) {
+    var w = wrongList[i];
+    lines.push("### ❌ 誤答 " + (i+1) + "/" + wrongList.length + " — Ch" + w.ch + " (Week " + w.week + ", " + w.source + ")");
+    lines.push("");
+    lines.push("**問題**: " + (w.q || '').replace(/\n/g, ' ').substring(0, 500));
+    lines.push("");
+    var letters = ['A','B','C','D','E','F'];
+    for (var oi = 0; oi < w.opts.length; oi++) {
+      var marker = (oi === w.ans) ? ' ✅ (正解)' : (oi === w.chosenOrig ? ' ← あなたの選択' : '');
+      lines.push("- **" + letters[oi] + ")** " + w.opts[oi] + marker);
+    }
+    lines.push("");
+    if (w.expl) {
+      lines.push("**公式解説**: " + w.expl.substring(0, 400));
+      lines.push("");
+    }
+    if (w.we && w.we[w.chosenOrig]) {
+      lines.push("**自分の選択がなぜ違ったか**: " + (w.we[w.chosenOrig] + "").substring(0, 300));
+      lines.push("");
+    }
+    lines.push("---");
+    lines.push("");
+  }
+
+  // Final ask
+  lines.push("## あなたへの依頼");
+  lines.push("");
+  lines.push("以下を **長くなっても構わないので徹底的に** 教えてください:");
+  lines.push("");
+  lines.push("1. **テーマ別の弱点分類**: 上記の誤答を、似た概念ごとにグループ化して整理 (例: 「在庫公式の混同」「Process Type の判別」など)。各グループのタイトルに加え、共通する誤解パターンを1段落で説明。");
+  lines.push("2. **各グループの徹底解説**: そのテーマの核心概念、Slack 教科書での扱い、関連する公式 (あれば)、典型的な exam pattern を含めて解説。");
+  lines.push("3. **覚え方 (Memory aid)**: 各テーマに対し、暗記しやすい:");
+  lines.push("   - 頭文字法 (例: QSDFC = Quality, Speed, Dependability, Flexibility, Cost)");
+  lines.push("   - 比喩・アナロジー (例: 「Critical Path は鎖の弱い輪」)");
+  lines.push("   - 図解 (ASCII でも OK、構造で記憶)");
+  lines.push("   - 数式の語呂合わせ (計算問題向け)");
+  lines.push("   を **複数案** 提示");
+  lines.push("4. **明日からの学習プラン**: この弱点を埋めるための具体的な学習順序 (3-5 ステップ)。");
+  lines.push("5. **試験当日のチェックリスト**: 試験会場で 30 秒で確認できる、この弱点に関する確認ポイント。");
+  lines.push("");
+  lines.push("**重要**: 単純な「もう一度勉強しましょう」では不十分です。私が試験で同じ間違いをしないよう、概念レベルで根本理解できるように深掘りして説明してください。");
+
+  return lines.join("\n");
+}
+
+function showAIPromptModal(scope) {
+  scope = scope || 'recent50';
+  var prompt = generateAIPrompt(scope);
+  if (!prompt) {
+    alert('まだ解答履歴がありません。クイズを解いてから再度お試しください。');
+    return;
+  }
+  // Create modal overlay
+  var existing = document.getElementById('ai-prompt-modal');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'ai-prompt-modal';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+
+  var lineCount = prompt.split('\n').length;
+  var charCount = prompt.length;
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#0f1c2e;border:2px solid #f97316;border-radius:14px;padding:18px 16px;max-width:680px;width:100%;max-height:90vh;display:flex;flex-direction:column;gap:10px;';
+  box.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+      '<div style="font-size:22px;font-weight:800;color:#f97316;">🤖 AI 苦手分野プロンプト</div>' +
+      '<button onclick="document.getElementById(\'ai-prompt-modal\').remove()" style="background:transparent;border:none;color:#94a3b8;font-size:28px;cursor:pointer;line-height:1;">×</button>' +
+    '</div>' +
+    '<div style="color:#94a3b8;font-size:15px;">' +
+      '直近の解答から弱点を分析したプロンプトを生成しました。下のボタンでコピーして Claude や ChatGPT に貼り付けてください。' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+      '<button onclick="copyAIPrompt()" id="ai-prompt-copy-btn" style="background:#f97316;color:#0f1c2e;border:none;padding:10px 16px;border-radius:8px;font-size:16px;font-weight:800;cursor:pointer;">📋 コピー</button>' +
+      '<button onclick="showAIPromptModal(\'all\')" style="background:#1a2940;border:1px solid #3b82f6;color:#3b82f6;padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;">全履歴版</button>' +
+      '<button onclick="showAIPromptModal(\'recent50\')" style="background:#1a2940;border:1px solid #3b82f6;color:#3b82f6;padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;">直近50問</button>' +
+      '<span style="color:#64748b;font-size:13px;margin-left:auto;align-self:center;">' + charCount.toLocaleString() + '文字 / ' + lineCount + '行</span>' +
+    '</div>' +
+    '<textarea id="ai-prompt-text" readonly style="flex:1;min-height:300px;width:100%;background:#1a2940;color:#e2e8f0;border:1px solid #1e3a5f;border-radius:8px;padding:12px;font-size:13px;font-family:monospace;line-height:1.5;resize:none;"></textarea>' +
+    '<div style="color:#64748b;font-size:12px;">💡 ヒント: コピー後、Claude.ai (Opus 推奨) や ChatGPT (GPT-4 推奨) に貼り付け。長い解説が返ってくるので、ゆっくり読んで覚え方を吸収してください。</div>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  document.getElementById('ai-prompt-text').value = prompt;
+  // Click outside to close
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
+}
+
+function copyAIPrompt() {
+  var ta = document.getElementById('ai-prompt-text');
+  if (!ta) return;
+  ta.select();
+  ta.setSelectionRange(0, 999999);
+  var ok = false;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(ta.value);
+      ok = true;
+    } else {
+      ok = document.execCommand('copy');
+    }
+  } catch(e) { ok = false; }
+  var btn = document.getElementById('ai-prompt-copy-btn');
+  if (btn) {
+    var orig = btn.innerHTML;
+    btn.innerHTML = ok ? '✅ コピーしました!' : '⚠️ 手動でコピー';
+    btn.style.background = ok ? '#22c55e' : '#ef4444';
+    setTimeout(function(){
+      btn.innerHTML = orig;
+      btn.style.background = '#f97316';
+    }, 2000);
+  }
+}
+
+function offerAIPromptIfMilestone() {
+  if (!quizState.pendingAIPromptMilestone) return;
+  var milestone = quizState.pendingAIPromptMilestone;
+  quizState.pendingAIPromptMilestone = null;
+  var prompt = '🎯 ' + milestone + '問解答達成！\n\nここまでの結果から弱点を分析した AI 用プロンプトを生成しますか？\n(Claude/ChatGPT に貼り付けて、徹底解説と覚え方を取得できます)';
+  if (confirm(prompt)) {
+    showAIPromptModal('recent50');
   }
 }
 
@@ -5112,9 +5592,28 @@ function showBlockReview() {
   }
   html += '<div style="text-align:center;margin:20px 0;font-size:30px;font-weight:700;color:#f97316;">' +
     correctCount + ' / ' + quizState.blockResults.length + ' correct</div>';
+
+  // Show AI-prompt milestone offer if reached
+  var totalAns = (loadState('answer_history', []) || []).length;
+  var lastMilestone = loadState('ai_prompt_milestone_shown', 0);
+  if (quizState.pendingAIPromptMilestone || totalAns >= 50) {
+    html += '<div style="margin:18px 0;padding:14px 16px;background:rgba(249,115,22,0.10);border-radius:10px;border-left:4px solid #f97316;">';
+    html += '<div style="font-size:20px;font-weight:800;color:#f97316;margin-bottom:6px;">🤖 AI 苦手分野プロンプト</div>';
+    html += '<div style="color:#cbd5e1;font-size:15px;margin-bottom:10px;">これまで <strong>' + totalAns + '問</strong> 解答。AI に弱点を整理してもらうプロンプトを生成できます。</div>';
+    html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+    html += '<button onclick="showAIPromptModal(\'recent50\')" style="background:#f97316;color:#0f1c2e;border:none;padding:10px 16px;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;">📋 直近50問でプロンプト生成</button>';
+    if (totalAns >= 100) {
+      html += '<button onclick="showAIPromptModal(\'all\')" style="background:#1a2940;border:1px solid #f97316;color:#f97316;padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;">全' + totalAns + '問版</button>';
+    }
+    html += '</div></div>';
+  }
+
   html += '<button class="start-btn" onclick="goQuizHome()">Back to Quiz Home</button>';
   document.getElementById('quiz-review').innerHTML = html;
   updateProgress();
+
+  // Auto-offer if just hit milestone
+  setTimeout(offerAIPromptIfMilestone, 400);
 }
 
 function goQuizHome() {
@@ -6375,7 +6874,7 @@ var QUESTIONS_W2 = [
 
   {
     id: "w2q2", ch: 5, type: "mc",
-    q: "What is the primary focus of supply-side management?",
+    q: "How would you define the primary focus of supply-side management?",
     opts: [
       "Managing customer relationships",
       "Developing marketing strategies",
@@ -6438,7 +6937,7 @@ var QUESTIONS_W2 = [
 
   {
     id: "w2q5", ch: 5, type: "mc",
-    q: "What is a business ecosystem?",
+    q: "Define: a business ecosystem?",
     opts: [
       "A single company's internal structure",
       "A network of interconnected organizations that co-evolve capabilities around shared innovation",
@@ -6921,7 +7420,7 @@ var QUESTIONS_W2 = [
 
   {
     id: "w2q28", ch: 5, type: "mc",
-    q: "Which of these is an example of downstream integration?",
+    q: "Pick the one that is an example of downstream integration?",
     opts: [
       "A coffee roaster buying a coffee plantation",
       "A manufacturer opening its own retail stores",
@@ -8898,7 +9397,7 @@ var QUESTIONS_W3 = [
   // ---- Chapter 10 Questions (46) ----
   {
     id: "w3q1", ch: 10, type: "mcq",
-    q: "What is the primary purpose of planning and control in operations management?",
+    q: "What is the central reason for planning and control in operations management?",
     opts: [
       "To maximize profits at all costs",
       "To reconcile supply with demand",
@@ -9366,7 +9865,7 @@ var QUESTIONS_W3 = [
   },
   {
     id: "w3q27", ch: 10, type: "mcq",
-    q: "Which of the following is NOT a common priority rule for job sequencing?",
+    q: "Identify the one that is NOT a common priority rule for job sequencing?",
     opts: [
       "Random Order Processing (ROP)",
       "Earliest Due Date (EDD)",
@@ -9474,7 +9973,7 @@ var QUESTIONS_W3 = [
   },
   {
     id: "w3q33", ch: 10, type: "mcq",
-    q: "What is the relationship between the P:D ratio and the level of speculation in operations?",
+    q: "In Slack's framework, what is the relationship between the P:D ratio and the level of speculation in operations?",
     opts: [
       "A lower P:D ratio requires more speculation",
       "The P:D ratio has no impact on speculation",
@@ -9872,7 +10371,7 @@ var QUESTIONS_W3 = [
   },
   {
     id: "w3q55", ch: 11, type: "mcq",
-    q: "Which of the following is an advantage of a level capacity plan?",
+    q: "Among these, which is an advantage of a level capacity plan?",
     opts: [
       "Low inventory costs",
       "Stable employment and predictable output",
@@ -9908,7 +10407,7 @@ var QUESTIONS_W3 = [
   },
   {
     id: "w3q57", ch: 11, type: "mcq",
-    q: "Which of the following is a method of demand management?",
+    q: "Which option is a method of demand management?",
     opts: [
       "Hiring temporary workers",
       "Building inventory",
@@ -11201,7 +11700,7 @@ var QUESTIONS_W6 = [
     id: 6109,
     ch: 14,
     week: 6,
-    q: "What is the PRIMARY purpose of the Master Production Schedule (MPS) in an MRP system?",
+    q: "How would you define the PRIMARY purpose of the Master Production Schedule (MPS) in an MRP system?",
     opts: ["To list every component required for each finished product", "To specify what end items will be produced and when, driving MRP calculations", "To track real-time inventory levels in the warehouse", "To calculate the economic order quantity for each raw material",
       'BOM lists only the final product',
       "Don't know"
@@ -12024,7 +12523,7 @@ var QUESTIONS_W7 = [
     id: 7104,
     ch: 15,
     week: 7,
-    q: "What is the '8th waste' added to TIMWOOD in modern lean thinking?",
+    q: "In Slack's framework, what is the '8th waste' added to TIMWOOD in modern lean thinking?",
     opts: ["Energy waste", "Environmental waste", "Underutilized skill (unused human talent)", "Excess paperwork",
       'SMED stands for Single Minute Execution Direction',
       "Don't know"
@@ -12037,7 +12536,7 @@ var QUESTIONS_W7 = [
     id: 7105,
     ch: 15,
     week: 7,
-    q: "What is the FIRST step of Goldratt's 5 Focusing Steps in the Theory of Constraints (TOC)?",
+    q: "How would you define the FIRST step of Goldratt's 5 Focusing Steps in the Theory of Constraints (TOC)?",
     opts: ["Subordinate everything to the constraint", "Identify the system's constraint (bottleneck)", "Elevate the constraint", "Exploit the constraint",
       'Takt time is the same as cycle time',
       "Don't know"
@@ -12133,7 +12632,7 @@ var QUESTIONS_W7 = [
     id: 7112,
     ch: 15,
     week: 7,
-    q: "What is the primary purpose of Heijunka (production leveling)?",
+    q: "What is the central reason for Heijunka (production leveling)?",
     opts: ["Maximize batch size for economy of scale", "Smooth volume and mix variation to reduce Mura", "Increase machine utilization to 100%", "Build maximum safety stock",
       'SMED stands for Single Minute Execution Direction',
       "Don't know"
@@ -12255,7 +12754,7 @@ var QUESTIONS_W7 = [
     id: 7121,
     ch: 16,
     week: 7,
-    q: "What is the KEY difference between BPR (Business Process Re-engineering) and TQM (Total Quality Management)?",
+    q: "In Slack's framework, what is the KEY difference between BPR (Business Process Re-engineering) and TQM (Total Quality Management)?",
     opts: ["BPR is incremental; TQM is radical", "BPR is radical/breakthrough redesign; TQM is incremental/continuous improvement", "BPR is top-down; TQM is bottom-up only", "They are essentially the same thing",
       'Fishbone diagram has 4 standard categories',
       "Don't know"
@@ -13069,7 +13568,7 @@ var QUESTIONS_W8 = [
     id: 8003,
     ch: 17,
     week: 8,
-    q: "What is the purpose of a control chart?",
+    q: "How would you define the purpose of a control chart?",
     opts: [
       "It helps in assessing whether a process functions normally or needs attention.",
       "It helps to identify opportunities for improvement.",
@@ -13605,7 +14104,7 @@ var QUESTIONS_MOCK = [
     id: 3012,
     ch: 10,
     week: 3,
-    q: "What is characteristic of processes that are controlled by a pull system?",
+    q: "Define: characteristic of processes that are controlled by a pull system?",
     opts: [
       "They use as few resources as possible.",
       "Process steps are decoupled by buffers of WIP (work-in-process).",
@@ -13749,7 +14248,7 @@ var QUESTIONS_MOCK = [
     id: 3020,
     ch: 6,
     week: 2,
-    q: "What is the resource with the highest utilization? [1 assistant (3min), optometrist (10min, 50% patients), ophthalmologist (15min, 100% patients), 1 follow-up assistant (7min)]",
+    q: "Define: the resource with the highest utilization? [1 assistant (3min), optometrist (10min, 50% patients), ophthalmologist (15min, 100% patients), 1 follow-up assistant (7min)]",
     opts: [
       "The doctor's assistant.",
       "The optometrist.",
@@ -13785,7 +14284,7 @@ var QUESTIONS_MOCK = [
     id: 3022,
     ch: 6,
     week: 2,
-    q: "What is the throughput efficiency (TE) of the process? [Work content ≈ 25 min per client, throughput time ≈ 60 min per client including waiting]",
+    q: "How would you define the throughput efficiency (TE) of the process? [Work content ≈ 25 min per client, throughput time ≈ 60 min per client including waiting]",
     opts: [
       "35 min. per client.",
       "35÷25 = 1.4.",
@@ -14220,7 +14719,7 @@ var QUESTIONS_MOCK = [
     id: 3049,
     ch: 6,
     week: 2,
-    q: "What is the capacity (in passengers per hour) of the Passport Check step? [17 agents, PT=1 min each]",
+    q: "In Slack's framework, what is the capacity (in passengers per hour) of the Passport Check step? [17 agents, PT=1 min each]",
     opts: [
       "120 passengers or hour.",
       "510 passengers or hour.",
@@ -14238,7 +14737,7 @@ var QUESTIONS_MOCK = [
     id: 3050,
     ch: 6,
     week: 2,
-    q: "What is the utilization of the resources at the Check-in or Baggage drop-off step? [80% of passengers check in, 10 agents, PT=3 min]",
+    q: "Define: the utilization of the resources at the Check-in or Baggage drop-off step? [80% of passengers check in, 10 agents, PT=3 min]",
     opts: [
       "38%.",
       "76%.",
@@ -15882,7 +16381,7 @@ var QUESTIONS_MOCK_FINAL = [
   },
   {
     id: 5024, ch: 17, week: 8,
-    q: "What is the purpose of a control chart?",
+    q: "How would you define the purpose of a control chart?",
     opts: [
       "It helps in assessing whether a process functions normally or needs attention.",
       "It helps to identify opportunities for improvement.",
@@ -16016,7 +16515,7 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 {id:6016,ch:13,week:6,q:"Which of the following is NOT seen as an advantage of inventory?",opts:["It prevents hold-ups in major projects","It smoothes supply and demand","It reduces working capital","It provides insurance against unexpected demand","It allows independence between stages of supply","Don't know"],ans:2,expl:"Inventory TIES UP working capital — it does not reduce it.",we:{4:"Decoupling stages IS an advantage of inventory."},source:"StudentWiki",exam:"endterm"},
 {id:6017,ch:13,week:6,q:"Inventory or stock is defined as the stored accumulation of material resources in a transformation system.",opts:["True","False","True, but only for finished goods","False, only physical materials count","False, services have no inventory","Don't know"],ans:0,expl:"Standard Slack textbook definition.",we:{2:"The definition covers all stages, not just finished goods.",3:"Inventory also includes queues of customers in services.",4:"Services do have inventory equivalents (queues)."},source:"StudentWiki",exam:"endterm"},
 {id:6018,ch:13,week:6,q:"Which of the following is NOT an example of inventory in a hotel?",opts:["Staff","Drinks","Food items","Cleaning materials","Toiletries","Don't know"],ans:0,expl:"Staff are a human resource, not inventory.",we:{4:"Toiletries are consumable supplies — they ARE inventory."},source:"StudentWiki",exam:"endterm"},
-{id:6019,ch:13,week:6,q:"Which of the following is NOT an example of inventory at Britvic's National Distribution Centre?",opts:["Packaging materials","Fork lift trucks","Pallets","Drinks","Bottles of soft drink","Don't know"],ans:1,expl:"Fork lift trucks are equipment (capital), not inventory.",we:{4:"Bottles of drink ARE the core finished-goods inventory."},source:"StudentWiki",exam:"endterm"},
+{id:6019,ch:13,week:6,q:"Identify the one that is NOT an example of inventory at Britvic's National Distribution Centre?",opts:["Packaging materials","Fork lift trucks","Pallets","Drinks","Bottles of soft drink","Don't know"],ans:1,expl:"Fork lift trucks are equipment (capital), not inventory.",we:{4:"Bottles of drink ARE the core finished-goods inventory."},source:"StudentWiki",exam:"endterm"},
 {id:6020,ch:13,week:6,q:"Which is NOT an example of inventory for a precious metals refiner?",opts:["Material waiting to be processed","Partly-processed material","Lorries","Refined metal","Crucibles and refining furnaces","Don't know"],ans:2,expl:"Lorries are transport assets, not inventory.",we:{4:"Furnaces are equipment, but the keyed answer (lorries) is the textbook example; this is also equipment, but the keyed answer applies."},source:"StudentWiki",exam:"endterm"},
 {id:6021,ch:13,week:6,q:"When customers are being processed, inventory is normally referred to as:",opts:["Customer stocks","People inventory","Customer lines","Queues","Service backlog","Don't know"],ans:3,expl:"In services, waiting customers form queues — the service equivalent of inventory.",we:{4:"Backlog is order-side terminology; Slack specifically uses 'queues' for customers."},source:"StudentWiki",exam:"endterm"},
 {id:6022,ch:13,week:6,q:"Cleaning materials are far more important inventory for an industrial cleaning company than a TV plant.",opts:["True","False","Only if outsourced","Only for industrial sites","Depends on plant size","Don't know"],ans:0,expl:"True — for a cleaning company, cleaning materials ARE the core input.",we:{2:"Outsourcing status doesn't change the relative importance of cleaning materials.",3:"All cleaning operations rely on cleaning materials, not only industrial.",4:"Plant size is irrelevant — it's about the nature of the operation."},source:"StudentWiki",exam:"endterm"},
@@ -16090,7 +16589,7 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 // [DELETED: 6303 Benchmarking misunderstanding — StudentWiki-only, Canvas/Mock Finalに無し]
 // [DELETED: 6304 Benchmarking speed — StudentWiki-only, Canvas/Mock Finalに無し]
 // [DELETED: 6305 Importance-Performance Matrix urgent action zone — StudentWiki-only, Canvas/Mock Finalに無し]
-{id:6306,ch:16,week:7,q:"Which is true of breakthrough improvement?",opts:["Small steps","Continuous timeframe","Effort orientation on technology","Un-dramatic changes","People-focused effort orientation","Don't know"],ans:2,expl:"Breakthrough relies on technology investment; continuous relies on people.",we:{4:"People orientation is CONTINUOUS improvement, not breakthrough."},source:"StudentWiki",exam:"endterm"},
+{id:6306,ch:16,week:7,q:"Pick the claim that is correct of breakthrough improvement?",opts:["Small steps","Continuous timeframe","Effort orientation on technology","Un-dramatic changes","People-focused effort orientation","Don't know"],ans:2,expl:"Breakthrough relies on technology investment; continuous relies on people.",we:{4:"People orientation is CONTINUOUS improvement, not breakthrough."},source:"StudentWiki",exam:"endterm"},
 {id:6307,ch:16,week:7,q:"Which is true of continuous improvement?",opts:["Individualism","Effort orientation focused on people","Concentrated risks","Results for profit evaluation","Dramatic, abrupt change","Don't know"],ans:1,expl:"CI is people-focused (Kaizen).",we:{4:"Dramatic change describes BREAKTHROUGH, not CI."},source:"StudentWiki",exam:"endterm"},
 {id:6308,ch:16,week:7,q:"The PDCA Cycle is an example of:",opts:["A statistical process control cycle","A product quality assessment cycle","A staff motivation cycle","An improvement cycle","A risk assessment cycle","Don't know"],ans:3,expl:"Plan-Do-Check-Act = improvement cycle (Deming).",we:{4:"PDCA is for improvement, not risk assessment."},source:"StudentWiki",exam:"endterm"},
 {id:6309,ch:16,week:7,q:"Which is NOT a criticism of Business Process Re-engineering?",opts:["It can lead to loss of essential experience","It fails to look at people who perform activities","It is merely an excuse for getting rid of employees","It only focuses on incremental improvement","It can be culturally disruptive","Don't know"],ans:3,expl:"BPR is RADICAL, not incremental — so this is NOT a criticism.",we:{4:"Cultural disruption IS a common BPR criticism."},source:"StudentWiki",exam:"endterm"},
@@ -16182,7 +16681,7 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 {id:6611,ch:19,week:8,q:"Which does NOT define a project?",opts:["They have no defined end point","They are all unique","They all have an objective","They all have to cope with uncertainty","They consume few resources","Don't know"],ans:0,expl:"Projects DO have defined endpoints — that's a programme.",we:{4:"Projects often use many resources — but the textbook answer is the 'no end point' option."},source:"StudentWiki",exam:"endterm"},
 {id:6612,ch:19,week:8,q:"Which is NOT common of projects?",opts:["They involve continuous improvement","They are all of a temporary nature","They involve a degree of complexity","They are all unique","They follow fixed daily routines","Don't know"],ans:0,expl:"CI is not specifically a project trait.",we:{4:"Routines describe operations, not projects."},source:"StudentWiki",exam:"endterm"},
 {id:6613,ch:19,week:8,q:"Because projects have a defined beginning and end, a temporary concentration of resources is needed.",opts:["True","False","False, projects use permanent resources","Only for matrix projects","Only for outsourced projects","Don't know"],ans:0,expl:"True.",we:{2:"Project resource concentration is temporary by definition.",3:"Holds for all project structures.",4:"Outsourcing doesn't change the principle."},source:"StudentWiki",exam:"endterm"},
-{id:6614,ch:19,week:8,q:"Which is true of a programme?",opts:["It has no defined end point","It is the same as a project","It is temporary in nature","It has a fixed budget","It is the same as a portfolio","Don't know"],ans:0,expl:"Programmes are ongoing (no fixed end).",we:{3:"Programmes have evolving budgets, not fixed end-state.",4:"Portfolios group programmes; not synonymous."},source:"StudentWiki",exam:"endterm"},
+{id:6614,ch:19,week:8,q:"Identify the accurate statement of a programme?",opts:["It has no defined end point","It is the same as a project","It is temporary in nature","It has a fixed budget","It is the same as a portfolio","Don't know"],ans:0,expl:"Programmes are ongoing (no fixed end).",we:{3:"Programmes have evolving budgets, not fixed end-state.",4:"Portfolios group programmes; not synonymous."},source:"StudentWiki",exam:"endterm"},
 {id:6615,ch:19,week:8,q:"Which involves the highest level of complexity?",opts:["A chemical plant","A company audit","A wedding","The Thames barrier","A national election","Don't know"],ans:3,expl:"Thames Barrier = massive engineering complexity.",we:{4:"Elections are complex, but the textbook answer is Thames Barrier engineering."},source:"StudentWiki",exam:"endterm"},
 {id:6616,ch:19,week:8,q:"Which involves the highest uncertainty in project planning?",opts:["An Antarctic expedition","An advertising campaign","A wedding","A company audit","A new product launch","Don't know"],ans:0,expl:"Antarctic expedition = environment or weather risk.",we:{4:"Launches have uncertainty but Antarctic expedition is the textbook answer."},source:"StudentWiki",exam:"endterm"},
 {id:6617,ch:19,week:8,q:"Projects with high complexity are not necessarily difficult to plan, but controlling them can be problematic.",opts:["True","False","False, complex is easy to control","Only for software projects","Only in low-uncertainty cases","Don't know"],ans:0,expl:"True.",we:{2:"Complexity typically makes control HARDER.",3:"Holds for many project types, not just software.",4:"Combination of complexity and uncertainty raises difficulty."},source:"StudentWiki",exam:"endterm"},
@@ -16709,6 +17208,20 @@ var QUESTIONS_GRAPH = [
     id: "g_001",
     ch: 1,
     week: 1,
+    visual: {
+      type: 'polar',
+      title: 'Operations A vs B — 4Vs Polar',
+      axes: [
+        {label: 'Volume', scoreA: 5, scoreB: 2},
+        {label: 'Variety', scoreA: 1, scoreB: 5},
+        {label: 'Variation', scoreA: 1, scoreB: 4},
+        {label: 'Visibility', scoreA: 1, scoreB: 5}
+      ],
+      legend: [
+        {label: 'Operation A', color: '#f97316'},
+        {label: 'Operation B', color: '#3b82f6'}
+      ]
+    },
     q: "A polar (radar) diagram is shown for two operations on the 4Vs (each axis 1=low, 5=high):\n\n```\n            VOLUME\n              5\n              |\n              4--A\n              |\n              3\n              |\n              2-----B\n              1\nVARIETY  1-2-3-4-5  VARIATION\n              |\n           A=3,B=1\n              |\n          (visibility low for A, high for B)\n```\nReadable scores:\n| Dimension     | Operation A | Operation B |\n|---------------|-------------|-------------|\n| Volume        | 5           | 2           |\n| Variety       | 1           | 5           |\n| Variation     | 1           | 4           |\n| Visibility    | 1           | 5           |\n\nWhich operation profile is **A** most likely to represent, and what is the dominant cost implication?",
     opts: [
       "A boutique tailor — high unit costs because of customisation",
@@ -16734,6 +17247,20 @@ var QUESTIONS_GRAPH = [
     id: "g_002",
     ch: 1,
     week: 1,
+    visual: {
+      type: 'polar',
+      title: 'Service X vs Y — 4Vs Polar',
+      axes: [
+        {label: 'Volume', scoreA: 4, scoreB: 1},
+        {label: 'Variety', scoreA: 2, scoreB: 5},
+        {label: 'Variation', scoreA: 5, scoreB: 2},
+        {label: 'Visibility', scoreA: 5, scoreB: 4}
+      ],
+      legend: [
+        {label: 'Service X', color: '#f97316'},
+        {label: 'Service Y', color: '#3b82f6'}
+      ]
+    },
     q: "Two service operations are plotted on a 4Vs polar diagram:\n\n| Dimension     | Service X | Service Y |\n|---------------|-----------|-----------|\n| Volume        | 4         | 1         |\n| Variety       | 2         | 5         |\n| Variation     | 5         | 2         |\n| Visibility    | 5         | 4         |\n\n```\n        Volume\n         5\n   X 4 ──┐\n         3\n         2 ── Y\n         1     Y\nVisibility 1-2-3-4-5 Variation\n```\nWhich SINGLE management challenge is the BIGGEST priority for **Service X** specifically (not Y)?",
     opts: [
       "Designing a flexible product range to handle high variety",
@@ -17079,6 +17606,13 @@ var QUESTIONS_GRAPH = [
     id: "g_015",
     ch: 13,
     week: 6,
+    visual: {
+      type: 'sawtooth',
+      title: 'Inventory Profile — Order Cycle',
+      peak: 80,
+      cycles: 4,
+      safety: 0
+    },
     q: "Inventory profile over 40 days:\n\n```\nStock\n│\n100┤▲         ▲         ▲\n   │ ╲         ╲         ╲\n 60┤  ╲         ╲         ╲   ← safety stock=20\n   │   ╲         ╲         ╲\n 20┤────╲─────────╲─────────╲───── safety stock line\n   │     ╲         ╲         ╲\n  0└──────────────────────────→ Day\n      0    10        20        30   40\n```\nReorder brings stock back up to 100 every 10 days; usage rate is constant. What is the **average inventory level**?",
     opts: [
       "40 units",
@@ -17104,6 +17638,13 @@ var QUESTIONS_GRAPH = [
     id: "g_016",
     ch: 13,
     week: 6,
+    visual: {
+      type: 'sawtooth',
+      title: 'Inventory Profile with Safety Stock',
+      peak: 100,
+      cycles: 3,
+      safety: 20
+    },
     q: "EOQ total-cost curve sketch:\n\n```\nCost\n  ▲                              ╱ Total cost\n  │                         ╱╱╱╱\n  │ ─    Holding cost  ╱╱╱╱\n  │  ╲─               ╱\n  │    ╲─       ───╱─── Min at Q*\n  │      ╲───╱─        ╲\n  │     ╱   ╲          ╲___ Ordering cost (∝1/Q)\n  │   ╱       ╲___\n  └─────────────────────→ Order qty Q\n           Q*\n```\nAt the EOQ optimum Q*, what is the relationship between **annual holding cost** and **annual ordering cost**?",
     opts: [
       "Holding cost is twice the ordering cost",
@@ -17262,6 +17803,17 @@ var QUESTIONS_GRAPH = [
     id: "g_022",
     ch: 18,
     week: 7,
+    visual: {
+      type: 'pareto',
+      title: 'Defect Causes — Pareto Chart',
+      bars: [
+        {label: 'Cause A', value: 40},
+        {label: 'Cause B', value: 30},
+        {label: 'Cause C', value: 15},
+        {label: 'Cause D', value: 10},
+        {label: 'Cause E', value: 5}
+      ]
+    },
     q: "Pareto chart of defect causes (last 1000 inspected units):\n\n```\nCount\n 500┤█\n    │█\n 400┤█\n    │█        cumulative %\n 300┤█  █     ────\n    │█  █   ╱   100%\n 200┤█  █  ╱──── 80%\n    │█  █  █  █\n 100┤█  █  █  █  █  █\n    │█  █  █  █  █  █\n   0└──────────────────→ Cause\n     A  B  C  D  E  F\n```\nCounts: A=500, B=200, C=120, D=80, E=60, F=40. Cumulative %: A=50%, A+B=70%, A+B+C=82%, A+B+C+D=90%.\nApplying the 80/20 Pareto rule, which causes should be tackled **first**?",
     opts: [
       "A only",
@@ -17395,6 +17947,27 @@ var QUESTIONS_GRAPH = [
     id: "g_027",
     ch: 19,
     week: 8,
+    visual: {
+      type: 'network',
+      title: 'PERT Network — Critical Path',
+      nodes: [
+        {id: 'S', label: 'S', x: 40, y: 110},
+        {id: 'A', label: 'A', x: 130, y: 60},
+        {id: 'B', label: 'B', x: 130, y: 160},
+        {id: 'C', label: 'C', x: 230, y: 60},
+        {id: 'D', label: 'D', x: 230, y: 160},
+        {id: 'E', label: 'E', x: 340, y: 110}
+      ],
+      edges: [
+        {from: 'S', to: 'A', label: '3'},
+        {from: 'S', to: 'B', label: '2'},
+        {from: 'A', to: 'C', label: '4'},
+        {from: 'B', to: 'D', label: '5'},
+        {from: 'C', to: 'E', label: '2'},
+        {from: 'D', to: 'E', label: '3'}
+      ],
+      criticalPath: ['S', 'B', 'D', 'E']
+    },
     q: "Project network (activity-on-node), durations in days shown in parentheses:\n\n```\n            ┌── B(4) ──┐\n            │          │\n  START ─▶ A(3) ──▶  ──┴─▶ D(2) ──▶ END\n            │          │\n            └── C(6) ──┘\n```\nPaths: A→B→D and A→C→D.\nWhat is the **critical path length** (project duration)?",
     opts: [
       "9 days",
