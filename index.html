@@ -11566,8 +11566,12 @@ var QUESTIONS_W6 = [
     ch: 13,
     week: 6,
     q: "J-BOX has annual demand D = 300 sets, ordering cost Co = EUR 50 per order, holding cost Ch = EUR 2 per set per year. What is the EOQ?",
-    opts: ["About 87 sets", "About 122 sets", "About 150 sets", "About 174 sets",
-      'Pipeline inventory only exists in manufacturing',
+    opts: [
+      "About 87 sets",
+      "About 122 sets",
+      "About 150 sets",
+      "About 174 sets",
+      "An expense related to the physical security of the warehouse",
       "Don't know"
     ],
     ans: 1,
@@ -11579,8 +11583,12 @@ var QUESTIONS_W6 = [
     ch: 13,
     week: 6,
     q: "Which of the following is NOT a component of inventory holding costs?",
-    opts: ["Cost of capital tied up in inventory", "Production costs", "Storage and warehousing costs", "Costs due to obsolescence",
-      'Pipeline inventory only exists in manufacturing',
+    opts: [
+      "Cost of capital tied up in inventory",
+      "Production costs",
+      "Storage and warehousing costs",
+      "Costs due to obsolescence",
+      "An expense related to the physical security of the warehouse",
       "Don't know"
     ],
     ans: 1,
@@ -11593,8 +11601,12 @@ var QUESTIONS_W6 = [
     ch: 13,
     week: 6,
     q: "Product A has annual demand D = 1250 batches, ordering cost Co = EUR 30, holding cost Ch = EUR 1 per batch per year. What is the EOQ (Q*)?",
-    opts: ["About 87 batches", "About 97 batches", "About 274 batches", "About 354 batches",
-      'ABC analysis groups items by physical weight',
+    opts: [
+      "About 87 batches",
+      "About 97 batches",
+      "About 274 batches",
+      "About 354 batches",
+      "Q* = average demand × lead time (cycle stock formula, not EOQ)",
       "Don't know"
     ],
     ans: 2,
@@ -11746,8 +11758,12 @@ var QUESTIONS_W6 = [
     ch: 13,
     week: 6,
     q: "A newsvendor faces demand D ~ N(μ=100, σ=20). Underage cost Cu=€8 (lost margin), overage cost Co=€2 (waste). What is the optimal order quantity Q*? (Z₀.₈=0.84)",
-    opts: ["About 88 units", "About 100 units", "About 117 units", "About 140 units",
-      'ABC analysis groups items by physical weight',
+    opts: [
+      "About 88 units",
+      "About 100 units",
+      "About 117 units",
+      "About 140 units",
+      "About 80 units (used z = −1 by mistake)",
       "Don't know"
     ],
     ans: 2,
@@ -11760,8 +11776,12 @@ var QUESTIONS_W6 = [
     ch: 13,
     week: 6,
     q: "A bakery sells fresh bread at p=€5 per loaf. Production cost c=€3. Unsold bread is sold to a farm at salvage s=€1. What is the critical ratio CR?",
-    opts: ["0.33", "0.50", "0.60", "0.67",
-      'Pipeline inventory only exists in manufacturing',
+    opts: [
+      "0.33",
+      "0.50",
+      "0.60",
+      "0.67",
+      "0.75 (used Cu/p incorrectly)",
       "Don't know"
     ],
     ans: 1,
@@ -11775,7 +11795,7 @@ var QUESTIONS_W6 = [
     week: 6,
     q: "How would you define the PRIMARY purpose of the Master Production Schedule (MPS) in an MRP system?",
     opts: ["To list every component required for each finished product", "To specify what end items will be produced and when, driving MRP calculations", "To track real-time inventory levels in the warehouse", "To calculate the economic order quantity for each raw material",
-      'BOM lists only the final product',
+      "To replace the operations strategy document",
       "Don't know"
     ],
     ans: 1,
@@ -16619,8 +16639,12 @@ var QUESTIONS_MOCK_FINAL = [
   {
     id: 5003, ch: 13, week: 6,
     q: "Media Markt is a large retailer of consumer electronics with large inventories. The costs for keeping these products in inventory are called holding costs. What is NOT a constituent of holding costs for electronics products?",
-    opts: ["Cost of capital.", "Production costs.", "Costs due to obsolescence.", "Storage costs.",
-      'EOQ minimizes holding cost only, ignoring ordering cost',
+    opts: [
+      "Cost of capital.",
+      "Production costs.",
+      "Costs due to obsolescence.",
+      "Storage costs.",
+      "Q* = average demand × lead time (cycle stock formula, not EOQ)",
       "Don't know"
     ],
     ans: 1,
@@ -16882,7 +16906,7 @@ var QUESTIONS_MOCK_FINAL = [
       "About 30% per order cycle, about once per 3.33 months.",
       "About 50% per order cycle, about once per 2 months.",
       "About 60% per order cycle, about once per 1.67 months.",
-      'Pipeline inventory only exists in manufacturing',
+      "An expense related to the physical security of the warehouse",
       "Don't know"
     ],
     ans: 1,
@@ -16993,7 +17017,7 @@ var QUESTIONS_MOCK_FINAL = [
       "Q* = 45, ROL = 24.",
       "Q* = 60, ROL = 30.",
       "Q* = 100, ROL = 40.",
-      'ABC analysis groups items by physical weight',
+      "Q* = average demand × lead time (cycle stock formula, not EOQ)",
       "Don't know"
     ],
     ans: 1,
@@ -17008,7 +17032,7 @@ var QUESTIONS_MOCK_FINAL = [
       "ROL ≈ 1025.5 (SS = 26 units).",
       "ROL ≈ 1050 (SS = 50 units).",
       "ROL ≈ 1100 (SS = 100 units).",
-      'ABC analysis groups items by physical weight',
+      "Q* = average demand × lead time (cycle stock formula, not EOQ)",
       "Don't know"
     ],
     ans: 1,
@@ -17023,7 +17047,7 @@ var QUESTIONS_MOCK_FINAL = [
       "About 400 barrels.",
       "About 600 barrels.",
       "About 900 barrels.",
-      'ABC analysis groups items by physical weight',
+      "Q* = average demand × lead time (cycle stock formula, not EOQ)",
       "Don't know"
     ],
     ans: 1,
@@ -17038,7 +17062,7 @@ var QUESTIONS_MOCK_FINAL = [
       "Q* = 130 papers.",
       "Q* = 150 papers.",
       "Q* = 180 papers.",
-      'ABC analysis groups items by physical weight',
+      "An order quantity equal to the maximum possible demand",
       "Don't know"
     ],
     ans: 1,
@@ -17115,7 +17139,7 @@ var QUESTIONS_MOCK_FINAL = [
       "Average cycle stock will be the same for A and B; not enough information for safety stock.",
       "Average cycle stock will be lower for A; safety stock will be the same for A and B.",
       "Average cycle stock will be the same for A and B; safety stock will be higher for A.",
-      'EOQ minimizes holding cost only, ignoring ordering cost',
+      "Q* = average demand × lead time (cycle stock formula, not EOQ)",
       "Don't know"
     ],
     ans: 0,
@@ -17182,7 +17206,7 @@ var QUESTIONS_MOCK_FINAL = [
       "About 42 barrels (√1800).",
       "About 60 barrels (√3600).",
       "About 85 barrels (√7200).",
-      'EOQ minimizes holding cost only, ignoring ordering cost',
+      "Q* = average demand × lead time (cycle stock formula, not EOQ)",
       "Don't know"
     ],
     ans: 3,
@@ -17225,7 +17249,7 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 // [DELETED: 6013 Periodic Review 定義 — StudentWiki-only, Canvas全素材に Periodic Review 概念なし]
 {id:6014,ch:13,week:6,q:"Holding inventory is NOT risky because:",opts:["Inventory ties up considerable amounts of working capital","Inventory can become obsolete","It provides no security for uncertain demand","Items held in stock can deteriorate","Inventory can be physically stolen or damaged","Don't know"],ans:2,expl:"Inventory DOES provide security against uncertain demand — so this is NOT a risk.",we:{4:"Theft and damage ARE real risks of holding inventory."},source:"StudentWiki",exam:"endterm"},
 {id:6015,ch:13,week:6,q:"The costs of inventory outweigh the benefits of holding stock.",opts:[
-      "EOQ minimizes ordering cost only",
+      "Q* = average demand × lead time (cycle stock formula, not EOQ)",
       "False",
       "Only for perishables",
       "Only in ABC Class A items",
@@ -17235,7 +17259,7 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 {id:6016,ch:13,week:6,q:"Which of the following is NOT seen as an advantage of inventory?",opts:["It prevents hold-ups in major projects","It smoothes supply and demand","It reduces working capital","It provides insurance against unexpected demand","It allows independence between stages of supply","Don't know"],ans:2,expl:"Inventory TIES UP working capital — it does not reduce it.",we:{4:"Decoupling stages IS an advantage of inventory."},source:"StudentWiki",exam:"endterm"},
 {id:6017,ch:13,week:6,q:"Inventory or stock is defined as the stored accumulation of material resources in a transformation system.",opts:[
       "True",
-      "EOQ minimizes ordering cost only",
+      "Q* = average demand × lead time (cycle stock formula, not EOQ)",
       "True, but only for finished goods",
       "False, only physical materials count",
       "False, services have no inventory",
@@ -17841,7 +17865,7 @@ var QUESTIONS_MOCK500 = [
   {"id": "m500_q222", "ch": 11, "week": 3, "type": "A", "source": "Mock500", "exam": "midterm", "q": "What is the reason for choosing \"EDD (Earliest Due Date)\"?", "opts": ["Maximize on-time delivery and minimize lateness", "Minimize average flow time", "Maximize customer satisfaction", "Maximize profit", "Minimize inventory", "Don't know"], "ans": 0, "expl": "**EDD = deadline first**.", "we": {"1": "SPT minimizes average flow time", "2": "Partial", "3": "", "4": ""}, "memory": "**EDD = deadline first**."},
   {"id": "m500_q223", "ch": 11, "week": 3, "type": "A", "source": "Mock500", "exam": "midterm", "q": "What is the reason for choosing \"SPT (Shortest Processing Time)\"?", "opts": ["Minimizes average flow time, WIP, and queue length", "Minimizes lateness", "Minimizes setups", "Only minimizes cost", "Maximizes quality", "Don't know"], "ans": 0, "expl": "SPT is optimal for minimizing average flow time.", "we": {"2": "", "3": "Indirect", "4": ""}, "memory": "**SPT = short jobs first → minimum average flow time**."},
   {"id": "m500_q224", "ch": 11, "week": 3, "type": "C", "source": "Mock500", "exam": "midterm", "q": "Four jobs with processing times = [4, 2, 6, 3] hours. What is the SPT order?", "opts": ["2 → 3 → 4 → 6 (Job 2 → Job 4 → Job 1 → Job 3)", "4, 2, 6, 3 (original order)", "6, 4, 3, 2 (LPT)", "Level capacity strategy adjusts output to match demand variation", "All in parallel", "Don't know"], "ans": 0, "expl": "**SPT = shortest first**.", "we": {"1": "", "2": "Reversed (LPT)", "3": ""}, "memory": "**SPT = shortest first**."},
-  {"id": "m500_q225", "ch": 11, "week": 3, "type": "C", "source": "Mock500", "exam": "midterm", "q": "For the four jobs above in SPT order, what is the average flow time?", "opts": ["(2 + 5 + 9 + 15)/4 = 31/4 = 7.75 hours", "15/4 = 3.75", "4", "15", "2", "Don't know"], "ans": 0, "expl": "**Avg flow = Σ completion / N**.", "we": {"1": "", "2": "", "3": "Total", "4": "Shortest only"}, "memory": "**Avg flow = Σ completion / N**."},
+  {"id": "m500_q225", "ch": 11, "week": 3, "type": "C", "source": "Mock500", "exam": "midterm", "q": "Four jobs have processing times [4, 2, 6, 3] hours. They are sequenced in SPT (shortest processing time) order: 2 → 3 → 4 → 6. Completion times: 2, 5, 9, 15 hours. What is the **average flow time**?", "opts": ["(2 + 5 + 9 + 15)/4 = 31/4 = 7.75 hours", "15/4 = 3.75", "4", "15", "2", "Don't know"], "ans": 0, "expl": "SPT order: 2, 3, 4, 6 (sorted ascending). Cumulative completion times: 2, 2+3=5, 5+4=9, 9+6=15. Avg flow = (2+5+9+15)/4 = 31/4 = **7.75 hours**. SPT minimizes average flow time but ignores due dates (use EDD for due dates).", "we": {"1": "", "2": "", "3": "Total", "4": "Shortest only"}, "memory": "**Avg flow = Σ completion / N**."},
   {"id": "m500_q226", "ch": 11, "week": 3, "type": "A", "source": "Mock500", "exam": "midterm", "q": "What is \"Scheduling\"?", "opts": ["A time-axis plan of when each task occurs (e.g., Gantt charts)", "Exactly the same as sequencing (contradicts standard capacity / queuing theory)", "Exactly the same as loading (contradicts standard capacity / queuing theory)", "Inventory management (contradicts standard capacity / queuing theory)", "Recruitment planning (contradicts standard capacity / queuing theory)", "Don't know"], "ans": 0, "expl": "Gantt and similar.", "we": {"1": "Sequencing is ordering", "2": "", "3": "", "4": ""}, "memory": "**Schedule = timetable**."},
   {"id": "m500_q227", "ch": 11, "week": 3, "type": "A", "source": "Mock500", "exam": "midterm", "q": "What is the characteristic of a \"Push\" planning system?", "opts": ["Each stage produces according to central plan instructions such as MRP (inventory may accumulate)", "Production is triggered by pull signals from downstream", "Customer orders only (contradicts standard capacity / queuing theory)", "Level capacity strategy adjusts output to match demand variation", "Fully automatic (contradicts standard capacity / queuing theory)", "Don't know"], "ans": 0, "expl": "MRP is the textbook Push.", "we": {"1": "Pull", "2": "", "3": "", "4": ""}, "memory": "**Push = central plan pushes work out**."},
   {"id": "m500_q228", "ch": 11, "week": 3, "type": "A", "source": "Mock500", "exam": "midterm", "q": "What is the characteristic of a \"Pull\" planning system?", "opts": ["Upstream stages produce and replenish only in response to a downstream pull signal (e.g., Kanban)", "Central planning (contradicts standard capacity / queuing theory)", "Forecast based (contradicts standard capacity / queuing theory)", "Hold full inventory (contradicts standard capacity / queuing theory)", "Impossible (contradicts standard capacity / queuing theory)", "Don't know"], "ans": 0, "expl": "JIT/Kanban are textbook Pull.", "we": {"1": "Push", "2": "", "3": "", "4": ""}, "memory": "**Pull = downstream pulls work**."},
@@ -17873,7 +17897,7 @@ var QUESTIONS_MOCK500 = [
   {"id": "m500_q255", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "What is \"pipeline (in-transit) inventory\"?", "opts": ["Stock in transit (in motion and therefore unavailable)", "Fixed warehouse stock", "Display stock", "Scheduled for disposal", "Defective stock", "Don't know"], "ans": 0, "expl": "In transit = on-the-move stock.", "we": {"1": "", "2": "", "3": "", "4": ""}, "memory": "**Pipeline = stock that is moving**."},
   {"id": "m500_q256", "ch": 13, "week": 6, "type": "C", "source": "Mock500", "exam": "endterm", "q": "EOQ formula: Q* = √(2C₀D/Ch). Annual demand D = 10,000, ordering cost C₀ = 50, holding cost Ch = 2 per unit per year. What is Q*?", "opts": ["√(2×50×10000/2) = √500,000 ≈ 707", "1000", "500", "100", "10000", "Don't know"], "ans": 0, "expl": "**EOQ = √(2C₀D/Ch)**.", "we": {"1": "", "2": "", "3": ""}, "memory": "**EOQ = √(2C₀D/Ch)**."},
   {"id": "m500_q257", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Which is **not** a key assumption of the \"EOQ\" model?", "opts": ["Demand is constant and certain", "Ordering cost and unit price are constant", "Replenishment is instantaneous", "Quantity discounts apply (this is part of the assumptions)", "No stockouts", "Don't know"], "ans": 3, "expl": "**EOQ assumes: stable, instantaneous replenishment, no discounts, zero stockout**.", "we": {}, "memory": "**EOQ assumes: stable, instantaneous replenishment, no discounts, zero stockout**."},
-  {"id": "m500_q258", "ch": 13, "week": 6, "type": "C", "source": "Mock500", "exam": "endterm", "q": "For Q256, what is total annual cost (TC), excluding purchase cost?", "opts": ["TC = (D/Q*)·C₀ + (Q*/2)·Ch = (10000/707)·50 + (707/2)·2 ≈ 707 + 707 ≈ 1,414", "500 (not consistent with EOQ / inventory principles)", "2000 (not consistent with EOQ / inventory principles)", "1000 (not consistent with EOQ / inventory principles)", "100 (not consistent with EOQ / inventory principles)", "Don't know"], "ans": 0, "expl": "**At EOQ, H = O, so TC ≈ 2 × Holding**.", "we": {"1": "", "2": "", "3": "", "4": ""}, "memory": "**At EOQ, H = O, so TC ≈ 2 × Holding**."},
+  {"id": "m500_q258", "ch": 13, "week": 6, "type": "C", "source": "Mock500", "exam": "endterm", "q": "An EOQ problem has D = 10,000/year, ordering cost C₀ = €50/order, holding cost Ch = €2/unit/year, EOQ = 707 units. What is the **total annual cost** (TC = ordering + holding, excluding purchase)?", "opts": ["TC = (D/Q*)·C₀ + (Q*/2)·Ch = (10000/707)·50 + (707/2)·2 ≈ 707 + 707 ≈ 1,414", "500 (not consistent with EOQ / inventory principles)", "2000 (not consistent with EOQ / inventory principles)", "1000 (not consistent with EOQ / inventory principles)", "100 (not consistent with EOQ / inventory principles)", "Don't know"], "ans": 0, "expl": "At EOQ, ordering cost = holding cost. TC = (D/Q*)·C₀ + (Q*/2)·Ch = (10000/707)·50 + (707/2)·2 ≈ 707 + 707 = **€1,414**. Equivalently, TC = √(2·D·S·H) = √(2·10000·50·2) ≈ 1,414.", "we": {"1": "", "2": "", "3": "", "4": ""}, "memory": "**At EOQ, H = O, so TC ≈ 2 × Holding**."},
   {"id": "m500_q259", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "What does \"robustness\" of EOQ mean?", "opts": ["Total cost barely changes for small deviations from Q* (the U-shaped curve is flat at the bottom)", "Perfectly strict (not consistent with EOQ / inventory principles)", "A 1% error causes bankruptcy (not consistent with EOQ / inventory principles)", "Not robust (not consistent with EOQ / inventory principles)", "Irrelevant (not consistent with EOQ / inventory principles)", "Don't know"], "ans": 0, "expl": "**EOQ is forgiving near the optimum**. Small deviations are OK.", "we": {"1": "", "2": "", "3": "", "4": ""}, "memory": "**EOQ is forgiving near the optimum**. Small deviations are OK."},
   {"id": "m500_q260", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Which is **not** included in \"holding cost (Ch)\"?", "opts": ["Storage cost (warehouse)", "Cost of capital (opportunity cost)", "Obsolescence", "Insurance", "Ordering cost", "Don't know"], "ans": 4, "expl": "Holding.", "we": {}, "memory": "**Holding = cost of having (warehouse, capital, obsolescence, insurance)**. Ordering = cost of placing."},
   {"id": "m500_q261", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Which is a correct example of \"ordering cost (C₀)\"?", "opts": ["Order processing admin + receiving inspection + transport (per order)", "Warehouse storage fee (not consistent with EOQ / inventory principles)", "Cost of capital (not consistent with EOQ / inventory principles)", "Obsolescence (not consistent with EOQ / inventory principles)", "Disposal cost (not consistent with EOQ / inventory principles)", "Don't know"], "ans": 0, "expl": "**Ordering = effort per single order**.", "we": {"1": "Holding", "2": "Holding", "3": "Holding", "4": "Holding"}, "memory": "**Ordering = effort per single order**."},
@@ -17912,7 +17936,7 @@ var QUESTIONS_MOCK500 = [
   {"id": "m500_q294", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "What is \"consignment inventory\"?", "opts": ["The supplier places stock at the customer's warehouse; ownership transfers upon use", "Customer buys all the inventory (not consistent with EOQ / inventory principles)", "Shared warehouse (not consistent with EOQ / inventory principles)", "Synonym for VMI (not consistent with EOQ / inventory principles)", "Pre-disposal stock (not consistent with EOQ / inventory principles)", "Don't know"], "ans": 0, "expl": "**Consignment = pay when used**.", "we": {"1": "", "2": "", "3": "Similar but distinct (it concerns ownership)", "4": ""}, "memory": "**Consignment = pay when used**."},
   {"id": "m500_q295", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "How does \"lead time variability\" affect SS?", "opts": ["Must extend to SS = Z · √(LT · σ_d² + d² · σ_LT²)", "No effect", "SS = 0", "Use only mean LT if LT varies", "Irrelevant", "Don't know"], "ans": 0, "expl": "**σ²_total = LT · σ_d² + d² · σ_LT²** → SS = Z · √(…).", "we": {"1": "", "2": "", "3": "Inaccurate", "4": ""}, "memory": "**σ²_total = LT · σ_d² + d² · σ_LT²** → SS = Z · √(…)."},
   {"id": "m500_q296", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "What are typical \"vendor performance\" indicators?", "opts": ["On-time delivery, quality (defect rate), cost, responsiveness", "Marketing budget (not consistent with EOQ / inventory principles)", "Customer count (not consistent with EOQ / inventory principles)", "Office size (not consistent with EOQ / inventory principles)", "Employee age (not consistent with EOQ / inventory principles)", "Don't know"], "ans": 0, "expl": "Standard supplier scorecard.", "we": {"1": "", "2": "", "3": "", "4": ""}, "memory": "**Vendor KPIs = OTIF + QPPM + cost + lead time**."},
-  {"id": "m500_q297", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "At a supermarket, how do management policies differ between \"daily commodities\" (C class) and \"premium wine\" (A class)?", "opts": ["Daily goods = two-bin / auto-replenish; wine = strict records, small quantities, frequent checks", "Same (not consistent with EOQ / inventory principles)", "Wine = two-bin, daily goods = strict (not consistent with EOQ / inventory principles)", "Outsource everything (not consistent with EOQ / inventory principles)", "Pipeline inventory exists only in manufacturing contexts", "Don't know"], "ans": 0, "expl": "**A = strict, C = automated, B = in between**.", "we": {"1": "", "2": "Reversed", "3": "", "4": ""}, "memory": "**A = strict, C = automated, B = in between**."},
+  {"id": "m500_q297", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "At a supermarket, how do management policies differ between \"daily commodities\" (C class) and \"premium wine\" (A class)?", "opts": ["Daily goods = two-bin / auto-replenish; wine = strict records, small quantities, frequent checks", "Same (not consistent with EOQ / inventory principles)", "Wine = two-bin, daily goods = strict (not consistent with EOQ / inventory principles)", "Outsource everything (not consistent with EOQ / inventory principles)", "An expense related to the physical security of the warehouse", "Don't know"], "ans": 0, "expl": "**A = strict, C = automated, B = in between**.", "we": {"1": "", "2": "Reversed", "3": "", "4": ""}, "memory": "**A = strict, C = automated, B = in between**."},
   {"id": "m500_q298", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "What is the typical \"holding cost rate (i)\" as a percentage?", "opts": ["15–40% per year (capital 8–15% + storage 5–10% + obsolescence 5–15%)", "1% (not consistent with EOQ / inventory principles)", "100% (not consistent with EOQ / inventory principles)", "0% (not consistent with EOQ / inventory principles)", "1000% (not consistent with EOQ / inventory principles)", "Don't know"], "ans": 0, "expl": "Industry-average range.", "we": {"1": "Too low", "2": "", "3": "", "4": ""}, "memory": "**Holding rate ≈ 20–30% per year**."},
   {"id": "m500_q299", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "What is the role of \"Distribution Requirements Planning (DRP)\"?", "opts": ["Replenishment planning for a distribution network (warehouse network), applying MRP-like logic to distribution", "Recruiting plan (not consistent with EOQ / inventory principles)", "Marketing plan (not consistent with EOQ / inventory principles)", "Finance plan (not consistent with EOQ / inventory principles)", "Capacity plan (not consistent with EOQ / inventory principles)", "Don't know"], "ans": 0, "expl": "**DRP = MRP for distribution**.", "we": {"1": "", "2": "", "3": "", "4": ""}, "memory": "**DRP = MRP for distribution**."},
   {"id": "m500_q300", "ch": 13, "week": 6, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Which is **not** a strategic role of \"inventory\"?", "opts": ["Improving customer service", "Supporting economies of scale", "Handling uncertainty", "Quality decline as a goal", "Decoupling processes", "Don't know"], "ans": 3, "expl": "Role.", "we": {}, "memory": "**Roles of inventory = customer / scale / uncertainty / decouple**."},
