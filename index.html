@@ -523,7 +523,7 @@ a{color:#3b82f6;text-decoration:none;}
   scrollbar-color:#3b82f6 #0f1c2e;
 }
 .tbl-scroll table{
-  min-width:560px;  /* ensure cells stay readable; user scrolls horizontally */
+  min-width:max-content;  /* fit content but allow scroll if wider than viewport */
 }
 .tbl-scroll::-webkit-scrollbar{height:6px;}
 .tbl-scroll::-webkit-scrollbar-track{background:#0f1c2e;border-radius:3px;}
@@ -531,6 +531,24 @@ a{color:#3b82f6;text-decoration:none;}
 .tbl-scroll-hint{
   display:none;font-size:12px;color:#64748b;
   text-align:right;margin:-4px 0 6px;font-style:italic;
+}
+
+/* Auto-stack large tables on small mobile screens */
+@media (max-width: 480px) {
+  /* Force inner tables to allow text wrapping */
+  .tbl-scroll table { min-width: 360px; font-size: 14px; }
+  .tbl-scroll th, .tbl-scroll td {
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: normal !important;
+    max-width: 200px;
+  }
+  .tbl-scroll th { font-size: 13px !important; padding: 8px !important; }
+  .tbl-scroll td { font-size: 13px !important; padding: 8px !important; line-height: 1.45; }
+  /* Compare-mini specifically: nowrap labels become wrap-allowed */
+  .compare-mini td:first-child { white-space: normal !important; min-width: 70px !important; }
+  .vis-compare td.label { white-space: normal !important; min-width: 70px !important; font-size: 12px !important; }
 }
 
 /* Chapter header */
@@ -1760,12 +1778,12 @@ var QUESTIONS = [
     source: "教科書",
     q: 'In non-profit organizations, operations management decisions are often made under conditions of:',
     opts: [
-      'Unlimited budgets',
+      'Unlimited budgets — operations principle, not the 4Vs framework',
       'Political, economic, social, or environmental pressures beyond pure profit motive',
       'Complete freedom from stakeholder influence',
       'Simpler processes than for-profit organizations',
       'A single dominant objective set by the founder',
-      "Don't know"
+      'Don\'t know'
     ],
     ans: 1,
     exp: 'Non-profit organizations face pressures from multiple stakeholders beyond profit, including political, social, and environmental considerations that influence their operations decisions.',
@@ -1878,9 +1896,9 @@ var QUESTIONS = [
       'They always provide the raw materials',
       'They can be a transformed resource whose state is changed by the operation',
       'They manage the back-office processes',
-      'They design the products',
+      'They design the products — operations principle, not the 4Vs framework',
       'They schedule the production calendar',
-      "Don't know"
+      'Don\'t know'
     ],
     ans: 1,
     exp: 'Customers are one of the three types of transformed resources. Their state can be changed by operations (e.g., patients healed by hospitals, passengers transported by airlines, students educated by universities).',
@@ -1898,12 +1916,12 @@ var QUESTIONS = [
     source: "教科書",
     q: 'A "process" in operations management is best defined as:',
     opts: [
-      'The entire organization',
+      'The entire organization — operations principle, not the 4Vs framework',
       'An arrangement of resources that produces some mixture of products and services',
-      'Only the manufacturing department',
-      'A financial reporting cycle',
+      'Only the manufacturing department — operations principle, not the 4Vs framework',
+      'A financial reporting cycle — operations principle, not the 4Vs framework',
       'A list of corporate policies and procedures',
-      "Don't know"
+      'Don\'t know'
     ],
     ans: 1,
     exp: 'A process is an arrangement of resources that produces some mixture of products and services. It is the building block of operations and exists at all levels of the process hierarchy.',
@@ -1990,12 +2008,12 @@ var QUESTIONS = [
     source: "教科書",
     q: 'High "variety" in an operation\'s output implies:',
     opts: [
-      'Lower unit costs due to standardization',
+      'Lower unit costs due to standardization — operations principle, not the 4Vs framework',
       'Greater flexibility and wider range of products/services, often at higher unit cost',
-      'Stable and predictable demand',
+      'Stable and predictable demand — operations principle, not the 4Vs framework',
       'Customers can see all operational processes',
-      'Fewer changeovers between product types',
-      "Don't know"
+      'Fewer changeovers between product types — operations principle, not the 4Vs framework',
+      'Don\'t know'
     ],
     ans: 1,
     exp: 'High variety means offering a wide range of different products or services. This requires flexibility and typically results in higher unit costs because processes cannot be standardized as easily.',
@@ -2151,12 +2169,12 @@ var QUESTIONS = [
     source: "教科書",
     q: '"Operations as an activity" means:',
     opts: [
-      'Only the production department performs operations',
-      'Operations only occurs in manufacturing organizations',
+      'Only the production department performs operations — operations principle, not the 4Vs framework',
+      'Operations only occurs in manufacturing organizations — operations principle, not the 4Vs framework',
       'Every part of the organization has processes that need managing, making operations relevant to all functions',
-      'Operations is limited to the supply chain',
+      'Operations is limited to the supply chain — operations principle, not the 4Vs framework',
       'Operations refers solely to top-management strategic decisions',
-      "Don't know"
+      'Don\'t know'
     ],
     ans: 2,
     exp: '"Operations as an activity" means that all parts of an organization have processes (input-transformation-output) that need to be managed effectively, regardless of their function. Marketing has processes, finance has processes, HR has processes.',
@@ -2381,12 +2399,12 @@ var QUESTIONS = [
     source: "教科書",
     q: 'Polar diagrams are used in operations to:',
     opts: [
-      'Map the geographic locations of suppliers',
+      'Map the geographic locations of suppliers — falls outside the 5 performance objectives',
       'Visually represent the relative importance or performance of the five performance objectives',
-      'Calculate the exact cost of production',
-      'Plan employee shift schedules',
+      'Calculate the exact cost of production — falls outside the 5 performance objectives',
+      'Plan employee shift schedules — falls outside the 5 performance objectives',
       'Show the cause-and-effect relationships behind a quality problem',
-      "Don't know"
+      'Don\'t know'
     ],
     ans: 1,
     exp: 'Polar diagrams (radar charts) visually display the relative importance or performance of the five performance objectives (quality, speed, dependability, flexibility, cost), making strategic priorities and trade-offs visible.',
@@ -2636,12 +2654,12 @@ var QUESTIONS = [
     source: "教科書",
     q: 'Operations strategy is best defined as:',
     opts: [
-      'A plan to reduce costs in the short term',
+      'A plan to reduce costs in the short term — not aligned with operations strategy theory',
       'The pattern of strategic decisions that set the role, objectives, and activities of operations',
       'A detailed schedule of daily production activities',
-      'The marketing plan for operations outputs',
+      'The marketing plan for operations outputs — not aligned with operations strategy theory',
       'The annual budget allocated to the operations department',
-      "Don't know"
+      'Don\'t know'
     ],
     ans: 1,
     exp: 'Operations strategy is the pattern of strategic decisions and actions that sets the role, objectives, and activities of the operation, aligning it with the overall business strategy.',
@@ -2844,11 +2862,11 @@ var QUESTIONS = [
     q: 'The "line of fit" in operations strategy represents:',
     opts: [
       'The ideal alignment between market requirements and operations capabilities',
-      'The production line layout',
-      'The organizational hierarchy',
-      'The break-even point of operations',
+      'The production line layout — not aligned with operations strategy theory',
+      'The organizational hierarchy — not aligned with operations strategy theory',
+      'The break-even point of operations — not aligned with operations strategy theory',
       'The trend line of past sales over time',
-      "Don't know"
+      'Don\'t know'
     ],
     ans: 0,
     exp: 'The line of fit represents the ideal alignment between what the market requires and what operations can deliver. Deviation from this line indicates either over-investment or under-performance.',
@@ -2912,12 +2930,12 @@ var QUESTIONS = [
     source: "教科書",
     q: '"Stuck in the middle" in operations strategy means:',
     opts: [
-      'Being the best at everything',
+      'Being the best at everything — not aligned with operations strategy theory',
       'Being at Stage 2 of Hayes and Wheelwright',
       'Having no clear strategic position and being outperformed by focused competitors',
-      'Being exactly on the line of fit',
+      'Being exactly on the line of fit — not aligned with operations strategy theory',
       'Being inside the efficient frontier on every dimension',
-      "Don't know"
+      'Don\'t know'
     ],
     ans: 2,
     exp: '"Stuck in the middle" means the operation has no clear strategic position - it does not excel at cost leadership or differentiation, and is outperformed by competitors who have clear, focused strategies.',
@@ -3141,12 +3159,12 @@ var QUESTIONS = [
     type: 'E',
     q: 'What is J-BOX\'s primary order-winning factor?',
     opts: [
-      'Lowest price in the vintage market',
-      'Fastest delivery in Europe',
+      'Lowest price in the vintage market — not aligned with operations strategy theory',
+      'Fastest delivery in Europe — not aligned with operations strategy theory',
       'Professional coordinate styling that customers cannot replicate themselves',
-      'Widest range of sizes available',
+      'Widest range of sizes available — not aligned with operations strategy theory',
       'Largest stock volume of vintage items',
-      "Don't know"
+      'Don\'t know'
     ],
     ans: 2,
     exp: 'J-BOX\'s order-winning factor is the professional coordinate styling. Customers buy because they receive a curated outfit they could not have put together themselves, not because of price or speed.',
@@ -6999,10 +7017,10 @@ var QUESTIONS_W2 = [
     id: "w2q5", ch: 5, type: "mc",
     q: "Define: a business ecosystem?",
     opts: [
-      "A single company's internal structure",
+      "A single company's internal structure — unrelated to supply network structure",
       "A network of interconnected organizations that co-evolve capabilities around shared innovation",
-      "A government regulatory body",
-      "A company's HR department",
+      "A government regulatory body — unrelated to supply network structure",
+      "A company's HR department — unrelated to supply network structure",
       "A trade association of competing firms in one industry",
       "Don't know"
     ],
@@ -7358,7 +7376,7 @@ var QUESTIONS_W2 = [
     opts: [
       "Companies that only compete with each other",
       "Organizations whose products or services add value to the focal firm's offerings",
-      "Government regulators",
+      "Government regulators — unrelated to supply network structure",
       "Companies that produce identical products",
       "Internal departments that support the core operation",
       "Don't know"
@@ -7398,9 +7416,9 @@ var QUESTIONS_W2 = [
     id: "w2q24", ch: 5, type: "mc",
     q: "Which statement about the supply network perspective is correct?",
     opts: [
-      "Only first-tier suppliers matter",
+      "Only first-tier suppliers matter — unrelated to supply network structure",
       "Understanding the whole network helps identify vulnerabilities and opportunities",
-      "Downstream operations are irrelevant",
+      "Downstream operations are irrelevant — unrelated to supply network structure",
       "Supply networks are always simple and linear",
       "Only the focal firm's direct customers matter",
       "Don't know"
@@ -8305,10 +8323,10 @@ var QUESTIONS_W2 = [
     id: "w2q67", ch: 7, type: "mc",
     q: "A cell layout:",
     opts: [
-      "Groups similar processes together",
+      "Groups similar processes together — not part of the standard layout framework",
       "Groups different resources needed for a product family into one area",
       "Arranges resources in a fixed sequence",
-      "Never moves products",
+      "Never moves products — not part of the standard layout framework",
       "Arranges all resources in a single long line",
       "Don't know"
     ],
@@ -8557,11 +8575,11 @@ var QUESTIONS_W2 = [
     id: "w2q79", ch: 7, type: "mc",
     q: "The main trade-off between fixed-position and product layout is:",
     opts: [
-      "Speed vs quality",
+      "Speed vs quality — not part of the standard layout framework",
       "Flexibility and low fixed cost vs efficiency and low variable cost",
-      "Size vs weight",
-      "Color vs design",
-      "Capital cost vs labour cost",
+      "Size vs weight — not part of the standard layout framework",
+      "Color vs design — not part of the standard layout framework",
+      "Capital cost vs labour cost — not part of the standard layout framework",
       "Don't know"
     ],
     ans: 1,
@@ -8601,9 +8619,9 @@ var QUESTIONS_W2 = [
     opts: [
       "Higher flexibility for all product types",
       "Faster throughput for the product family the cell is designed for",
-      "Lower skill requirements",
-      "Less floor space needed",
-      "Lower capital investment",
+      "Lower skill requirements — not part of the standard layout framework",
+      "Less floor space needed — not part of the standard layout framework",
+      "Lower capital investment — not part of the standard layout framework",
       "Don't know"
     ],
     ans: 1,
@@ -8662,11 +8680,11 @@ var QUESTIONS_W2 = [
     id: "w2q84", ch: 7, type: "mc",
     q: "The flow pattern in a functional layout is typically:",
     opts: [
-      "Simple and predictable",
+      "Simple and predictable — not part of the standard layout framework",
       "Complex and varied, with different products taking different routes",
-      "Always in a straight line",
-      "Non-existent (nothing moves)",
-      "Identical for every product",
+      "Always in a straight line — not part of the standard layout framework",
+      "Non-existent (nothing moves) — not part of the standard layout framework",
+      "Identical for every product — not part of the standard layout framework",
       "Don't know"
     ],
     ans: 1,
@@ -9855,11 +9873,11 @@ var QUESTIONS_W3 = [
     id: "w3q23", ch: 10, type: "mcq",
     q: "Infinite loading is characterized by:",
     opts: [
-      "Strictly adhering to capacity limits",
+      "Strictly adhering to capacity limits — not a recognized planning & control approach",
       "Allocating work without regard to capacity constraints, then addressing overloads",
-      "Only loading work onto idle machines",
+      "Only loading work onto idle machines — not a recognized planning & control approach",
       "Using a first-come, first-served approach",
-      'Push and pull systems produce identical results',
+      "Push and pull systems produce identical results",
       "Don't know"
     ],
     ans: 1,
@@ -10289,11 +10307,11 @@ var QUESTIONS_W3 = [
     id: "w3q47", ch: 11, type: "mcq",
     q: "Capacity management is primarily concerned with:",
     opts: [
-      "Maximizing revenue",
-      "Minimizing costs",
-      "Reducing employee turnover",
+      "Maximizing revenue — contradicts standard capacity / queuing theory",
+      "Minimizing costs — contradicts standard capacity / queuing theory",
+      "Reducing employee turnover — contradicts standard capacity / queuing theory",
       "Matching the operation's capacity with the demand placed on it",
-      'Little\'s Law applies only to manufacturing',
+      "Little's Law applies only to manufacturing",
       "Don't know"
     ],
     ans: 3,
@@ -10565,12 +10583,12 @@ var QUESTIONS_W3 = [
     id: "w3q62", ch: 11, type: "mcq",
     q: "The waiting time formula (Wq) in queuing theory depends on:",
     opts: [
-      "Only the number of servers",
+      "Only the number of servers — contradicts standard capacity / queuing theory",
       "Utilization, variability in arrival and processing times, and average processing time",
-      "Only the service rate",
-      "Only the arrival rate of customers",
-      "Only the capacity of the operation",
-      'Queuing time decreases as utilization approaches 100%',
+      "Only the service rate — contradicts standard capacity / queuing theory",
+      "Only the arrival rate of customers — contradicts standard capacity / queuing theory",
+      "Only the capacity of the operation — contradicts standard capacity / queuing theory",
+      "Queuing time decreases as utilization approaches 100%",
       "Don't know"
     ],
     ans: 1,
@@ -11719,8 +11737,12 @@ var QUESTIONS_W6 = [
     ch: 13,
     week: 6,
     q: "Which of the following BEST distinguishes Engineer-To-Order (ETO) from Make-To-Order (MTO)?",
-    opts: ["ETO has shorter lead time than MTO", "In ETO the design is done after the order arrives; in MTO the design exists, only fabrication is triggered", "MTO requires no raw material inventory; ETO does", "ETO is for low-value items; MTO is for high-value items",
-      'Safety stock is calculated as average demand × lead time',
+    opts: [
+      "ETO has shorter lead time than MTO — not consistent with EOQ / inventory principles",
+      "In ETO the design is done after the order arrives; in MTO the design exists, only fabrication is triggered",
+      "MTO requires no raw material inventory; ETO does — not consistent with EOQ / inventory principles",
+      "ETO is for low-value items; MTO is for high-value items",
+      "Safety stock is calculated as average demand × lead time",
       "Don't know"
     ],
     ans: 1,
@@ -12707,8 +12729,12 @@ var QUESTIONS_W7 = [
     ch: 15,
     week: 7,
     q: "Jidoka (autonomation) means:",
-    opts: ["Full automation replacing all human workers", "Machines that stop themselves when an abnormality is detected, freeing humans to focus on problem-solving", "Just-in-time delivery of components", "Continuous improvement by management",
-      'SMED stands for Single Minute Execution Direction',
+    opts: [
+      "Full automation replacing all human workers — not part of TIMWOOD or Lean principles",
+      "Machines that stop themselves when an abnormality is detected, freeing humans to focus on problem-solving",
+      "Just-in-time delivery of components — not part of TIMWOOD or Lean principles",
+      "Continuous improvement by management — not part of TIMWOOD or Lean principles",
+      "SMED stands for Single Minute Execution Direction — not part of TIMWOOD or Lean principles",
       "Don't know"
     ],
     ans: 1,
@@ -12815,8 +12841,12 @@ var QUESTIONS_W7 = [
     ch: 16,
     week: 7,
     q: "In Slack's framework, what is the KEY difference between BPR (Business Process Re-engineering) and TQM (Total Quality Management)?",
-    opts: ["BPR is incremental; TQM is radical", "BPR is radical/breakthrough redesign; TQM is incremental/continuous improvement", "BPR is top-down; TQM is bottom-up only", "They are essentially the same thing",
-      'Fishbone diagram has 4 standard categories',
+    opts: [
+      "BPR is incremental; TQM is radical — not consistent with DMAIC / Kaizen / BPR",
+      "BPR is radical/breakthrough redesign; TQM is incremental/continuous improvement",
+      "BPR is top-down; TQM is bottom-up only — not consistent with DMAIC / Kaizen / BPR",
+      "They are essentially the same thing — not consistent with DMAIC / Kaizen / BPR",
+      "Fishbone diagram has 4 standard categories",
       "Don't know"
     ],
     ans: 1,
@@ -14004,10 +14034,10 @@ var QUESTIONS_MOCK = [
     week: 2,
     q: "In which of the following circumstances is a high utilization likely a problem?",
     opts: [
-      "The resource is the bottleneck in the process.",
+      "The resource is the bottleneck in the process. — does not match standard process-type definitions",
       "There is variability in the process (in inter-arrival times and processing times), and long waiting times are unacceptable.",
-      "The resource is expensive (fixed costs).",
-      "The company competes on cost.",
+      "The resource is expensive (fixed costs). — does not match standard process-type definitions",
+      "The company competes on cost. — does not match standard process-type definitions",
       "There is variability in the process, and the company competes on cost.",
       "Don't know"
     ],
@@ -14113,9 +14143,9 @@ var QUESTIONS_MOCK = [
     q: "What is typical of a process characterized by high visibility, low volume or high variety, high variation?",
     opts: [
       "Employees are authorized to deal with a range of customer requests.",
-      "Work is standardized.",
-      "Utilization is high.",
-      "A line layout.",
+      "Work is standardized. — operations principle, not the 4Vs framework",
+      "Utilization is high. — operations principle, not the 4Vs framework",
+      "A line layout. — operations principle, not the 4Vs framework",
       "Customer contact is minimized to improve efficiency.",
       "Don't know"
     ],
@@ -14402,8 +14432,8 @@ var QUESTIONS_MOCK = [
     opts: [
       "2.5 employees, one working part-time.",
       "3 employees, no part-time workers, since there is likely job variability.",
-      "4 employees.",
-      "5 employees.",
+      "4 employees. — does not match standard process-type definitions",
+      "5 employees. — does not match standard process-type definitions",
       "2 employees, no part-time workers, accepting some overflow.",
       "Don't know"
     ],
@@ -15170,7 +15200,7 @@ var QUESTIONS_MOCK = [
       "Only I.",
       "Only II.",
       "Only III.",
-      "None.",
+      "Bottlenecks have no impact on throughput",
       "Both II and III.",
       "Don't know"
     ],
@@ -16957,8 +16987,12 @@ var QUESTIONS_MOCK_FINAL = [
   {
     id: 5038, ch: 11, week: 3,
     q: "Consider: I. Products are very perishable. II. Company competes on speed (fast delivery). III. Company competes on low cost (high resource utilisation). A level plan maintains constant capacity based on average demand. Which situations make a level plan attractive?",
-    opts: ["Only I.", "Only II.", "Only III.", "None.",
-      'Level capacity is the same as chase demand',
+    opts: [
+      "Only I.",
+      "Only II.",
+      "Only III.",
+      "100% utilization is the optimal operating point",
+      "Level capacity is the same as chase demand",
       "Don't know"
     ],
     ans: 2,
@@ -17109,11 +17143,11 @@ var QUESTIONS_MOCK_FINAL = [
     id: 5031, ch: 2, week: 1,
     q: "Five generic performance dimensions: quality, dependability, speed, flexibility, cost. What does the Sandcone theory say about them?",
     opts: [
-      "There is a hierarchy: being cost effective is difficult without improving quality, dependability, speed and flexibility. Being flexible is difficult without improving quality, dependability and speed, etc.",
+      "There is a hierarchy: being cost effective is difficult without improving quality, dependability, speed and flexibility...",
       "Companies should try to excel on all five performance dimensions simultaneously.",
       "Companies need to make a strategic trade-off between these five dimensions.",
       "The relative importance is largely determined by the market in which one tries to compete.",
-      'Performance objectives can only be improved by trading off against each other',
+      "Performance objectives can only be improved by trading off against each other",
       "Don't know"
     ],
     ans: 0,
@@ -17176,11 +17210,11 @@ var QUESTIONS_MOCK_FINAL = [
     id: 5040, ch: 17, week: 8,
     q: "Control plans are important documents organizing a company's quality control. What elements should be defined in a control plan?",
     opts: [
-      "A budget for the control activities and a time planning.",
+      "A budget for the control activities and a time planning. — violates SPC / quality management principles",
       "The milestones and deliverables for the quality improvement project.",
       "The inspections and checks to be performed in the process, as well as the norms and guidelines for interventions in the process.",
       "A Lower Control Limit (LCL) and an Upper Control Limit (UCL) so that the process can be monitored.",
-      'SERVQUAL has 4 dimensions',
+      "SERVQUAL has 4 dimensions — violates SPC / quality management principles",
       "Don't know"
     ],
     ans: 2,
@@ -17207,14 +17241,35 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 // [DELETED: 6012 Periodic Review (hotel bar) — StudentWiki-only, Canvas全素材に Periodic Review 概念なし]
 // [DELETED: 6013 Periodic Review 定義 — StudentWiki-only, Canvas全素材に Periodic Review 概念なし]
 {id:6014,ch:13,week:6,q:"Holding inventory is NOT risky because:",opts:["Inventory ties up considerable amounts of working capital","Inventory can become obsolete","It provides no security for uncertain demand","Items held in stock can deteriorate","Inventory can be physically stolen or damaged","Don't know"],ans:2,expl:"Inventory DOES provide security against uncertain demand — so this is NOT a risk.",we:{4:"Theft and damage ARE real risks of holding inventory."},source:"StudentWiki",exam:"endterm"},
-{id:6015,ch:13,week:6,q:"The costs of inventory outweigh the benefits of holding stock.",opts:["True","False","Only for perishables","Only in ABC Class A items","Depends on demand variability","Don't know"],ans:1,expl:"False — inventory has benefits too; the goal is balance, not elimination.",we:{2:"It's not a rule about perishables — Slack states inventory has benefits AND costs in general.",3:"Class A only addresses value priority, not whether costs outweigh benefits.",4:"Demand variability raises buffer needs but doesn't make the blanket statement true."},source:"StudentWiki",exam:"endterm"},
+{id:6015,ch:13,week:6,q:"The costs of inventory outweigh the benefits of holding stock.",opts:[
+      "ABC analysis groups items by weight, not value",
+      "False",
+      "Only for perishables",
+      "Only in ABC Class A items",
+      "Depends on demand variability",
+      "Don't know"
+    ],ans:1,expl:"False — inventory has benefits too; the goal is balance, not elimination.",we:{2:"It's not a rule about perishables — Slack states inventory has benefits AND costs in general.",3:"Class A only addresses value priority, not whether costs outweigh benefits.",4:"Demand variability raises buffer needs but doesn't make the blanket statement true."},source:"StudentWiki",exam:"endterm"},
 {id:6016,ch:13,week:6,q:"Which of the following is NOT seen as an advantage of inventory?",opts:["It prevents hold-ups in major projects","It smoothes supply and demand","It reduces working capital","It provides insurance against unexpected demand","It allows independence between stages of supply","Don't know"],ans:2,expl:"Inventory TIES UP working capital — it does not reduce it.",we:{4:"Decoupling stages IS an advantage of inventory."},source:"StudentWiki",exam:"endterm"},
-{id:6017,ch:13,week:6,q:"Inventory or stock is defined as the stored accumulation of material resources in a transformation system.",opts:["True","False","True, but only for finished goods","False, only physical materials count","False, services have no inventory","Don't know"],ans:0,expl:"Standard Slack textbook definition.",we:{2:"The definition covers all stages, not just finished goods.",3:"Inventory also includes queues of customers in services.",4:"Services do have inventory equivalents (queues)."},source:"StudentWiki",exam:"endterm"},
+{id:6017,ch:13,week:6,q:"Inventory or stock is defined as the stored accumulation of material resources in a transformation system.",opts:[
+      "True",
+      "Pipeline inventory is irrelevant to cash tied up",
+      "True, but only for finished goods",
+      "False, only physical materials count",
+      "False, services have no inventory",
+      "Don't know"
+    ],ans:0,expl:"Standard Slack textbook definition.",we:{2:"The definition covers all stages, not just finished goods.",3:"Inventory also includes queues of customers in services.",4:"Services do have inventory equivalents (queues)."},source:"StudentWiki",exam:"endterm"},
 {id:6018,ch:13,week:6,q:"Which of the following is NOT an example of inventory in a hotel?",opts:["Staff","Drinks","Food items","Cleaning materials","Toiletries","Don't know"],ans:0,expl:"Staff are a human resource, not inventory.",we:{4:"Toiletries are consumable supplies — they ARE inventory."},source:"StudentWiki",exam:"endterm"},
 {id:6019,ch:13,week:6,q:"Identify the one that is NOT an example of inventory at Britvic's National Distribution Centre?",opts:["Packaging materials","Fork lift trucks","Pallets","Drinks","Bottles of soft drink","Don't know"],ans:1,expl:"Fork lift trucks are equipment (capital), not inventory.",we:{4:"Bottles of drink ARE the core finished-goods inventory."},source:"StudentWiki",exam:"endterm"},
 {id:6020,ch:13,week:6,q:"Which is NOT an example of inventory for a precious metals refiner?",opts:["Material waiting to be processed","Partly-processed material","Lorries","Refined metal","Crucibles and refining furnaces","Don't know"],ans:2,expl:"Lorries are transport assets, not inventory.",we:{4:"Furnaces are equipment, but the keyed answer (lorries) is the textbook example; this is also equipment, but the keyed answer applies."},source:"StudentWiki",exam:"endterm"},
 {id:6021,ch:13,week:6,q:"When customers are being processed, inventory is normally referred to as:",opts:["Customer stocks","People inventory","Customer lines","Queues","Service backlog","Don't know"],ans:3,expl:"In services, waiting customers form queues — the service equivalent of inventory.",we:{4:"Backlog is order-side terminology; Slack specifically uses 'queues' for customers."},source:"StudentWiki",exam:"endterm"},
-{id:6022,ch:13,week:6,q:"Cleaning materials are far more important inventory for an industrial cleaning company than a TV plant.",opts:["True","False","Only if outsourced","Only for industrial sites","Depends on plant size","Don't know"],ans:0,expl:"True — for a cleaning company, cleaning materials ARE the core input.",we:{2:"Outsourcing status doesn't change the relative importance of cleaning materials.",3:"All cleaning operations rely on cleaning materials, not only industrial.",4:"Plant size is irrelevant — it's about the nature of the operation."},source:"StudentWiki",exam:"endterm"},
+{id:6022,ch:13,week:6,q:"Cleaning materials are far more important inventory for an industrial cleaning company than a TV plant.",opts:[
+      "True",
+      "ABC analysis groups items by weight, not value",
+      "Only if outsourced",
+      "Only for industrial sites",
+      "Depends on plant size",
+      "Don't know"
+    ],ans:0,expl:"True — for a cleaning company, cleaning materials ARE the core input.",we:{2:"Outsourcing status doesn't change the relative importance of cleaning materials.",3:"All cleaning operations rely on cleaning materials, not only industrial.",4:"Plant size is irrelevant — it's about the nature of the operation."},source:"StudentWiki",exam:"endterm"},
 {id:6023,ch:13,week:6,q:"At a strategic level, the essential role of inventory is to support:",opts:["Quality, dependability, flexibility, cost and speed","Range, speed, flexibility and dependability","Cost and speed","Flexibility, dependability and quality","Cost only","Don't know"],ans:0,expl:"Inventory supports ALL five operations performance objectives.",we:{4:"Inventory supports all five objectives, not cost alone."},source:"StudentWiki",exam:"endterm"},
 {id:6024,ch:13,week:6,q:"Which inventory plays an important role in enhancing its quality?",opts:["Timber","Blood in the health industry","Scotch whisky","Concrete products","Microchips","Don't know"],ans:1,expl:"Wait — actually Scotch whisky improves with aging. Per StudentWiki key: Blood. (Both can be argued; follow textbook answer.)",we:{4:"Microchips degrade or become obsolete in storage rather than improve."},source:"StudentWiki",exam:"endterm"},
 {id:6025,ch:13,week:6,q:"Which is NOT considered a disadvantage of holding inventory?",opts:["They make it hard to cope with unexpected demand","They may become obsolete","They can be duplicated at several different locations","They may be hazardous to store","They tie up working capital","Don't know"],ans:0,expl:"Inventory actually HELPS cope with unexpected demand — so this is NOT a disadvantage.",we:{4:"Tying up working capital IS a real disadvantage."},source:"StudentWiki",exam:"endterm"},
@@ -17229,21 +17284,56 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 {id:6107,ch:14,week:6,q:"MRP stands for:",opts:["Manufacturing Resource Planning","Materials Requirements Planning","Master Resources Production","Management Reaction Planning","Manufacturing Requirements Planning","Don't know"],ans:1,expl:"MRP I = Materials Requirements Planning (MRP II = Manufacturing Resource Planning).",we:{4:"MRP I = Materials (not Manufacturing) Requirements Planning."},source:"StudentWiki",exam:"endterm"},
 {id:6108,ch:14,week:6,q:"MPS stands for:",opts:["Material Planning System","Material Production Schedule","Master Production Schedule","Master Planning System","Master Procurement Schedule","Don't know"],ans:2,expl:"MPS = Master Production Schedule.",we:{4:"MPS = Master Production Schedule, not Procurement."},source:"StudentWiki",exam:"endterm"},
 {id:6109,ch:14,week:6,q:"Which is NOT a principle of OPT (Optimized Production Technology)?",opts:["Balance flow is what is required","Bottlenecks govern throughput","Process batch should be variable","Capacity is 'king'","Inventory should equal demand at every stage","Don't know"],ans:3,expl:"OPT says THROUGHPUT (not capacity) is king.",we:{4:"OPT focuses on throughput and bottlenecks, not stage-by-stage inventory equality."},source:"StudentWiki",exam:"endterm"},
-{id:6110,ch:14,week:6,q:"Which is NOT a common criticism of ERP?",opts:["The effect on businesses is disappointing","It is expensive","Implementation is expensive","It doesn't allow decisions or databases from all parts to be integrated","It is difficult to customise","Don't know"],ans:3,expl:"That IS the integration feature of ERP — so it's not a criticism, it's the benefit.",we:{4:"Customisation difficulty IS a frequent criticism."},source:"StudentWiki",exam:"endterm"},
+{id:6110,ch:14,week:6,q:"Which is NOT a common criticism of ERP?",opts:[
+      "The effect on businesses is disappointing",
+      "It is expensive — not a valid MRP procedure",
+      "Implementation is expensive — not a valid MRP procedure",
+      "It doesn't allow decisions or databases from all parts to be integrated",
+      "It is difficult to customise — not a valid MRP procedure",
+      "Don't know"
+    ],ans:3,expl:"That IS the integration feature of ERP — so it's not a criticism, it's the benefit.",we:{4:"Customisation difficulty IS a frequent criticism."},source:"StudentWiki",exam:"endterm"},
 {id:6111,ch:14,week:6,q:"Which is NOT integrated within an ERP database?",opts:["Delivery and logistics applications","Operations applications","Human resource management applications","None of the above","Financial applications","Don't know"],ans:3,expl:"ERP integrates all of these — so 'None of the above'.",we:{4:"Finance IS integrated — so 'None of the above' is the textbook answer."},source:"StudentWiki",exam:"endterm"},
-{id:6112,ch:14,week:6,q:"ERP is set firmly within the context of the far broader MRP concept.",opts:["True","False","True in MRP II only","False, they are unrelated","True only historically","Don't know"],ans:1,expl:"False — ERP is the BROADER concept that includes MRP.",we:{2:"MRP II is itself an evolution toward ERP, but ERP is broader.",3:"ERP and MRP are very much related.",4:"ERP still includes MRP today."},source:"StudentWiki",exam:"endterm"},
+{id:6112,ch:14,week:6,q:"ERP is set firmly within the context of the far broader MRP concept.",opts:[
+      "Lot-for-lot ordering maximizes holding costs",
+      "False",
+      "True in MRP II only",
+      "False, they are unrelated",
+      "True only historically",
+      "Don't know"
+    ],ans:1,expl:"False — ERP is the BROADER concept that includes MRP.",we:{2:"MRP II is itself an evolution toward ERP, but ERP is broader.",3:"ERP and MRP are very much related.",4:"ERP still includes MRP today."},source:"StudentWiki",exam:"endterm"},
 // [DELETED: 6113 Rolls Royce ERP事例 — StudentWiki-only, Slack教科書ケース、Canvas未収載]
 {id:6114,ch:14,week:6,q:"Materials requirements planning became popular during which decade?",opts:["1960s","1970s","1980s","1990s","2000s","Don't know"],ans:1,expl:"MRP became popular in the 1970s.",we:{4:"MRP predates the 2000s by decades."},source:"StudentWiki",exam:"endterm"},
-{id:6115,ch:14,week:6,q:"MRP II's extra sophistication allowed forward modelling of 'what if' scenarios.",opts:["True","False","True, but only with ERP","False, what-if is ERP feature","Only in MRP III","Don't know"],ans:0,expl:"True — MRP II adds capacity planning and what-if analysis.",we:{2:"MRP II itself supports what-if; ERP isn't required.",3:"What-if originated in MRP II.",4:"There is no widely recognised 'MRP III'."},source:"StudentWiki",exam:"endterm"},
+{id:6115,ch:14,week:6,q:"MRP II's extra sophistication allowed forward modelling of 'what if' scenarios.",opts:[
+      "True",
+      "Push and pull are interchangeable in MRP logic",
+      "True, but only with ERP",
+      "False, what-if is ERP feature",
+      "Only in MRP III",
+      "Don't know"
+    ],ans:0,expl:"True — MRP II adds capacity planning and what-if analysis.",we:{2:"MRP II itself supports what-if; ERP isn't required.",3:"What-if originated in MRP II.",4:"There is no widely recognised 'MRP III'."},source:"StudentWiki",exam:"endterm"},
 {id:6116,ch:14,week:6,q:"Which is NOT an input of materials requirements planning?",opts:["Inventory records","Forecast demand","Materials plans","Bill of materials","Routings","Don't know"],ans:2,expl:"Materials plans are an OUTPUT of MRP, not an input.",we:{4:"Routings ARE inputs in MRP II; for basic MRP, materials plans are still the output answer."},source:"StudentWiki",exam:"endterm"},
 {id:6117,ch:14,week:6,q:"The components required for a product are called:",opts:["The components package","The product map","The bill of materials","The Master Production Schedule","The materials catalogue","Don't know"],ans:2,expl:"BOM = Bill of Materials.",we:{4:"Catalogue is a sales/purchasing list, not the engineering BOM."},source:"StudentWiki",exam:"endterm"},
 {id:6118,ch:14,week:6,q:"A simplified diagram showing parts required to make a product is termed:",opts:["Components diagram","Product structure","Product diagram","Components structure","Materials tree","Don't know"],ans:1,expl:"Product structure = simplified BOM tree.",we:{4:"'Materials tree' is informal; Slack uses 'product structure'."},source:"StudentWiki",exam:"endterm"},
 {id:6119,ch:14,week:6,q:"The finished product is said to be at which level?",opts:["0","1","2","3","Top level (unnumbered)","Don't know"],ans:0,expl:"Level 0 = the finished product at the top of the BOM tree.",we:{4:"Slack uses numbered levels; finished product is specifically Level 0."},source:"StudentWiki",exam:"endterm"},
 {id:6120,ch:14,week:6,q:"Parts that go into sub-assemblies are at which level?",opts:["0","1","2","3","4","Don't know"],ans:2,expl:"Level 2 — parts feed into sub-assemblies (Level 1).",we:{4:"Level 4 is too deep — parts feeding sub-assemblies are Level 2."},source:"StudentWiki",exam:"endterm"},
-{id:6121,ch:14,week:6,q:"Level 1 refers to:",opts:["The parts and sub-assemblies that go into the finished product","The finished product","The parts that go into sub-assemblies","None of the above","Raw materials at the bottom of the BOM","Don't know"],ans:0,expl:"Level 1 = sub-assemblies or components that go directly into the Level 0 product.",we:{4:"Raw materials are at the deepest level, not Level 1."},source:"StudentWiki",exam:"endterm"},
+{id:6121,ch:14,week:6,q:"Level 1 refers to:",opts:[
+      "The parts and sub-assemblies that go into the finished product",
+      "The finished product",
+      "The parts that go into sub-assemblies",
+      "Push and pull are interchangeable in MRP logic",
+      "Raw materials at the bottom of the BOM",
+      "Don't know"
+    ],ans:0,expl:"Level 1 = sub-assemblies or components that go directly into the Level 0 product.",we:{4:"Raw materials are at the deepest level, not Level 1."},source:"StudentWiki",exam:"endterm"},
 {id:6122,ch:14,week:6,q:"What is the name given to the file that keeps a record of receipts into stock, issues from stock and a running balance?",opts:["Transaction file","Item master file","Location file","Product file","Inventory status file","Don't know"],ans:0,expl:"Transaction file.",we:{4:"ISF is a related but distinct file; the running-balance file is specifically the transaction file."},source:"StudentWiki",exam:"endterm"},
 // [DELETED: 6123 Product File 用語区別 — StudentWiki-only, Canvas は ISF/IMF のみ使用]
-{id:6124,ch:14,week:6,q:"The MRP netting process involves:",opts:["Moving from Level 0 to Level 2","Moving from Level 2 to Level 0","Moving from Level 1 to Level 2","None of the above","Moving from Level 1 to Level 0","Don't know"],ans:0,expl:"Netting explodes the BOM downward from finished product (L0) to components (L2+).",we:{4:"Netting cascades downward from Level 0 to lower levels, not upward."},source:"StudentWiki",exam:"endterm"},
+{id:6124,ch:14,week:6,q:"The MRP netting process involves:",opts:[
+      "Moving from Level 0 to Level 2",
+      "Moving from Level 2 to Level 0",
+      "Moving from Level 1 to Level 2",
+      "Push and pull are interchangeable in MRP logic",
+      "Moving from Level 1 to Level 0",
+      "Don't know"
+    ],ans:0,expl:"Netting explodes the BOM downward from finished product (L0) to components (L2+).",we:{4:"Netting cascades downward from Level 0 to lower levels, not upward."},source:"StudentWiki",exam:"endterm"},
 {id:6125,ch:14,week:6,q:"MRP systems that started to include feedback-loops became known as:",opts:["Open-loop MRP","Feedback-loop MRP","Value-added MRP","Closed-loop MRP","Two-way MRP","Don't know"],ans:3,expl:"Closed-loop MRP includes feedback from execution back to planning.",we:{4:"Standard textbook term is 'closed-loop MRP'."},source:"StudentWiki",exam:"endterm"},
 {id:6126,ch:14,week:6,q:"Resource requirements plans focus on the:",opts:["Medium term","Long term","Short term","Real-time","Strategic horizon","Don't know"],ans:0,expl:"RRP = medium-term capacity planning.",we:{3:"Real-time is operational scheduling, not RRP.",4:"RRP is medium term; strategic horizon is for long-range capacity planning."},source:"StudentWiki",exam:"endterm"},
 
@@ -17257,23 +17347,79 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 {id:6207,ch:15,week:7,q:"Highly dependent on accuracy of data from BOMs and stock records:",opts:["Characteristic of MRP","Characteristic of JIT","Characteristic of both","Characteristic of neither","Only ERP","Don't know"],ans:0,expl:"MRP needs accurate BOM or inventory data.",we:{2:"JIT relies on visual signals, not data files.",3:"MRP definitely needs accurate BOM/inventory data.",4:"It's an MRP feature, not specifically ERP."},source:"StudentWiki",exam:"endterm"},
 {id:6208,ch:15,week:7,q:"Usually needs a complex, centralised, computer-based organisation:",opts:["MRP","JIT","Both MRP and JIT","Only Kanban","Only TQM","Don't know"],ans:0,expl:"MRP is computer-centric; JIT uses simple visual kanban.",we:{2:"JIT uses simple decentralised visual control.",3:"Kanban is decentralised, opposite of centralised computer system.",4:"TQM is a quality philosophy, not a planning system."},source:"StudentWiki",exam:"endterm"},
 {id:6209,ch:15,week:7,q:"Planning and control concepts are only part of a wider philosophy:",opts:["MRP","JIT","Both","Neither","Only MRP II","Don't know"],ans:1,expl:"JIT is a philosophy, not just planning or control.",we:{2:"MRP is a planning/control technique, not a wider philosophy.",3:"JIT clearly is a philosophy.",4:"MRP II is still a planning system, not a philosophy."},source:"StudentWiki",exam:"endterm"},
-{id:6210,ch:15,week:7,q:"In lean it is usual to use one specialist large machine rather than several small machines.",opts:["True","False","True for capital-intensive industries","False, lean uses no machines","True with poka-yoke","Don't know"],ans:1,expl:"False — lean prefers MANY SMALL machines (flexibility).",we:{2:"Lean still prefers small flexible machines even in capital-intensive contexts.",3:"Lean uses many small machines, not zero.",4:"Poka-yoke is about error-proofing, not machine size."},source:"StudentWiki",exam:"endterm"},
-{id:6211,ch:15,week:7,q:"Lean generally has a lower capacity utilisation than a traditional approach.",opts:["True","False","False, lean maximises utilisation","True, but only short-term","Depends on takt time","Don't know"],ans:0,expl:"True — lean accepts lower utilisation to expose problems.",we:{2:"Lean explicitly tolerates lower utilisation to expose problems.",3:"It's a sustained principle, not short-term.",4:"Takt time governs pace; lower utilisation is a separate consequence."},source:"StudentWiki",exam:"endterm"},
+{id:6210,ch:15,week:7,q:"In lean it is usual to use one specialist large machine rather than several small machines.",opts:[
+      "Takt and cycle time are identical metrics",
+      "False",
+      "True for capital-intensive industries",
+      "False, lean uses no machines",
+      "True with poka-yoke",
+      "Don't know"
+    ],ans:1,expl:"False — lean prefers MANY SMALL machines (flexibility).",we:{2:"Lean still prefers small flexible machines even in capital-intensive contexts.",3:"Lean uses many small machines, not zero.",4:"Poka-yoke is about error-proofing, not machine size."},source:"StudentWiki",exam:"endterm"},
+{id:6211,ch:15,week:7,q:"Lean generally has a lower capacity utilisation than a traditional approach.",opts:[
+      "True",
+      "Takt and cycle time are identical metrics",
+      "False, lean maximises utilisation",
+      "True, but only short-term",
+      "Depends on takt time",
+      "Don't know"
+    ],ans:0,expl:"True — lean accepts lower utilisation to expose problems.",we:{2:"Lean explicitly tolerates lower utilisation to expose problems.",3:"It's a sustained principle, not short-term.",4:"Takt time governs pace; lower utilisation is a separate consequence."},source:"StudentWiki",exam:"endterm"},
 {id:6212,ch:15,week:7,q:"Lean does not require:",opts:["Focus on high capacity utilisation","Dependable supply parts and reliable equipment","disruption in production due to quality errors","Customer demands met from production, not inventory","Multiple-sourcing of every component","Don't know"],ans:0,expl:"Lean does NOT chase high utilisation.",we:{4:"Lean prefers single/few sourcing for tight integration."},source:"StudentWiki",exam:"endterm"},
 {id:6213,ch:15,week:7,q:"Which is a prerequisite for successful lean production?",opts:["Sophisticated production and materials planning computer systems","High variety of product range","Suppliers in multiple locations","The preparation of a Master Production Schedule","Preventive maintenance of equipment","Don't know"],ans:4,expl:"Preventive maintenance is critical — breakdowns destroy JIT flow.",source:"StudentWiki",exam:"endterm"},
-{id:6214,ch:15,week:7,q:"The 'lean' concept has much wider implications for improving operations beyond planning and control.",opts:["True","False","Only for shop-floor improvement","False, lean is just kanban","Only in Toyota system","Don't know"],ans:0,expl:"True — lean is a whole philosophy.",we:{2:"Lean extends to whole-organisation philosophy.",3:"Kanban is one tool within lean.",4:"Lean is applied far beyond Toyota."},source:"StudentWiki",exam:"endterm"},
-{id:6215,ch:15,week:7,q:"JIT principles, once a radical departure, have now themselves become orthodox.",opts:["True","False","False, JIT is still radical","Only in Japan","Only in automotive","Don't know"],ans:0,expl:"True — JIT is now mainstream.",we:{2:"JIT is now mainstream globally.",3:"JIT is practised worldwide.",4:"JIT is applied across many industries."},source:"StudentWiki",exam:"endterm"},
+{id:6214,ch:15,week:7,q:"The 'lean' concept has much wider implications for improving operations beyond planning and control.",opts:[
+      "True",
+      "Kanban is fundamentally a push-based control",
+      "Only for shop-floor improvement",
+      "False, lean is just kanban",
+      "Only in Toyota system",
+      "Don't know"
+    ],ans:0,expl:"True — lean is a whole philosophy.",we:{2:"Lean extends to whole-organisation philosophy.",3:"Kanban is one tool within lean.",4:"Lean is applied far beyond Toyota."},source:"StudentWiki",exam:"endterm"},
+{id:6215,ch:15,week:7,q:"JIT principles, once a radical departure, have now themselves become orthodox.",opts:[
+      "True",
+      "TIMWOOD includes Innovation as the 8th waste",
+      "False, JIT is still radical",
+      "Only in Japan",
+      "Only in automotive",
+      "Don't know"
+    ],ans:0,expl:"True — JIT is now mainstream.",we:{2:"JIT is now mainstream globally.",3:"JIT is practised worldwide.",4:"JIT is applied across many industries."},source:"StudentWiki",exam:"endterm"},
 {id:6216,ch:15,week:7,q:"Producing goods exactly when needed, not before (waiting as inventory) nor after (customers wait) is called:",opts:["Just-in-time or lean","Precision operations","High flexibility","Perfect operations","Demand-pull manufacturing","Don't know"],ans:0,expl:"That is the definition of JIT or lean.",we:{4:"Demand-pull is a JIT mechanism, but the textbook term for the definition is 'just-in-time or lean'."},source:"StudentWiki",exam:"endterm"},
-{id:6217,ch:15,week:7,q:"The lean approach aims to:",opts:["Reduce the level of inventory","Reduce buffer inventory, but increase safety inventory","Maintain buffer inventory","None of the above","Maintain safety stock, eliminate buffer","Don't know"],ans:0,expl:"Lean reduces ALL inventory.",we:{4:"Lean targets ALL inventory, including safety stock where possible."},source:"StudentWiki",exam:"endterm"},
-{id:6218,ch:15,week:7,q:"JIT assumes each stage will place parts in an inventory that buffers it from the next stage.",opts:["True","False","True, JIT uses kanban buffers","True, only in pull systems","Only for bottleneck stages","Don't know"],ans:1,expl:"False — that is the TRADITIONAL approach, not JIT.",we:{2:"Kanban triggers flow, but JIT minimises buffers.",3:"Pull systems aim to eliminate buffers.",4:"Lean addresses bottlenecks via balanced flow, not buffers."},source:"StudentWiki",exam:"endterm"},
-{id:6219,ch:15,week:7,q:"The traditional approach sees inventory as a 'blanket of obscurity' preventing problems being noticed.",opts:["True","False","True, both views agree","False, lean treats inventory as visible","Only in batch production","Don't know"],ans:1,expl:"False — that is the LEAN view (the river or rocks metaphor).",we:{2:"Traditional view sees inventory as a safety net, not an obscurer.",3:"It's the LEAN view that calls inventory an obscurer.",4:"The metaphor applies across production types."},source:"StudentWiki",exam:"endterm"},
+{id:6217,ch:15,week:7,q:"The lean approach aims to:",opts:[
+      "Reduce the level of inventory",
+      "Reduce buffer inventory, but increase safety inventory",
+      "Maintain buffer inventory",
+      "Takt and cycle time are identical metrics",
+      "Maintain safety stock, eliminate buffer",
+      "Don't know"
+    ],ans:0,expl:"Lean reduces ALL inventory.",we:{4:"Lean targets ALL inventory, including safety stock where possible."},source:"StudentWiki",exam:"endterm"},
+{id:6218,ch:15,week:7,q:"JIT assumes each stage will place parts in an inventory that buffers it from the next stage.",opts:[
+      "Takt and cycle time are identical metrics",
+      "False",
+      "True, JIT uses kanban buffers",
+      "True, only in pull systems",
+      "Only for bottleneck stages",
+      "Don't know"
+    ],ans:1,expl:"False — that is the TRADITIONAL approach, not JIT.",we:{2:"Kanban triggers flow, but JIT minimises buffers.",3:"Pull systems aim to eliminate buffers.",4:"Lean addresses bottlenecks via balanced flow, not buffers."},source:"StudentWiki",exam:"endterm"},
+{id:6219,ch:15,week:7,q:"The traditional approach sees inventory as a 'blanket of obscurity' preventing problems being noticed.",opts:[
+      "Takt and cycle time are identical metrics",
+      "False",
+      "True, both views agree",
+      "False, lean treats inventory as visible",
+      "Only in batch production",
+      "Don't know"
+    ],ans:1,expl:"False — that is the LEAN view (the river or rocks metaphor).",we:{2:"Traditional view sees inventory as a safety net, not an obscurer.",3:"It's the LEAN view that calls inventory an obscurer.",4:"The metaphor applies across production types."},source:"StudentWiki",exam:"endterm"},
 {id:6220,ch:15,week:7,q:"The lean approach aims to reduce which of the following?",opts:["Poor floor layout","Rework","Work in progress","All of the above","Overproduction","Don't know"],ans:3,expl:"All seven wastes (and more) targeted.",we:{4:"Overproduction IS targeted — but 'All of the above' captures everything, which is the correct answer."},source:"StudentWiki",exam:"endterm"},
 {id:6221,ch:15,week:7,q:"Which is NOT true of the 'traditional' view of capacity utilisation?",opts:["Lower capacity utilisation","More stoppages","High inventory","More production at each stage","Specialised dedicated machines","Don't know"],ans:0,expl:"Traditional view favours HIGH utilisation — not lower.",we:{4:"Dedicated specialised machines ARE typical of the traditional approach."},source:"StudentWiki",exam:"endterm"},
 {id:6222,ch:15,week:7,q:"Which is NOT part of the lean philosophy of operations?",opts:["More production at each stage","Elimination of waste","Continuous improvement","Total people involvement","Push production scheduling","Don't know"],ans:0,expl:"Lean produces only what is needed, not more.",we:{4:"Push scheduling IS contrary to lean — both this and 'more production at each stage' are anti-lean, but the textbook answer is the latter."},source:"StudentWiki",exam:"endterm"},
 {id:6223,ch:15,week:7,q:"Kaizen is the Japanese word for:",opts:["Elimination of waste","Respect-for-humans","Continuous improvement","Employee involvement","Visual control","Don't know"],ans:2,expl:"Kaizen = continuous improvement.",we:{4:"Visual control is a lean tool but the term Kaizen specifically means continuous improvement."},source:"StudentWiki",exam:"endterm"},
 
 {id:6225,ch:15,week:7,q:"Which is NOT a basic working practice for lean?",opts:["High pay","Discipline","Flexibility","Autonomy","Hierarchical job titles","Don't know"],ans:0,expl:"High pay is not a basic lean working practice.",we:{4:"Lean does discourage rigid hierarchies, but the textbook key is 'high pay' as the non-lean practice."},source:"StudentWiki",exam:"endterm"},
-{id:6226,ch:15,week:7,q:"Lean companies often have consistent pay structures that don't differentiate full-time vs hourly staff.",opts:["True","False","False, lean pays per output","Only for managers","Only union shops","Don't know"],ans:0,expl:"True — equality of treatment is a lean principle.",we:{2:"Lean uses consistent structures, not pure piece-rate.",3:"Consistency applies across all roles, not just managers.",4:"Lean isn't tied to union status."},source:"StudentWiki",exam:"endterm"},
+{id:6226,ch:15,week:7,q:"Lean companies often have consistent pay structures that don't differentiate full-time vs hourly staff.",opts:[
+      "True",
+      "Kanban is fundamentally a push-based control",
+      "False, lean pays per output",
+      "Only for managers",
+      "Only union shops",
+      "Don't know"
+    ],ans:0,expl:"True — equality of treatment is a lean principle.",we:{2:"Lean uses consistent structures, not pure piece-rate.",3:"Consistency applies across all roles, not just managers.",4:"Lean isn't tied to union status."},source:"StudentWiki",exam:"endterm"},
 {id:6227,ch:15,week:7,q:"Lean tends to involve using:",opts:["Small machines","Few staff","Multiple-sourcing strategies","Large machines","Single-sourcing strategies","Don't know"],ans:0,expl:"Small flexible machines, not large dedicated ones.",we:{4:"Single sourcing IS a lean practice — but the textbook answer here is 'small machines'."},source:"StudentWiki",exam:"endterm"},
 {id:6228,ch:15,week:7,q:"The time taken to change over the process from one activity to the next is defined as:",opts:["Changeover time","Set-up time","Downtime","Start-up time","Lead time","Don't know"],ans:1,expl:"Set-up time (target of SMED).",we:{4:"Lead time is total processing duration, not changeover time."},source:"StudentWiki",exam:"endterm"},
 {id:6229,ch:15,week:7,q:"Which is NOT used to reduce set-up time in lean?",opts:["The pre-preparation of tasks","The investment in large machinery","The practice of set-up routines","The reduction in search for tools and equipment","The use of standardised quick-release fixtures","Don't know"],ans:1,expl:"Lean uses SMALL machines — not large ones.",we:{4:"Quick-release fixtures DO reduce setup — textbook answer is investment in LARGE machinery (which doesn't reduce setup)."},source:"StudentWiki",exam:"endterm"},
@@ -17300,22 +17446,71 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 {id:6318,ch:16,week:7,q:"If change is gradual and constant, is this breakthrough or continuous improvement?",opts:["Breakthrough improvement","Continuous improvement","Reactive improvement","Breakthrough and continuous mix","Neither","Don't know"],ans:1,expl:"Continuous = Kaizen, small steady steps.",we:{2:"Reactive is not a Slack term in this context.",3:"Pure gradual fits continuous; mix is something else.",4:"Gradual constant change clearly is continuous improvement."},source:"StudentWiki",exam:"endterm"},
 
 // Chapter 17: Quality management (Week 8)
-{id:6401,ch:17,week:8,q:"The Operations view of quality is 'quality is consistent conformance to customers' expectations'. By this it is meant that:",opts:["Anything the customer wants should be provided","There are clear specifications consistently met that provide customers with what they would realistically believe they should receive","The product must be right every time, irrespective of cost","The product will be seen as synonymous with innate excellence","The cheapest service that meets minimum legal requirements","Don't know"],ans:1,expl:"Operations quality = realistic, consistent conformance to clear specs.",we:{4:"Operations quality is about realistic consistent conformance, not minimum cost."},source:"StudentWiki",exam:"endterm"},
+{id:6401,ch:17,week:8,q:"The Operations view of quality is 'quality is consistent conformance to customers' expectations'. By this it is meant that:",opts:[
+      "Anything the customer wants should be provided — violates SPC / quality management principles",
+      "There are clear specifications consistently met that provide customers with what they would realistically believe they should receive",
+      "The product must be right every time, irrespective of cost — violates SPC / quality management principles",
+      "The product will be seen as synonymous with innate excellence",
+      "The cheapest service that meets minimum legal requirements — violates SPC / quality management principles",
+      "Don't know"
+    ],ans:1,expl:"Operations quality = realistic, consistent conformance to clear specs.",we:{4:"Operations quality is about realistic consistent conformance, not minimum cost."},source:"StudentWiki",exam:"endterm"},
 {id:6402,ch:17,week:8,q:"What term describes producing a product or service to its design specification?",opts:["Conformance to specification","Output quality","Designed quality achievement","Specified quality","Design quality","Don't know"],ans:0,expl:"Conformance to specification.",we:{4:"Design quality is what is INTENDED, conformance is what is DELIVERED to spec."},source:"StudentWiki",exam:"endterm"},
 {id:6403,ch:17,week:8,q:"Step 5 of quality planning and control involves:",opts:["Finding and correcting causes of poor quality","Deciding how to measure each quality characteristic","Continuing to make improvements to quality","Controlling quality against set standards","Setting quality standards","Don't know"],ans:0,expl:"Step 5 = find & correct causes.",we:{4:"Standard-setting belongs to earlier steps, not Step 5 (root cause work)."},source:"StudentWiki",exam:"endterm"},
 {id:6404,ch:17,week:8,q:"Step 2 of quality planning and control involves:",opts:["Controlling quality against set standards","Finding and correcting poor quality","Deciding how to measure each quality characteristic","Defining quality characteristics","Designing the product or service","Don't know"],ans:2,expl:"Step 2 = deciding measurement methods.",we:{4:"Design is upstream of quality planning's measurement step."},source:"StudentWiki",exam:"endterm"},
-{id:6405,ch:17,week:8,q:"Disaggregating quality characteristics into measurable components can result in characteristics losing some of their meaning.",opts:["True","False","False, components fully capture meaning","Only for services","Only for tangible goods","Don't know"],ans:0,expl:"True — the whole experience is more than the sum of parts.",we:{2:"Disaggregation always loses some holistic experience.",3:"It applies to all products and services.",4:"Equally true for services."},source:"StudentWiki",exam:"endterm"},
-{id:6406,ch:17,week:8,q:"Many factors lost by disaggregating quality characteristics are those embedded in the design of the product.",opts:["True","False","False, they are mostly in operations","Only at conception stage","Only in service design","Don't know"],ans:0,expl:"True.",we:{2:"Slack attributes the loss to design-embedded characteristics.",3:"Applies throughout design, not just conception.",4:"Equally true for product design."},source:"StudentWiki",exam:"endterm"},
+{id:6405,ch:17,week:8,q:"Disaggregating quality characteristics into measurable components can result in characteristics losing some of their meaning.",opts:[
+      "True",
+      "SERVQUAL has only 3 dimensions",
+      "False, components fully capture meaning",
+      "Only for services",
+      "Only for tangible goods",
+      "Don't know"
+    ],ans:0,expl:"True — the whole experience is more than the sum of parts.",we:{2:"Disaggregation always loses some holistic experience.",3:"It applies to all products and services.",4:"Equally true for services."},source:"StudentWiki",exam:"endterm"},
+{id:6406,ch:17,week:8,q:"Many factors lost by disaggregating quality characteristics are those embedded in the design of the product.",opts:[
+      "True",
+      "SERVQUAL has only 3 dimensions",
+      "False, they are mostly in operations",
+      "Only at conception stage",
+      "Only in service design",
+      "Don't know"
+    ],ans:0,expl:"True.",we:{2:"Slack attributes the loss to design-embedded characteristics.",3:"Applies throughout design, not just conception.",4:"Equally true for product design."},source:"StudentWiki",exam:"endterm"},
 {id:6407,ch:17,week:8,q:"Why are disaggregated measures of quality not always useful in services?",opts:["Because measurement is less important than customer loyalty","Because some aspects of service can't be measured","Because disaggregated measures are complicated","Because services are tangible","Because customers refuse to be measured","Don't know"],ans:1,expl:"Some service aspects (feel, ambience) resist measurement.",we:{4:"It's about the intangible nature of service aspects, not customer refusal."},source:"StudentWiki",exam:"endterm"},
 {id:6408,ch:17,week:8,q:"Which is NOT a decision in Step 4 of quality planning and control?",opts:["Should checks be made for every product or service?","Where in the operation should checks be made?","Should customers check the product or the service provider?","How should checks be performed?","Who should do the checking?","Don't know"],ans:2,expl:"Whether customers check is not a planning decision.",we:{4:"'Who' is part of Step 4; 'customers vs provider' is not the same question."},source:"StudentWiki",exam:"endterm"},
 // [DELETED: 6409 Type I Error road safety — StudentWiki-only, Canvas/Mock Finalに無し]
 // [DELETED: 6410 Acceptance sampling vs SPC — StudentWiki-only, Canvas/Mock Finalに無し]
-{id:6411,ch:17,week:8,q:"What factors appear influential in TQM success?",opts:["Quality strategy, top management support, steering group, training, recognition and reward","Committed workers and supervisors, training, financial benefits","Focus TQM on areas with greatest customer impact","Motivate via slogans and exhortations","Heavy reliance on consultants","Don't know"],ans:0,expl:"All five key TQM success factors.",we:{4:"Consultant reliance is not a key success factor in Slack."},source:"StudentWiki",exam:"endterm"},
-{id:6412,ch:17,week:8,q:"TQM lays particular emphasis on which one?",opts:["Delighting the customer","Getting the customer-facing part right","Meeting customer needs, covering all parts of the organisation, continuous improvement","Business Process Re-engineering","Statistical process control techniques alone","Don't know"],ans:2,expl:"TQM = TOTAL (whole organisation) + continuous improvement.",we:{4:"SPC is a tool within TQM, not the emphasis itself."},source:"StudentWiki",exam:"endterm"},
-{id:6413,ch:17,week:8,q:"Top-management role in TQM. Best representation:",opts:["Articulate strategy and empower or exhort workforce","See TQM as important but separate","Involve in quality teams and meet customers","Understand quality, participate in problem-solving, formulate clear idea of what quality means","Delegate quality entirely to the quality department","Don't know"],ans:3,expl:"Top management must deeply engage with quality principles.",we:{4:"Delegation defeats the purpose of top-management engagement."},source:"StudentWiki",exam:"endterm"},
+{id:6411,ch:17,week:8,q:"What factors appear influential in TQM success?",opts:[
+      "Quality strategy, top management support, steering group, training, recognition and reward",
+      "Committed workers and supervisors, training, financial benefits",
+      "Focus TQM on areas with greatest customer impact",
+      "Motivate via slogans and exhortations — violates SPC / quality management principles",
+      "Heavy reliance on consultants — violates SPC / quality management principles",
+      "Don't know"
+    ],ans:0,expl:"All five key TQM success factors.",we:{4:"Consultant reliance is not a key success factor in Slack."},source:"StudentWiki",exam:"endterm"},
+{id:6412,ch:17,week:8,q:"TQM lays particular emphasis on which one?",opts:[
+      "Delighting the customer — violates SPC / quality management principles",
+      "Getting the customer-facing part right — violates SPC / quality management principles",
+      "Meeting customer needs, covering all parts of the organisation, continuous improvement",
+      "Business Process Re-engineering — violates SPC / quality management principles",
+      "Statistical process control techniques alone",
+      "Don't know"
+    ],ans:2,expl:"TQM = TOTAL (whole organisation) + continuous improvement.",we:{4:"SPC is a tool within TQM, not the emphasis itself."},source:"StudentWiki",exam:"endterm"},
+{id:6413,ch:17,week:8,q:"Top-management role in TQM. Best representation:",opts:[
+      "Articulate strategy and empower or exhort workforce",
+      "See TQM as important but separate — violates SPC / quality management principles",
+      "Involve in quality teams and meet customers — violates SPC / quality management principles",
+      "Understand quality, participate in problem-solving, formulate clear idea of what quality means",
+      "Delegate quality entirely to the quality department",
+      "Don't know"
+    ],ans:3,expl:"Top management must deeply engage with quality principles.",we:{4:"Delegation defeats the purpose of top-management engagement."},source:"StudentWiki",exam:"endterm"},
 {id:6414,ch:17,week:8,q:"Specific concerns of TQM do NOT include:",opts:["Developing continuous improvement","Examining all costs relating to quality","Cutting back on output to give preference to quality","Developing systems or procedures that support quality","Getting things 'right the first time'","Don't know"],ans:2,expl:"TQM does NOT cut output — it improves while producing.",source:"StudentWiki",exam:"endterm"},
 {id:6415,ch:17,week:8,q:"TQM programmes are less likely to remain effective if:",opts:["TQM becomes a substitute for normal managerial leadership","The term 'quality' is not defined too narrowly","Slogans and exhortations are avoided","Quality improvement relates to performance objectives","TQM does not become a separate 'bolt-on'","Don't know"],ans:0,expl:"TQM should SUPPORT, not REPLACE management.",source:"StudentWiki",exam:"endterm"},
-{id:6416,ch:17,week:8,q:"TQM asserts there is an optimum amount of quality effort that minimises total quality costs.",opts:["True","False","True under traditional view","Only for service quality","True for low-volume operations","Don't know"],ans:1,expl:"False — TQM (vs. traditional view) seeks ZERO defects, not an 'optimum' tradeoff.",we:{2:"The traditional view says there's an optimum, but TQM denies it.",3:"Service vs goods doesn't determine this view.",4:"Volume isn't the deciding factor."},source:"StudentWiki",exam:"endterm"},
+{id:6416,ch:17,week:8,q:"TQM asserts there is an optimum amount of quality effort that minimises total quality costs.",opts:[
+      "Cpk measures only spread, ignoring centering",
+      "False",
+      "True under traditional view",
+      "Only for service quality",
+      "True for low-volume operations",
+      "Don't know"
+    ],ans:1,expl:"False — TQM (vs. traditional view) seeks ZERO defects, not an 'optimum' tradeoff.",we:{2:"The traditional view says there's an optimum, but TQM denies it.",3:"Service vs goods doesn't determine this view.",4:"Volume isn't the deciding factor."},source:"StudentWiki",exam:"endterm"},
 {id:6417,ch:17,week:8,q:"Which prescription should NOT be followed for effective TQM?",opts:["TQM does not become a separate 'bolt-on'","TQM should become a substitute for normal managerial leadership","Quality improvement relates to performance objectives","Slogans or exhortations avoided","Encourage top management to lead quality teams","Don't know"],ans:1,expl:"TQM should NOT replace management.",we:{4:"Top-management leadership IS prescribed — so this is not 'should NOT be followed'."},source:"StudentWiki",exam:"endterm"},
 {id:6418,ch:17,week:8,q:"Which would normally be considered a 'cost of quality'?",opts:["Marketing costs","Distribution costs","Internal failure costs","Stockholding costs","Research and development costs","Don't know"],ans:2,expl:"Internal failure = scrap, rework (a quality cost).",source:"StudentWiki",exam:"endterm"},
 
@@ -17342,10 +17537,38 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 // [DELETED: 6508 Staff failure 分類 — StudentWiki-only, Slack本「故障原因5分類」、Canvas未収載]
 // [DELETED: 6509 Design failure 分類 — StudentWiki-only, Slack本「故障原因5分類」、Canvas未収載]
 // [DELETED: 6510 Facilities failure 分類 — StudentWiki-only, Slack本「故障原因5分類」、Canvas未収載]
-{id:6511,ch:18,week:8,q:"The more interdependent components a system has, the lower its reliability will be.",opts:["True","False","False, more components add redundancy","Only without redundancy","Only for electronic systems","Don't know"],ans:0,expl:"True — series reliability = product of all R_i.",we:{2:"Series components multiply reliability; only parallel/redundancy raises it.",3:"Technically yes, but the bald statement is generally treated as true.",4:"Applies to mechanical and other systems too."},source:"StudentWiki",exam:"endterm"},
-{id:6512,ch:18,week:8,q:"The three tasks of failure prevention and recovery are: detection or analysis, prevention, and improving reliability.",opts:["True","False","True, three tasks include reliability","True, but only two tasks","Only in TPM","Don't know"],ans:1,expl:"False — the three tasks are detection, prevention, and RECOVERY or mitigation.",we:{2:"Reliability improvement isn't one of the canonical three tasks.",3:"There are three, not two.",4:"These tasks apply broadly, not just within TPM."},source:"StudentWiki",exam:"endterm"},
-{id:6513,ch:18,week:8,q:"The risk priority number (RPN) determines the potential cause of failure.",opts:["True","False","True, RPN identifies root cause","True, only in FTA","Only with Pareto","Don't know"],ans:1,expl:"False — RPN PRIORITISES failures (Severity × Occurrence × Detection), it doesn't determine causes.",we:{2:"RPN ranks risk; root cause is a separate analysis.",3:"RPN belongs to FMEA, not FTA.",4:"RPN is independent of Pareto."},source:"StudentWiki",exam:"endterm"},
-{id:6514,ch:18,week:8,q:"Building redundancy means having backup systems or components in case of failure.",opts:["True","False","False, redundancy means duplication of work","Only in safety-critical systems","True only for software","Don't know"],ans:0,expl:"True.",we:{2:"Redundancy in reliability means backup, not duplicated effort.",3:"Used broadly, not just safety-critical.",4:"Hardware and other systems also use redundancy."},source:"StudentWiki",exam:"endterm"},
+{id:6511,ch:18,week:8,q:"The more interdependent components a system has, the lower its reliability will be.",opts:[
+      "True",
+      "MTBF and MTTR are interchangeable concepts",
+      "False, more components add redundancy",
+      "Only without redundancy",
+      "Only for electronic systems",
+      "Don't know"
+    ],ans:0,expl:"True — series reliability = product of all R_i.",we:{2:"Series components multiply reliability; only parallel/redundancy raises it.",3:"Technically yes, but the bald statement is generally treated as true.",4:"Applies to mechanical and other systems too."},source:"StudentWiki",exam:"endterm"},
+{id:6512,ch:18,week:8,q:"The three tasks of failure prevention and recovery are: detection or analysis, prevention, and improving reliability.",opts:[
+      "Series reliability uses the parallel formula",
+      "False",
+      "True, three tasks include reliability",
+      "True, but only two tasks",
+      "Only in TPM",
+      "Don't know"
+    ],ans:1,expl:"False — the three tasks are detection, prevention, and RECOVERY or mitigation.",we:{2:"Reliability improvement isn't one of the canonical three tasks.",3:"There are three, not two.",4:"These tasks apply broadly, not just within TPM."},source:"StudentWiki",exam:"endterm"},
+{id:6513,ch:18,week:8,q:"The risk priority number (RPN) determines the potential cause of failure.",opts:[
+      "The bathtub curve has constant failure rate",
+      "False",
+      "True, RPN identifies root cause",
+      "True, only in FTA",
+      "Only with Pareto",
+      "Don't know"
+    ],ans:1,expl:"False — RPN PRIORITISES failures (Severity × Occurrence × Detection), it doesn't determine causes.",we:{2:"RPN ranks risk; root cause is a separate analysis.",3:"RPN belongs to FMEA, not FTA.",4:"RPN is independent of Pareto."},source:"StudentWiki",exam:"endterm"},
+{id:6514,ch:18,week:8,q:"Building redundancy means having backup systems or components in case of failure.",opts:[
+      "True",
+      "MTBF and MTTR are interchangeable concepts",
+      "False, redundancy means duplication of work",
+      "Only in safety-critical systems",
+      "True only for software",
+      "Don't know"
+    ],ans:0,expl:"True.",we:{2:"Redundancy in reliability means backup, not duplicated effort.",3:"Used broadly, not just safety-critical.",4:"Hardware and other systems also use redundancy."},source:"StudentWiki",exam:"endterm"},
 {id:6515,ch:18,week:8,q:"FMEA checklist. Which question is NOT likely to feature?",opts:["What would the consequences be?","What is the likelihood of occurrence?","How likely is failure to be detected before customer?","What would the cost of avoiding failure be?","What controls already detect the failure?","Don't know"],ans:3,expl:"FMEA uses Severity or Occurrence or Detection — not avoidance cost.",we:{4:"Existing-controls is part of Detection scoring — it IS in FMEA."},source:"StudentWiki",exam:"endterm"},
 {id:6516,ch:18,week:8,q:"Reliability is NOT improved by which procedure?",opts:["Laying off employees who cause faults","Ensuring activities are fail-safe","Designing out fail points","Building redundancy","Increasing inspection frequency","Don't know"],ans:0,expl:"Firing employees doesn't fix systemic failure causes.",we:{4:"Inspection frequency CAN improve detection of issues — not the textbook 'NOT' answer."},source:"StudentWiki",exam:"endterm"},
 // [DELETED: 6517 Design failure (劇場) — StudentWiki-only, Slack本「故障原因5分類」、Canvas未収載]
@@ -17361,31 +17584,94 @@ var QUESTIONS_STUDENTWIKI_ENDTERM = [
 {id:6527,ch:18,week:8,q:"A lock on the lavatory door that must be turned to switch on the lights is an example of:",opts:["A customer poka-yoke","Total preventive maintenance","Building in redundancy","Fail-safing the service provider","A staff poka-yoke","Don't know"],ans:0,expl:"Customer-side poka-yoke (foolproofing).",we:{4:"The customer turns the lock, so it's a CUSTOMER poka-yoke, not staff."},source:"StudentWiki",exam:"endterm"},
 {id:6528,ch:18,week:8,q:"Servicing facilities at pre-planned intervals is termed:",opts:["Product-focused maintenance","Preventive maintenance","Condition-based maintenance","Run to breakdown maintenance","Reliability-centred maintenance","Don't know"],ans:1,expl:"Preventive maintenance (PM).",we:{4:"RCM is broader; servicing at pre-planned intervals is specifically preventive."},source:"StudentWiki",exam:"endterm"},
 {id:6529,ch:18,week:8,q:"Dominant maintenance when consequences of failure are high:",opts:["Needs maintenance","Product-focused maintenance","Condition-based maintenance","Preventive maintenance","Run-to-breakdown maintenance","Don't know"],ans:3,expl:"PM dominates when failure cost is high.",we:{4:"Run-to-breakdown is the OPPOSITE — only fits when failure cost is low."},source:"StudentWiki",exam:"endterm"},
-{id:6530,ch:18,week:8,q:"Which is a criticism of Total Productive Maintenance?",opts:["It reduces machine effectiveness","It leads to unplanned maintenance","It tends to recommend preventive maintenance when inappropriate","It is hard to manage","It eliminates the need for any planning","Don't know"],ans:2,expl:"TPM sometimes over-prescribes PM.",we:{4:"TPM requires significant planning — opposite of eliminating it."},source:"StudentWiki",exam:"endterm"},
+{id:6530,ch:18,week:8,q:"Which is a criticism of Total Productive Maintenance?",opts:[
+      "It reduces machine effectiveness",
+      "It leads to unplanned maintenance",
+      "It tends to recommend preventive maintenance when inappropriate",
+      "It is hard to manage — misapplies reliability / risk management",
+      "It eliminates the need for any planning",
+      "Don't know"
+    ],ans:2,expl:"TPM sometimes over-prescribes PM.",we:{4:"TPM requires significant planning — opposite of eliminating it."},source:"StudentWiki",exam:"endterm"},
 
 // Chapter 19: Project management (Week 8)
-{id:6601,ch:19,week:8,q:"A properly planned project should not contain any aspect of uncertainty.",opts:["True","False","True for routine projects","Only in waterfall projects","Only with full risk register","Don't know"],ans:1,expl:"False — uncertainty is inherent in all projects.",we:{2:"Even routine projects have residual uncertainty.",3:"Methodology doesn't eliminate uncertainty.",4:"Risk register manages — doesn't eliminate — uncertainty."},source:"StudentWiki",exam:"endterm"},
-{id:6602,ch:19,week:8,q:"A project manager does not need technical expertise in the area.",opts:["True","False","True for matrix organisations","Only for IT projects","Only in large programmes","Don't know"],ans:1,expl:"False — technical understanding is important.",we:{2:"Technical understanding helps regardless of structure.",3:"All project types benefit from PM technical literacy.",4:"Size doesn't remove the need for technical understanding."},source:"StudentWiki",exam:"endterm"},
-{id:6603,ch:19,week:8,q:"PERT stands for Project Electronic Relay Transfer.",opts:["True","False","True, that is what PERT means","True, an obsolete meaning","True, but acronym was relabelled","Don't know"],ans:1,expl:"False — PERT = Program Evaluation and Review Technique.",we:{2:"PERT is Program Evaluation and Review Technique.",3:"No such historical meaning.",4:"Acronym was never 'Project Electronic Relay Transfer'."},source:"StudentWiki",exam:"endterm"},
+{id:6601,ch:19,week:8,q:"A properly planned project should not contain any aspect of uncertainty.",opts:[
+      "PERT uses only the most-likely estimate",
+      "False",
+      "True for routine projects",
+      "Only in waterfall projects",
+      "Only with full risk register",
+      "Don't know"
+    ],ans:1,expl:"False — uncertainty is inherent in all projects.",we:{2:"Even routine projects have residual uncertainty.",3:"Methodology doesn't eliminate uncertainty.",4:"Risk register manages — doesn't eliminate — uncertainty."},source:"StudentWiki",exam:"endterm"},
+{id:6602,ch:19,week:8,q:"A project manager does not need technical expertise in the area.",opts:[
+      "Float is always zero on non-critical activities",
+      "False",
+      "True for matrix organisations",
+      "Only for IT projects",
+      "Only in large programmes",
+      "Don't know"
+    ],ans:1,expl:"False — technical understanding is important.",we:{2:"Technical understanding helps regardless of structure.",3:"All project types benefit from PM technical literacy.",4:"Size doesn't remove the need for technical understanding."},source:"StudentWiki",exam:"endterm"},
+{id:6603,ch:19,week:8,q:"PERT stands for Project Electronic Relay Transfer.",opts:[
+      "Critical path is the shortest path through the network",
+      "False",
+      "True, that is what PERT means",
+      "True, an obsolete meaning",
+      "True, but acronym was relabelled",
+      "Don't know"
+    ],ans:1,expl:"False — PERT = Program Evaluation and Review Technique.",we:{2:"PERT is Program Evaluation and Review Technique.",3:"No such historical meaning.",4:"Acronym was never 'Project Electronic Relay Transfer'."},source:"StudentWiki",exam:"endterm"},
 {id:6604,ch:19,week:8,q:"The project management model does NOT include:",opts:["Project planning and technical execution","Project control","Project definition","Understanding the project environment","Project rejection","Don't know"],ans:4,expl:"Rejection is not a stage of the project model.",source:"StudentWiki",exam:"endterm"},
 {id:6605,ch:19,week:8,q:"Kyoto Agreement project: uncertainty or complexity?",opts:["Low uncertainty, high complexity","High uncertainty, low complexity","High uncertainty, high complexity","Low uncertainty, low complexity","Medium uncertainty, medium complexity","Don't know"],ans:2,expl:"Multi-nation political treaty = high on both axes.",we:{4:"Multinational climate treaty is high on both dimensions, not medium."},source:"StudentWiki",exam:"endterm"},
 {id:6606,ch:19,week:8,q:"Arranging a party in a brewery: uncertainty or complexity?",opts:["High uncertainty, low complexity","Low uncertainty, high complexity","Low uncertainty, low complexity","High uncertainty, high complexity","Medium uncertainty, medium complexity","Don't know"],ans:2,expl:"Low on both — routine, simple project.",we:{4:"Routine party planning is low on both, not medium."},source:"StudentWiki",exam:"endterm"},
 {id:6607,ch:19,week:8,q:"Operations engaged in complex, large-scale activities with defined beginning or end are called:",opts:["Complex operations","Focused operations","Planning operations","Project operations","Programme operations","Don't know"],ans:3,expl:"Project operations.",we:{4:"Programmes have no defined end; projects do."},source:"StudentWiki",exam:"endterm"},
-{id:6608,ch:19,week:8,q:"The pioneers of planning or controlling projects were engineers working on defence and construction.",opts:["True","False","False, pioneers were management consultants","Only NASA pioneers","Only after WWII","Don't know"],ans:0,expl:"True — military or construction origins (e.g. Polaris, Manhattan).",we:{2:"Engineers, not consultants, pioneered PM techniques.",3:"NASA was one; defence and construction broader.",4:"Origins predate and span WWII era."},source:"StudentWiki",exam:"endterm"},
-{id:6609,ch:19,week:8,q:"A programme is a set of activities with defined start, end, goal and resources.",opts:["True","False","True, programmes have defined end","True only for IT programmes","Only at portfolio level","Don't know"],ans:1,expl:"False — that describes a PROJECT. A programme has no defined end.",we:{2:"Programmes are ongoing without defined end.",3:"Holds for all programmes, not just IT.",4:"Portfolio is a different concept."},source:"StudentWiki",exam:"endterm"},
+{id:6608,ch:19,week:8,q:"The pioneers of planning or controlling projects were engineers working on defence and construction.",opts:[
+      "True",
+      "Float is always zero on non-critical activities",
+      "False, pioneers were management consultants",
+      "Only NASA pioneers",
+      "Only after WWII",
+      "Don't know"
+    ],ans:0,expl:"True — military or construction origins (e.g. Polaris, Manhattan).",we:{2:"Engineers, not consultants, pioneered PM techniques.",3:"NASA was one; defence and construction broader.",4:"Origins predate and span WWII era."},source:"StudentWiki",exam:"endterm"},
+{id:6609,ch:19,week:8,q:"A programme is a set of activities with defined start, end, goal and resources.",opts:[
+      "Critical path is the shortest path through the network",
+      "False",
+      "True, programmes have defined end",
+      "True only for IT programmes",
+      "Only at portfolio level",
+      "Don't know"
+    ],ans:1,expl:"False — that describes a PROJECT. A programme has no defined end.",we:{2:"Programmes are ongoing without defined end.",3:"Holds for all programmes, not just IT.",4:"Portfolio is a different concept."},source:"StudentWiki",exam:"endterm"},
 {id:6610,ch:19,week:8,q:"Which is NOT true of projects?",opts:["They are relatively small-scale undertakings","They involve interactions across organisation","They use relatively large amounts of resources","They are relatively complex","They have a clear end point","Don't know"],ans:0,expl:"Projects are typically LARGE-scale, not small.",we:{4:"A clear endpoint IS true of projects — so 'small-scale' is the false claim."},source:"StudentWiki",exam:"endterm"},
 {id:6611,ch:19,week:8,q:"Which does NOT define a project?",opts:["They have no defined end point","They are all unique","They all have an objective","They all have to cope with uncertainty","They consume few resources","Don't know"],ans:0,expl:"Projects DO have defined endpoints — that's a programme.",we:{4:"Projects often use many resources — but the textbook answer is the 'no end point' option."},source:"StudentWiki",exam:"endterm"},
 {id:6612,ch:19,week:8,q:"Which is NOT common of projects?",opts:["They involve continuous improvement","They are all of a temporary nature","They involve a degree of complexity","They are all unique","They follow fixed daily routines","Don't know"],ans:0,expl:"CI is not specifically a project trait.",we:{4:"Routines describe operations, not projects."},source:"StudentWiki",exam:"endterm"},
-{id:6613,ch:19,week:8,q:"Because projects have a defined beginning and end, a temporary concentration of resources is needed.",opts:["True","False","False, projects use permanent resources","Only for matrix projects","Only for outsourced projects","Don't know"],ans:0,expl:"True.",we:{2:"Project resource concentration is temporary by definition.",3:"Holds for all project structures.",4:"Outsourcing doesn't change the principle."},source:"StudentWiki",exam:"endterm"},
+{id:6613,ch:19,week:8,q:"Because projects have a defined beginning and end, a temporary concentration of resources is needed.",opts:[
+      "True",
+      "Float is always zero on non-critical activities",
+      "False, projects use permanent resources",
+      "Only for matrix projects",
+      "Only for outsourced projects",
+      "Don't know"
+    ],ans:0,expl:"True.",we:{2:"Project resource concentration is temporary by definition.",3:"Holds for all project structures.",4:"Outsourcing doesn't change the principle."},source:"StudentWiki",exam:"endterm"},
 {id:6614,ch:19,week:8,q:"Identify the accurate statement of a programme?",opts:["It has no defined end point","It is the same as a project","It is temporary in nature","It has a fixed budget","It is the same as a portfolio","Don't know"],ans:0,expl:"Programmes are ongoing (no fixed end).",we:{3:"Programmes have evolving budgets, not fixed end-state.",4:"Portfolios group programmes; not synonymous."},source:"StudentWiki",exam:"endterm"},
 {id:6615,ch:19,week:8,q:"Which involves the highest level of complexity?",opts:["A chemical plant","A company audit","A wedding","The Thames barrier","A national election","Don't know"],ans:3,expl:"Thames Barrier = massive engineering complexity.",we:{4:"Elections are complex, but the textbook answer is Thames Barrier engineering."},source:"StudentWiki",exam:"endterm"},
 {id:6616,ch:19,week:8,q:"Which involves the highest uncertainty in project planning?",opts:["An Antarctic expedition","An advertising campaign","A wedding","A company audit","A new product launch","Don't know"],ans:0,expl:"Antarctic expedition = environment or weather risk.",we:{4:"Launches have uncertainty but Antarctic expedition is the textbook answer."},source:"StudentWiki",exam:"endterm"},
-{id:6617,ch:19,week:8,q:"Projects with high complexity are not necessarily difficult to plan, but controlling them can be problematic.",opts:["True","False","False, complex is easy to control","Only for software projects","Only in low-uncertainty cases","Don't know"],ans:0,expl:"True.",we:{2:"Complexity typically makes control HARDER.",3:"Holds for many project types, not just software.",4:"Combination of complexity and uncertainty raises difficulty."},source:"StudentWiki",exam:"endterm"},
+{id:6617,ch:19,week:8,q:"Projects with high complexity are not necessarily difficult to plan, but controlling them can be problematic.",opts:[
+      "True",
+      "Float is always zero on non-critical activities",
+      "False, complex is easy to control",
+      "Only for software projects",
+      "Only in low-uncertainty cases",
+      "Don't know"
+    ],ans:0,expl:"True.",we:{2:"Complexity typically makes control HARDER.",3:"Holds for many project types, not just software.",4:"Combination of complexity and uncertainty raises difficulty."},source:"StudentWiki",exam:"endterm"},
 {id:6618,ch:19,week:8,q:"A project manager's main activity is managing:",opts:["Physical resources","Human resources","Feedback loops","Control mechanisms","Information technology","Don't know"],ans:1,expl:"PM is primarily about people.",we:{4:"PM uses IT tools but the main activity is people management."},source:"StudentWiki",exam:"endterm"},
 {id:6619,ch:19,week:8,q:"Corrective action involves moving from:",opts:["Planning to definition","Control to planning","Definition to planning","Control to definition","Planning to control","Don't know"],ans:1,expl:"When control reveals deviation, loop back to planning.",we:{4:"Direction is REVERSE — control feeds back INTO planning."},source:"StudentWiki",exam:"endterm"},
 {id:6620,ch:19,week:8,q:"Performing technical aspects occurs at which stage of the model?",opts:["2","3","4","5","6","Don't know"],ans:2,expl:"Stage 4 = technical execution.",we:{4:"Stage 6 is not part of the standard model; technical work is Stage 4."},source:"StudentWiki",exam:"endterm"},
 {id:6621,ch:19,week:8,q:"All factors that may affect the project during its life are called:",opts:["Project plan","Project overview","Project factors","Project environment","Project scope","Don't know"],ans:3,expl:"Project environment = stakeholders, market, regs.",we:{4:"Scope is what the project DELIVERS; environment is what SURROUNDS it."},source:"StudentWiki",exam:"endterm"},
-{id:6622,ch:19,week:8,q:"The stages in the project management model are a sequential chain of steps.",opts:["True","False","True, strictly sequential","Only in waterfall","Only without corrective action","Don't know"],ans:1,expl:"False — they are iterative (corrective action loops back).",we:{2:"Slack's model is iterative, not strictly sequential.",3:"Even waterfall has feedback loops in PM.",4:"Corrective action is part of the model."},source:"StudentWiki",exam:"endterm"},
+{id:6622,ch:19,week:8,q:"The stages in the project management model are a sequential chain of steps.",opts:[
+      "PERT uses only the most-likely estimate",
+      "False",
+      "True, strictly sequential",
+      "Only in waterfall",
+      "Only without corrective action",
+      "Don't know"
+    ],ans:1,expl:"False — they are iterative (corrective action loops back).",we:{2:"Slack's model is iterative, not strictly sequential.",3:"Even waterfall has feedback loops in PM.",4:"Corrective action is part of the model."},source:"StudentWiki",exam:"endterm"},
 {id:6623,ch:19,week:8,q:"For an overseas education agency, fluctuating commodity prices affecting host government commitments:",opts:["National culture","Geography","Finance","Politics","Legal environment","Don't know"],ans:2,expl:"Finance or economic environment factor.",we:{4:"Commodity prices are economic/financial, not legal."},source:"StudentWiki",exam:"endterm"},
 {id:6624,ch:19,week:8,q:"Which is NOT an element in project definition?",opts:["Project objectives","Project costs","Project strategy","Project scope","Project deliverables","Don't know"],ans:1,expl:"Costs come from planning, not definition.",we:{4:"Deliverables ARE part of definition — but the textbook answer is 'Project costs' (planning, not definition)."},source:"StudentWiki",exam:"endterm"},
 {id:6625,ch:19,week:8,q:"Most important performance objective for a new aircraft project:",opts:["Quality","Time","Cost","Flexibility","Speed","Don't know"],ans:0,expl:"Quality (safety) is paramount for aircraft.",we:{3:"Flexibility is secondary in aircraft design vs safety.",4:"Speed of delivery is secondary to airworthiness."},source:"StudentWiki",exam:"endterm"},
@@ -17538,7 +17824,7 @@ var QUESTIONS_MOCK500 = [
   {"id": "m500_q144", "ch": 5, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A logistics firm reviews its supply-network structure. frei's typology of customer-introduced variability has which five categories?", "opts": ["Arrival / Request / Capability / Eff...", "Demand / Supply / Process / Quality", "Time / Cost / Quality", "Internal / External (option)", "Quantitative / Qualitative", "Don't know"], "ans": 0, "expl": "Customer variability — Arrival, Request, Capability, Effort, Preference. [Ch5 Structure & Scope of Supply: key concepts = Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Exam trap: confusing horizontal with vertical integration; assuming bigger = always better.] — Formula reference: (Capacity decisions; vertical integration cost analysis)", "we": {"1": "general OM categories", "2": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "3": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "4": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better."}, "memory": "Customer variability — Arrival, Request, Capability, Effort, Preference."},
   {"id": "m500_q145", "ch": 5, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "Consider a coffee chain expanding into bean roasting. which of the following is NOT an effective way to reduce process variability?", "opts": ["Standardization", "Training (option)", "Automation (option)", "Completely ignoring t...", "Improving supplier re...", "Don't know"], "ans": 3, "expl": ". [Ch5 Structure & Scope of Supply: key concepts = Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Exam trap: confusing horizontal with vertical integration; assuming bigger = always better.] — Formula reference: (Capacity decisions; vertical integration cost analysis)", "we": {"0": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "1": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "2": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "4": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better."}, "memory": "Reduce variability via standardization, training, automation, and supply-chain integration."},
   {"id": "m500_q147", "ch": 5, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A manufacturer is selecting between lead and lag capacity. what is the decoupling point (customer order decoupling point, CODP)?", "opts": ["The point at which product design is frozen", "The point in the supply chain where push (forec...", "The point of revenue recognition", "The point at which delivery starts", "The point of product disposal", "Don't know"], "ans": 1, "expl": "CODP = the push/pull boundary. MTS = downstream; MTO = upstream. [Ch5 Structure & Scope of Supply: key concepts = Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Exam trap: confusing horizontal with vertical integration; assuming bigger = always better.] — Formula reference: (Capacity decisions; vertical integration cost analysis)", "we": {"0": "that is design freeze", "2": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "3": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "4": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better."}, "memory": "CODP = the push/pull boundary. MTS = downstream; MTO = upstream."},
-  {"id": "m500_q148", "ch": 5, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A manufacturer is selecting between lead and lag capacity. what is \"assemble-to-order\" (ATO)?", "opts": ["A hybrid between MTS an...", "Pure MTS (option)", "Pure MTO (option)", "Engineer-to-order (ETO)", "None of the above", "Don't know"], "ans": 0, "expl": "ATO = modular inventory + assembly to order. Dell Direct. [Ch5 Structure & Scope of Supply: key concepts = Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Exam trap: confusing horizontal with vertical integration; assuming bigger = always better.] — Formula reference: (Capacity decisions; vertical integration cost analysis)", "we": {"3": "different concept", "1": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "2": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "4": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better."}, "memory": "ATO = modular inventory + assembly to order. Dell Direct."},
+  {"id": "m500_q148", "ch": 5, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A manufacturer is selecting between lead and lag capacity. what is \"assemble-to-order\" (ATO)?", "opts": ["A hybrid between MTS an...", "Pure MTS (option)", "Pure MTO (option)", "Engineer-to-order (ETO)", "Outsourcing never introduces dependency risk", "Don't know"], "ans": 0, "expl": "ATO = modular inventory + assembly to order. Dell Direct. [Ch5 Structure & Scope of Supply: key concepts = Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Exam trap: confusing horizontal with vertical integration; assuming bigger = always better.] — Formula reference: (Capacity decisions; vertical integration cost analysis)", "we": {"3": "different concept", "1": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "2": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "4": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better."}, "memory": "ATO = modular inventory + assembly to order. Dell Direct."},
   {"id": "m500_q149", "ch": 5, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "What characterizes engineer-to-order (ETO)?", "opts": ["Production begins from...", "Shipped immediately fro...", "No setup required", "Mass production (option)", "Easy to automate (option)", "Don't know"], "ans": 0, "expl": "project-process style — long LT and high customization. [Ch5 Structure & Scope of Supply: key concepts = Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Exam trap: confusing horizontal with vertical integration; assuming bigger = always better.] — Formula reference: (Capacity decisions; vertical integration cost analysis)", "we": {"1": "that is MTS", "3": "opposite", "2": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "4": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better."}, "memory": "Order of increasing customization and LT — ETO > MTO > ATO > MTS."},
   {"id": "m500_q150", "ch": 5, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A Dutch retailer is choosing whether to vertically integrate. what is the \"reshoring\" trend?", "opts": ["Bringing manufacturing that had been moved a...", "Accelerating relocation overseas", "An inventory reduction technique", "A price-cutting strategy", "Solely a tariff-avoidance tactic", "Don't know"], "ans": 0, "expl": "the reshoring / onshoring trend since the 2010s. [Ch5 Structure & Scope of Supply: key concepts = Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Exam trap: confusing horizontal with vertical integration; assuming bigger = always better.] — Formula reference: (Capacity decisions; vertical integration cost analysis)", "we": {"1": "that is offshoring", "4": "only partly", "2": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better.", "3": "This option does not fit the Ch5 concept being tested. Recall: Supply networks, vertical integration, outsourcing, capacity decisions (lead/lag), location. Common exam trap: confusing horizontal with vertical integration; assuming bigger = always better."}, "memory": "Reshore = return home; Offshore = move abroad; Nearshore = move to a neighbouring country."},
   {"id": "m500_q151", "ch": 6, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A printing firm classifies its work along the volume-variety matrix. when comparing \"Long-thin\" and \"Short-fat\" line configurations, what is the main advantage of the **Short-fat** arrangement?", "opts": ["Multi-skilled workers, hig...", "Full automation (option)", "Shortest cycle time", "No changeovers required", "Lowest cost (option)", "Don't know"], "ans": 0, "expl": "Short-fat uses multiple parallel paths, increasing flexibility and robustness. [Ch6 Process Design: key concepts = Process types (Project/Jobbing/Batch/Mass/Continuous), volume-variety matrix, throughput, cycle time, bottleneck. Exam trap: misidentifying bottleneck; confusing cycle time with throughput time.] — Formula reference: (Throughput = output/time; cycle time = 1/throughput rate)", "we": {"1": "Not a defining feature", "2": "Long-thin typically achieves shorter cycle time", "3": "Unrelated", "4": "Long-thin often has lower unit cost"}, "memory": "**Long-thin = efficient but fragile / Short-fat = less efficient but robust**."},
@@ -17580,7 +17866,7 @@ var QUESTIONS_MOCK500 = [
   {"id": "m500_q187", "ch": 7, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "An ergonomist evaluates a packaging line. what does the \"Kraljic matrix\" classify?", "opts": ["Purchased items by \"s...", "Customers (option)", "Product life cycles", "Competitors (option)", "Inventory items", "Don't know"], "ans": 0, "expl": "Kraljic (1983). [Ch7 Layout & Flow: key concepts = Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Exam trap: choosing layout based only on cost without considering flexibility.] — Formula reference: (Line efficiency = Σtask/(N·C); takt = available/demand)", "we": {"1": "Wrong subject", "2": "Wrong subject", "3": "Wrong subject", "4": "This option does not fit the Ch7 concept being tested. Recall: Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Common exam trap: choosing layout based only on cost without considering flexibility."}, "memory": "**Kraljic 4 quadrants = Strategic / Leverage / Bottleneck / Non-critical**."},
   {"id": "m500_q188", "ch": 7, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A logistics centre rebalances its workstations. what are the characteristics of \"strategic items\" in the Kraljic matrix?", "opts": ["High supply risk + high profit...", "Low risk + low impact", "Middle of both axes (option)", "Low risk + high impact", "High risk + low impact", "Don't know"], "ans": 0, "expl": "Strategic quadrant. [Ch7 Layout & Flow: key concepts = Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Exam trap: choosing layout based only on cost without considering flexibility.] — Formula reference: (Line efficiency = Σtask/(N·C); takt = available/demand)", "we": {"1": "Non-critical", "2": "Not the strategic cell", "3": "Leverage", "4": "This option does not fit the Ch7 concept being tested. Recall: Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Common exam trap: choosing layout based only on cost without considering flexibility."}, "memory": "**Strategic = high risk × high impact** → deep partnership."},
   {"id": "m500_q189", "ch": 7, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A logistics centre rebalances its workstations. what is the recommended strategy for \"leverage items\" in the Kraljic matrix?", "opts": ["Competitive bidding...", "Long-term contracts o...", "Single sourcing", "Stockpiling (option)", "Discontinue (option)", "Don't know"], "ans": 0, "expl": "Leverage = high impact, low risk → exploit price leverage. [Ch7 Layout & Flow: key concepts = Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Exam trap: choosing layout based only on cost without considering flexibility.] — Formula reference: (Line efficiency = Σtask/(N·C); takt = available/demand)", "we": {"2": "Not appropriate here", "3": "Not the focus", "4": "Not the answer", "1": "This option does not fit the Ch7 concept being tested. Recall: Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Common exam trap: choosing layout based only on cost without considering flexibility."}, "memory": "**Leverage = competitive tendering to extract bargaining power**."},
-  {"id": "m500_q190", "ch": 7, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "For an electronics manufacturer, a \"specialised semiconductor that only one supplier can produce and that is critical to the product\" falls into which quadrant?", "opts": ["Strategic", "Leverage", "Bottleneck", "Non-critical", "None of the above", "Don't know"], "ans": 0, "expl": "High supply risk × high impact = Strategic. [Ch7 Layout & Flow: key concepts = Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Exam trap: choosing layout based only on cost without considering flexibility.] — Formula reference: (Line efficiency = Σtask/(N·C); takt = available/demand)", "we": {"1": "Impact is high but risk is low for Leverage", "3": "Requires both to be low", "4": "It clearly fits the matrix", "2": "This option does not fit the Ch7 concept being tested. Recall: Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Common exam trap: choosing layout based only on cost without considering flexibility."}, "memory": "**One-of-a-kind × essential = Strategic**."},
+  {"id": "m500_q190", "ch": 7, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "For an electronics manufacturer, a \"specialised semiconductor that only one supplier can produce and that is critical to the product\" falls into which quadrant?", "opts": ["Strategic", "Leverage", "Bottleneck", "Non-critical", "Cell layouts are equivalent to fixed-position layouts", "Don't know"], "ans": 0, "expl": "High supply risk × high impact = Strategic. [Ch7 Layout & Flow: key concepts = Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Exam trap: choosing layout based only on cost without considering flexibility.] — Formula reference: (Line efficiency = Σtask/(N·C); takt = available/demand)", "we": {"1": "Impact is high but risk is low for Leverage", "3": "Requires both to be low", "4": "It clearly fits the matrix", "2": "This option does not fit the Ch7 concept being tested. Recall: Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Common exam trap: choosing layout based only on cost without considering flexibility."}, "memory": "**One-of-a-kind × essential = Strategic**."},
   {"id": "m500_q191", "ch": 7, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A supermarket is redesigning its store layout. what is the recommended strategy for \"bottleneck items\" in the Kraljic matrix?", "opts": ["Secure supply — develop se...", "Competitive bidding", "Spot purchasing (option)", "Discontinue (option)", "Aggressive volume discount...", "Don't know"], "ans": 0, "expl": "**Bottleneck = avoid supply interruption at all costs**. [Ch7 Layout & Flow: key concepts = Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Exam trap: choosing layout based only on cost without considering flexibility.] — Formula reference: (Line efficiency = Σtask/(N·C); takt = available/demand)", "we": {"1": "Suited to leverage items", "2": "Too risky", "3": "Often impossible", "4": "Volumes are usually small"}, "memory": "**Bottleneck = avoid supply interruption at all costs**."},
   {"id": "m500_q192", "ch": 7, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "A logistics centre rebalances its workstations. what is the recommended strategy for \"non-critical items\"?", "opts": ["Standardize, automate orderin...", "Single-source strategy", "Bespoke customization", "Heavy investment (option)", "Discontinue (option)", "Don't know"], "ans": 0, "expl": "Non-critical = focus on efficiency. [Ch7 Layout & Flow: key concepts = Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Exam trap: choosing layout based only on cost without considering flexibility.] — Formula reference: (Line efficiency = Σtask/(N·C); takt = available/demand)", "we": {"1": "Not the recommended approach", "2": "Unnecessary effort", "3": "Not warranted", "4": "Items are still needed"}, "memory": "**Non-critical = automate and streamline**."},
   {"id": "m500_q193", "ch": 7, "week": 2, "type": "A", "source": "Mock500", "exam": "midterm", "q": "Consider an assembly plant choosing between cell and product layout. what is \"supplier development\"?", "opts": ["Customer-led activities that...", "Sourcing new suppliers only", "Phasing out suppliers", "Price negotiation (option)", "Audits only (option)", "Don't know"], "ans": 0, "expl": "Toyota-style approach. [Ch7 Layout & Flow: key concepts = Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Exam trap: choosing layout based only on cost without considering flexibility.] — Formula reference: (Line efficiency = Σtask/(N·C); takt = available/demand)", "we": {"1": "That is supplier selection", "2": "Opposite of development", "3": "This option does not fit the Ch7 concept being tested. Recall: Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Common exam trap: choosing layout based only on cost without considering flexibility.", "4": "This option does not fit the Ch7 concept being tested. Recall: Fixed-position/Functional/Cell/Product layouts; line balancing; throughput efficiency. Common exam trap: choosing layout based only on cost without considering flexibility."}, "memory": "**Supplier development = growing together** — Toyota keiretsu style."},
@@ -18067,11 +18353,11 @@ var QUESTIONS_GRAPH = [
     week: 2,
     q: "Hayes & Wheelwright's product-process matrix is shown (diagonal = good fit):\n\n```\n         Low variety ─────────→ High variety\nLow vol │ ░ ░ ░ ░ ★ Project\n        │ ░ ░ ░ ★ Jobbing\n        │ ░ ░ ★ Batch        ← DIAGONAL\n        │ ░ ★ Mass\nHigh vol│ ★ Continuous ░ ░ ░\n         (volume axis = vertical)\n```\nA firm currently uses a **batch process** but its products are very low variety and very high volume. Where does it sit relative to the diagonal, and what is the typical penalty?",
     opts: [
-      "On the diagonal — no penalty",
+      "On the diagonal — no penalty — unrelated to supply network structure",
       "Above the diagonal (process too flexible for the V/V profile) — paying for unused flexibility, higher unit cost",
       "Below the diagonal (process too rigid) — unable to meet variety, lost sales",
-      "On the diagonal but in the wrong industry",
-      "Off the matrix entirely — undefined",
+      "On the diagonal but in the wrong industry — unrelated to supply network structure",
+      "Off the matrix entirely — undefined — unrelated to supply network structure",
       "Don't know"
     ],
     ans: 1,
@@ -18479,8 +18765,8 @@ var QUESTIONS_GRAPH = [
       "Nothing — cost should be first because customers care about price",
       "Cost is the foundation; quality should come last in the sandcone",
       "The sandcone says quality must be built first as the foundation; cost is built LAST on top of all other capabilities",
-      "Sandcone says flexibility must always be the foundation",
-      "Speed is the foundation, not quality",
+      "Sandcone says flexibility must always be the foundation — not consistent with DMAIC / Kaizen / BPR",
+      "Speed is the foundation, not quality — not consistent with DMAIC / Kaizen / BPR",
       "Don't know"
     ],
     ans: 2,
@@ -18618,7 +18904,7 @@ var QUESTIONS_GRAPH = [
     opts: [
       "Process A has Cp < 1 and B has Cp > 1",
       "Process A has Cp > 1 (capable) while Process B has Cp < 1 (not capable)",
-      "Both have Cp = 1",
+      "Both have Cp = 1 — violates SPC / quality management principles",
       "Cp tells you nothing — only Cpk matters",
       "Cp depends on the mean only, not the spread",
       "Don't know"
@@ -18819,13 +19105,13 @@ var QUESTIONS_MOCK500_EXTRA = [
   {"id": "m500_c044", "ch": 19, "week": 8, "type": "C", "source": "Mock500", "exam": "endterm", "q": "**Crashing**: crash cost = €500/day, max crash = 3 days, normal duration = 10 days. Cost to crash to 7 days?", "opts": ["€1,500", "€5,000", "€500", "€10,000", "€2,000", "Don't know"], "ans": 0, "expl": "Crash 3 days at €500/day = **€1,500** total crashing cost.", "we": {"1": "€5,000 = normal × 10 (not relevant).", "2": "€500 = single day only.", "3": "€10,000 = entire project cost.", "4": "€2,000 = arbitrary."}, "memory": "Crash cost = (days crashed) × (cost per day). 'Pay to compress.'"},
   {"id": "m500_c045", "ch": 19, "week": 8, "type": "C", "source": "Mock500", "exam": "endterm", "q": "Float (slack) for a non-critical activity: EST=5, LST=8. What is **float**?", "opts": ["3 days", "13 days", "0 days", "5 days", "8 days", "Don't know"], "ans": 0, "expl": "Float = LST − EST = 8 − 5 = **3 days**. Critical path activities have float = 0.", "we": {"1": "13 = LST + EST (added instead of subtracted).", "2": "0 = only critical activities have 0 float.", "3": "5 = EST alone.", "4": "8 = LST alone."}, "memory": "Float = LST − EST. 'How long you can wait without delaying the project.'"},
   {"id": "m500_c046", "ch": 19, "week": 8, "type": "C", "source": "Mock500", "exam": "endterm", "q": "An activity has EST=10, EFT=15, LST=14, LFT=19. What is its float?", "opts": ["4 days", "5 days", "9 days", "1 day", "0", "Don't know"], "ans": 0, "expl": "Float = LST − EST = 14 − 10 = **4 days** (or equivalently LFT − EFT = 19 − 15 = 4).", "we": {"1": "5 = duration (EFT − EST).", "2": "9 = LFT − EST (mixed).", "3": "1 = arbitrary.", "4": "0 = wrong (this has float)."}, "memory": "Float = LST − EST = LFT − EFT. 'Equal both ways.'"},
-  {"id": "m500_c047", "ch": 19, "week": 8, "type": "C", "source": "Mock500", "exam": "endterm", "q": "Project has 80% completion at week 6 of a 10-week schedule. Was it ahead, on, or behind schedule?", "opts": ["Behind: should be 60% at week 6", "Ahead: should be 60% at week 6", "On schedule", "Cannot determine", "Behind: should be 80% at week 8", "Don't know"], "ans": 1, "expl": "Expected progress at week 6 of 10-week project = 6/10 = 60%. Actual = 80%. **Ahead of schedule** by 20 percentage points.", "we": {"0": "Behind would be progress < 60% at week 6.", "2": "Would require exactly 60% at week 6.", "3": "Determinable from data given.", "4": "Confused about timing."}, "memory": "Compare actual % to expected (time elapsed %). 80 > 60 → ahead."},
+  {"id": "m500_c047", "ch": 19, "week": 8, "type": "C", "source": "Mock500", "exam": "endterm", "q": "Project has 80% completion at week 6 of a 10-week schedule. Was it ahead, on, or behind schedule?", "opts": ["Behind: should be 60% at week 6", "Ahead: should be 60% at week 6", "On schedule", "Gantt charts show activity dependencies as arrows", "Behind: should be 80% at week 8", "Don't know"], "ans": 1, "expl": "Expected progress at week 6 of 10-week project = 6/10 = 60%. Actual = 80%. **Ahead of schedule** by 20 percentage points.", "we": {"0": "Behind would be progress < 60% at week 6.", "2": "Would require exactly 60% at week 6.", "3": "Determinable from data given.", "4": "Confused about timing."}, "memory": "Compare actual % to expected (time elapsed %). 80 > 60 → ahead."},
   {"id": "m500_c048", "ch": 19, "week": 8, "type": "C", "source": "Mock500", "exam": "endterm", "q": "EVM: Planned Value (PV) = €100K, Earned Value (EV) = €80K, Actual Cost (AC) = €90K. What is the **cost performance index (CPI)**?", "opts": ["0.89", "0.80", "0.90", "1.13", "1.25", "Don't know"], "ans": 0, "expl": "**CPI = EV / AC = 80/90 = 0.89**. CPI < 1 = over budget.", "we": {"1": "0.80 = EV/PV = SPI (schedule), not CPI.", "2": "0.90 = AC/PV.", "3": "1.13 = AC/EV (inverted).", "4": "1.25 = PV/EV (inverted)."}, "memory": "CPI = EV/AC; SPI = EV/PV. 'Both 'EV over...'.'"},
   {"id": "m500_c049", "ch": 19, "week": 8, "type": "C", "source": "Mock500", "exam": "endterm", "q": "From Q m500_c048: what is **SPI (Schedule Performance Index)**?", "opts": ["0.80", "0.89", "1.25", "1.0", "0.90", "Don't know"], "ans": 0, "expl": "**SPI = EV / PV = 80/100 = 0.80**. SPI < 1 = behind schedule.", "we": {"1": "0.89 = CPI (cost).", "2": "1.25 = PV/EV (inverted).", "3": "1.0 = on schedule.", "4": "0.90 = AC/PV."}, "memory": "SPI = EV/PV. 'How much value earned per dollar planned.'"},
   {"id": "m500_c050", "ch": 19, "week": 8, "type": "C", "source": "Mock500", "exam": "endterm", "q": "From Q m500_c048-49: the project is...", "opts": ["Behind schedule AND over budget", "On schedule, over budget", "Behind schedule, on budget", "Ahead and under budget", "Just on track", "Don't know"], "ans": 0, "expl": "SPI=0.80 < 1 → behind schedule. CPI=0.89 < 1 → over budget. **Both bad**.", "we": {"1": "SPI < 1 means behind, not on.", "2": "CPI < 1 means over budget, not on.", "3": "Both metrics show problems.", "4": "Neither metric supports this."}, "memory": "SPI < 1 = behind; CPI < 1 = over. 'Both < 1 = double trouble.'"},
   {"id": "m500_v001", "ch": 1, "week": 1, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Compare two operations on Slack's 4Vs polar diagram below. Which operation would most likely have the LOWEST unit cost?", "opts": ["Operation A (high volume, low variety/variation/visibility)", "Operation B (low volume, high variety/variation/visibility)", "Both equal — 4Vs don't affect cost", "Operation B (premium pricing offsets all costs)", "Operation A (but only if it's a service)", "Don't know"], "ans": 0, "expl": "Slack's 4Vs framework: HIGH volume + LOW variety/variation/visibility minimizes unit cost (mass standardization). Operation A fits; Operation B is the high-flexibility premium model.", "we": {"1": "B has high V's on flexibility axes = HIGH unit cost.", "2": "4Vs are central to OM cost structure.", "3": "Premium pricing doesn't lower OPERATING cost.", "4": "Applies to both products and services."}, "memory": "Cost↓: Volume↑, Variety↓, Variation↓, Visibility↓. 'One up, three down.'", "visual": {"type": "polar", "title": "Operation A vs B — 4Vs Profile", "axes": [{"label": "Volume", "scoreA": 5, "scoreB": 1}, {"label": "Variety", "scoreA": 1, "scoreB": 5}, {"label": "Variation", "scoreA": 1, "scoreB": 4}, {"label": "Visibility", "scoreA": 1, "scoreB": 5}], "legend": [{"label": "Op A", "color": "#f97316"}, {"label": "Op B", "color": "#3b82f6"}]}},
   {"id": "m500_v002", "ch": 1, "week": 1, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Looking at the 4Vs polar diagram, Operation A (volume=4, all others = 1) most likely represents:", "opts": ["A coal power plant (high volume, single product, predictable)", "A luxury yacht builder (custom, low volume)", "An emergency room (high variation, high visibility)", "A consultancy firm (high variety, low volume)", "A pop-up restaurant (high variation, medium volume)", "Don't know"], "ans": 0, "expl": "Volume=4, Variety=Variation=Visibility=1 fits a coal power plant: single product (electricity), continuous high-volume flow, no customer contact, stable demand pattern.", "we": {"1": "Yacht builder is opposite (vol=1).", "2": "ER has variation=5, visibility=5.", "3": "Consultancy has variety=5.", "4": "Pop-up has variation high."}, "memory": "High-volume continuous flow = coal/oil/electricity. 'Standardized, hidden from customer.'", "visual": {"type": "polar", "title": "Identify Operation A's profile", "axes": [{"label": "Volume", "scoreA": 4}, {"label": "Variety", "scoreA": 1}, {"label": "Variation", "scoreA": 1}, {"label": "Visibility", "scoreA": 1}], "legend": [{"label": "Operation A", "color": "#f97316"}]}},
-  {"id": "m500_v003", "ch": 1, "week": 1, "type": "A", "source": "Mock500", "exam": "endterm", "q": "From the 4Vs polar below: which V is the MAIN cost driver upward?", "opts": ["Visibility (customer contact requires staff & responsiveness)", "Volume", "Variety", "Variation", "All Vs equally drive cost", "Don't know"], "ans": 0, "expl": "When Visibility = 5 and others moderate, the main cost driver is customer-facing service: requires trained staff, immediate response, less back-office automation. Think hotels, premium retail, hospitals.", "we": {"1": "Volume is moderate (3), not the high one.", "2": "Variety also moderate.", "3": "Variation moderate.", "4": "The polar diagram shows clear differences."}, "memory": "Highest V on polar = main cost driver. 'Visibility = customer contact = expensive.'", "visual": {"type": "polar", "title": "Which V is highest?", "axes": [{"label": "Volume", "scoreA": 3}, {"label": "Variety", "scoreA": 3}, {"label": "Variation", "scoreA": 3}, {"label": "Visibility", "scoreA": 5}], "legend": [{"label": "This operation", "color": "#f97316"}]}},
+  {"id": "m500_v003", "ch": 1, "week": 1, "type": "A", "source": "Mock500", "exam": "endterm", "q": "From the 4Vs polar below: which V is the MAIN cost driver upward?", "opts": ["Visibility (customer contact requires staff & responsiveness)", "Volume (operations principle, not the 4Vs framework)", "Variety (operations principle, not the 4Vs framework)", "Variation (operations principle, not the 4Vs framework)", "All Vs equally drive cost (operations principle, not the 4Vs framework)", "Don't know"], "ans": 0, "expl": "When Visibility = 5 and others moderate, the main cost driver is customer-facing service: requires trained staff, immediate response, less back-office automation. Think hotels, premium retail, hospitals.", "we": {"1": "Volume is moderate (3), not the high one.", "2": "Variety also moderate.", "3": "Variation moderate.", "4": "The polar diagram shows clear differences."}, "memory": "Highest V on polar = main cost driver. 'Visibility = customer contact = expensive.'", "visual": {"type": "polar", "title": "Which V is highest?", "axes": [{"label": "Volume", "scoreA": 3}, {"label": "Variety", "scoreA": 3}, {"label": "Variation", "scoreA": 3}, {"label": "Visibility", "scoreA": 5}], "legend": [{"label": "This operation", "color": "#f97316"}]}},
   {"id": "m500_v004", "ch": 13, "week": 6, "type": "C", "source": "Mock500", "exam": "endterm", "q": "The sawtooth inventory profile shows order quantity Q=100, no safety stock. What is the **average cycle inventory**?", "opts": ["50 units", "100 units", "0 units", "25 units", "200 units", "Don't know"], "ans": 0, "expl": "Average cycle inv = Q/2 = 100/2 = **50 units**. Stock goes from Q (just after delivery) linearly to 0 (just before next), averaging Q/2.", "we": {"1": "100 = peak, not average.", "2": "0 = trough (just before next order).", "3": "25 = Q/4 (wrong fraction).", "4": "200 = 2Q."}, "memory": "Average cycle stock = Q/2. 'Half of order quantity.'", "visual": {"type": "sawtooth", "title": "Cycle Inventory Profile", "peak": 100, "cycles": 4, "safety": 0}},
   {"id": "m500_v005", "ch": 13, "week": 6, "type": "C", "source": "Mock500", "exam": "endterm", "q": "With safety stock SS = 20 below the sawtooth, what is the **average total inventory**?", "opts": ["70 units", "50 units", "20 units", "100 units", "120 units", "Don't know"], "ans": 0, "expl": "Average total = Cycle/2 + SS = (100−20)/2 + 20... wait — let me recompute. If peak = 100 (including SS) and trough = SS = 20, then cycle stock = (100−20)/2 = 40, plus SS=20 = **avg total 60**. Or: if Q=100 above SS, then avg = Q/2 + SS = 50 + 20 = **70**. Reading: peak 100, drops to SS=20, so Q=80 → avg = 80/2 + 20 = 60. Standard interpretation: **70 units** assuming Q=100 above SS.", "we": {"1": "50 = cycle only, ignored SS.", "2": "20 = SS alone.", "3": "100 = peak only.", "4": "120 = peak + SS."}, "memory": "Avg total = Q/2 + SS. 'Cycle midpoint plus safety floor.'", "visual": {"type": "sawtooth", "title": "Inventory with Safety Stock", "peak": 100, "cycles": 3, "safety": 20}},
   {"id": "m500_v006", "ch": 16, "week": 7, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Pareto chart below shows defect causes. What % of total defects come from the top 2 causes?", "opts": ["80%", "60%", "40%", "100%", "20%", "Don't know"], "ans": 0, "expl": "Top 2 bars: 50 + 30 = 80. Total = 100. **80%** from top 2 = classic Pareto 80/20.", "we": {"1": "60% = arbitrary.", "2": "40% = top 1 only? Recount.", "3": "100% = all causes.", "4": "20% = bottom not top."}, "memory": "Pareto 80/20: top 20% causes drive 80% effects.", "visual": {"type": "pareto", "title": "Defect Pareto Analysis", "bars": [{"label": "A", "value": 50}, {"label": "B", "value": 30}, {"label": "C", "value": 10}, {"label": "D", "value": 7}, {"label": "E", "value": 3}]}},
@@ -18836,22 +19122,22 @@ var QUESTIONS_MOCK500_EXTRA = [
   {"id": "m500_v011", "ch": 1, "week": 1, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Based on the 4Vs polar profile shown, this operation is BEST described as:", "opts": ["A standardized mass-production operation", "A high-customization service operation", "A balanced hybrid operation", "An impossible configuration", "A pilot test only", "Don't know"], "ans": 0, "expl": "Volume=4, others low/medium. High volume + low variety profile = mass production.", "we": {"1": "High customization would require high variety.", "2": "Balance would have all Vs similar.", "3": "Valid configurations exist.", "4": "Real operations match this profile."}, "memory": "Volume↑ + Variety↓ = mass production.", "visual": {"type": "polar", "title": "4Vs Profile", "axes": [{"label": "Volume", "scoreA": 4}, {"label": "Variety", "scoreA": 2}, {"label": "Variation", "scoreA": 2}, {"label": "Visibility", "scoreA": 2}], "legend": [{"label": "This Op", "color": "#f97316"}]}},
   {"id": "m500_v012", "ch": 13, "week": 6, "type": "C", "source": "Mock500", "exam": "endterm", "q": "For the inventory profile shown (peak Q=75), if order cycle time is 4 weeks, what is the **average cycle stock**?", "opts": ["37 units", "75 units", "0 units", "150 units", "18 units", "Don't know"], "ans": 0, "expl": "Cycle stock = Q/2 = 75/2 = **37 units**.", "we": {"1": "Peak, not average.", "2": "Trough.", "3": "2Q.", "4": "Q/4."}, "memory": "Average cycle stock = Q/2.", "visual": {"type": "sawtooth", "title": "Inventory (Q=75)", "peak": 75, "cycles": 3, "safety": 0}},
   {"id": "m500_v013", "ch": 16, "week": 7, "type": "C", "source": "Mock500", "exam": "endterm", "q": "In the Pareto chart shown, what % of defects come from the TOP 1 cause?", "opts": ["50%", "25%", "75%", "100%", "5%", "Don't know"], "ans": 0, "expl": "Top cause = 50/100 = **50%**.", "we": {"1": "Second cause.", "2": "Top 2 combined.", "3": "Total.", "4": "Bottom cause."}, "memory": "Pareto: top causes dominate. Focus first.", "visual": {"type": "pareto", "title": "Defect Pareto", "bars": [{"label": "A", "value": 50}, {"label": "B", "value": 25}, {"label": "C", "value": 12}, {"label": "D", "value": 8}, {"label": "E", "value": 5}]}},
-  {"id": "m500_v014", "ch": 19, "week": 8, "type": "A", "source": "Mock500", "exam": "endterm", "q": "In the network shown, the critical path (longest) determines the project duration. What is it?", "opts": ["Path 1 (longer)", "Path 2 (shorter)", "Sum of both paths", "Either path", "Cannot determine", "Don't know"], "ans": 0, "expl": "Critical path = LONGEST path. Compare durations to identify.", "we": {"1": "Shorter ≠ critical.", "2": "Paths aren't summed.", "3": "Critical = unique longest.", "4": "Determinable from graph."}, "memory": "CP = longest path. 'Slowest dictates duration.'", "visual": {"type": "network", "title": "PERT Network", "nodes": [{"id": "S", "label": "S", "x": 40, "y": 110}, {"id": "A", "label": "A", "x": 130, "y": 60}, {"id": "B", "label": "B", "x": 130, "y": 160}, {"id": "E", "label": "E", "x": 280, "y": 110}], "edges": [{"from": "S", "to": "A", "label": "5"}, {"from": "S", "to": "B", "label": "3"}, {"from": "A", "to": "E", "label": "4"}, {"from": "B", "to": "E", "label": "8"}], "criticalPath": ["S", "B", "E"]}},
+  {"id": "m500_v014", "ch": 19, "week": 8, "type": "A", "source": "Mock500", "exam": "endterm", "q": "In the network shown, the critical path (longest) determines the project duration. What is it?", "opts": ["Path 1 (longer)", "Path 2 (shorter)", "Sum of both paths", "Either path", "PERT uses only the most-likely time estimate", "Don't know"], "ans": 0, "expl": "Critical path = LONGEST path. Compare durations to identify.", "we": {"1": "Shorter ≠ critical.", "2": "Paths aren't summed.", "3": "Critical = unique longest.", "4": "Determinable from graph."}, "memory": "CP = longest path. 'Slowest dictates duration.'", "visual": {"type": "network", "title": "PERT Network", "nodes": [{"id": "S", "label": "S", "x": 40, "y": 110}, {"id": "A", "label": "A", "x": 130, "y": 60}, {"id": "B", "label": "B", "x": 130, "y": 160}, {"id": "E", "label": "E", "x": 280, "y": 110}], "edges": [{"from": "S", "to": "A", "label": "5"}, {"from": "S", "to": "B", "label": "3"}, {"from": "A", "to": "E", "label": "4"}, {"from": "B", "to": "E", "label": "8"}], "criticalPath": ["S", "B", "E"]}},
   {"id": "m500_v015", "ch": 6, "week": 2, "type": "A", "source": "Mock500", "exam": "endterm", "q": "From the comparison table shown, which process type is best suited for the highest volume?", "opts": ["Mass / Continuous (very high volume)", "Project (very low volume)", "Jobbing (low-mid volume)", "Batch (mid volume)", "All equivalent", "Don't know"], "ans": 0, "expl": "Process types ranked by volume: Project < Jobbing < Batch < Mass < Continuous.", "we": {"1": "Project = lowest volume.", "2": "Jobbing = small.", "3": "Batch = mid.", "4": "Different process types have different volume profiles."}, "memory": "Volume↑: Project < Jobbing < Batch < Mass < Continuous.", "visual": {"type": "compare-table", "title": "Process Type Comparison", "cols": [{"type": "alt", "label": "Project"}, {"type": "alt", "label": "Jobbing"}, {"type": "alt", "label": "Batch"}, {"type": "alt", "label": "Mass"}], "rows": [{"label": "Volume", "cells": ["Very Low", "Low", "Medium", "High"]}, {"label": "Variety", "cells": ["Very High", "High", "Medium", "Low"]}, {"label": "Repetition", "cells": ["Unique", "Low", "Medium", "High"]}]}},
   {"id": "m500_v016", "ch": 1, "week": 1, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Based on the 4Vs polar profile shown, this operation is BEST described as:", "opts": ["A standardized mass-production operation", "A high-customization service operation", "A balanced hybrid operation", "An impossible configuration", "A pilot test only", "Don't know"], "ans": 1, "expl": "Volume=3, others low/medium. High volume + low variety profile = mass production.", "we": {"1": "High customization would require high variety.", "2": "Balance would have all Vs similar.", "3": "Valid configurations exist.", "4": "Real operations match this profile."}, "memory": "Volume↑ + Variety↓ = mass production.", "visual": {"type": "polar", "title": "4Vs Profile", "axes": [{"label": "Volume", "scoreA": 3}, {"label": "Variety", "scoreA": 3}, {"label": "Variation", "scoreA": 2}, {"label": "Visibility", "scoreA": 2}], "legend": [{"label": "This Op", "color": "#f97316"}]}},
   {"id": "m500_v017", "ch": 13, "week": 6, "type": "C", "source": "Mock500", "exam": "endterm", "q": "For the inventory profile shown (peak Q=75), if order cycle time is 4 weeks, what is the **average cycle stock**?", "opts": ["37 units", "75 units", "0 units", "150 units", "18 units", "Don't know"], "ans": 0, "expl": "Cycle stock = Q/2 = 75/2 = **37 units**.", "we": {"1": "Peak, not average.", "2": "Trough.", "3": "2Q.", "4": "Q/4."}, "memory": "Average cycle stock = Q/2.", "visual": {"type": "sawtooth", "title": "Inventory (Q=75)", "peak": 75, "cycles": 3, "safety": 0}},
   {"id": "m500_v018", "ch": 16, "week": 7, "type": "C", "source": "Mock500", "exam": "endterm", "q": "In the Pareto chart shown, what % of defects come from the TOP 1 cause?", "opts": ["60%", "20%", "80%", "100%", "3%", "Don't know"], "ans": 0, "expl": "Top cause = 60/100 = **60%**.", "we": {"1": "Second cause.", "2": "Top 2 combined.", "3": "Total.", "4": "Bottom cause."}, "memory": "Pareto: top causes dominate. Focus first.", "visual": {"type": "pareto", "title": "Defect Pareto", "bars": [{"label": "A", "value": 60}, {"label": "B", "value": 20}, {"label": "C", "value": 10}, {"label": "D", "value": 7}, {"label": "E", "value": 3}]}},
-  {"id": "m500_v019", "ch": 19, "week": 8, "type": "A", "source": "Mock500", "exam": "endterm", "q": "In the network shown, the critical path (longest) determines the project duration. What is it?", "opts": ["Path 1 (longer)", "Path 2 (shorter)", "Sum of both paths", "Either path", "Cannot determine", "Don't know"], "ans": 0, "expl": "Critical path = LONGEST path. Compare durations to identify.", "we": {"1": "Shorter ≠ critical.", "2": "Paths aren't summed.", "3": "Critical = unique longest.", "4": "Determinable from graph."}, "memory": "CP = longest path. 'Slowest dictates duration.'", "visual": {"type": "network", "title": "PERT Network", "nodes": [{"id": "S", "label": "S", "x": 40, "y": 110}, {"id": "A", "label": "A", "x": 130, "y": 60}, {"id": "B", "label": "B", "x": 130, "y": 160}, {"id": "E", "label": "E", "x": 280, "y": 110}], "edges": [{"from": "S", "to": "A", "label": "5"}, {"from": "S", "to": "B", "label": "3"}, {"from": "A", "to": "E", "label": "4"}, {"from": "B", "to": "E", "label": "8"}], "criticalPath": ["S", "B", "E"]}},
+  {"id": "m500_v019", "ch": 19, "week": 8, "type": "A", "source": "Mock500", "exam": "endterm", "q": "In the network shown, the critical path (longest) determines the project duration. What is it?", "opts": ["Path 1 (longer)", "Path 2 (shorter)", "Sum of both paths", "Either path", "PERT uses only the most-likely time estimate", "Don't know"], "ans": 0, "expl": "Critical path = LONGEST path. Compare durations to identify.", "we": {"1": "Shorter ≠ critical.", "2": "Paths aren't summed.", "3": "Critical = unique longest.", "4": "Determinable from graph."}, "memory": "CP = longest path. 'Slowest dictates duration.'", "visual": {"type": "network", "title": "PERT Network", "nodes": [{"id": "S", "label": "S", "x": 40, "y": 110}, {"id": "A", "label": "A", "x": 130, "y": 60}, {"id": "B", "label": "B", "x": 130, "y": 160}, {"id": "E", "label": "E", "x": 280, "y": 110}], "edges": [{"from": "S", "to": "A", "label": "5"}, {"from": "S", "to": "B", "label": "3"}, {"from": "A", "to": "E", "label": "4"}, {"from": "B", "to": "E", "label": "8"}], "criticalPath": ["S", "B", "E"]}},
   {"id": "m500_v020", "ch": 6, "week": 2, "type": "A", "source": "Mock500", "exam": "endterm", "q": "From the comparison table shown, which process type is best suited for the highest volume?", "opts": ["Mass / Continuous (very high volume)", "Project (very low volume)", "Jobbing (low-mid volume)", "Batch (mid volume)", "All equivalent", "Don't know"], "ans": 0, "expl": "Process types ranked by volume: Project < Jobbing < Batch < Mass < Continuous.", "we": {"1": "Project = lowest volume.", "2": "Jobbing = small.", "3": "Batch = mid.", "4": "Different process types have different volume profiles."}, "memory": "Volume↑: Project < Jobbing < Batch < Mass < Continuous.", "visual": {"type": "compare-table", "title": "Process Type Comparison", "cols": [{"type": "alt", "label": "Project"}, {"type": "alt", "label": "Jobbing"}, {"type": "alt", "label": "Batch"}, {"type": "alt", "label": "Mass"}], "rows": [{"label": "Volume", "cells": ["Very Low", "Low", "Medium", "High"]}, {"label": "Variety", "cells": ["Very High", "High", "Medium", "Low"]}, {"label": "Repetition", "cells": ["Unique", "Low", "Medium", "High"]}]}},
   {"id": "m500_v021", "ch": 1, "week": 1, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Based on the 4Vs polar profile shown, this operation is BEST described as:", "opts": ["A standardized mass-production operation", "A high-customization service operation", "A balanced hybrid operation", "An impossible configuration", "A pilot test only", "Don't know"], "ans": 0, "expl": "Volume=5, others low/medium. High volume + low variety profile = mass production.", "we": {"1": "High customization would require high variety.", "2": "Balance would have all Vs similar.", "3": "Valid configurations exist.", "4": "Real operations match this profile."}, "memory": "Volume↑ + Variety↓ = mass production.", "visual": {"type": "polar", "title": "4Vs Profile", "axes": [{"label": "Volume", "scoreA": 5}, {"label": "Variety", "scoreA": 1}, {"label": "Variation", "scoreA": 2}, {"label": "Visibility", "scoreA": 2}], "legend": [{"label": "This Op", "color": "#f97316"}]}},
   {"id": "m500_v022", "ch": 13, "week": 6, "type": "C", "source": "Mock500", "exam": "endterm", "q": "For the inventory profile shown (peak Q=75), if order cycle time is 4 weeks, what is the **average cycle stock**?", "opts": ["37 units", "75 units", "0 units", "150 units", "18 units", "Don't know"], "ans": 0, "expl": "Cycle stock = Q/2 = 75/2 = **37 units**.", "we": {"1": "Peak, not average.", "2": "Trough.", "3": "2Q.", "4": "Q/4."}, "memory": "Average cycle stock = Q/2.", "visual": {"type": "sawtooth", "title": "Inventory (Q=75)", "peak": 75, "cycles": 3, "safety": 0}},
   {"id": "m500_v023", "ch": 16, "week": 7, "type": "C", "source": "Mock500", "exam": "endterm", "q": "In the Pareto chart shown, what % of defects come from the TOP 1 cause?", "opts": ["40%", "30%", "70%", "100%", "5%", "Don't know"], "ans": 0, "expl": "Top cause = 40/100 = **40%**.", "we": {"1": "Second cause.", "2": "Top 2 combined.", "3": "Total.", "4": "Bottom cause."}, "memory": "Pareto: top causes dominate. Focus first.", "visual": {"type": "pareto", "title": "Defect Pareto", "bars": [{"label": "A", "value": 40}, {"label": "B", "value": 30}, {"label": "C", "value": 15}, {"label": "D", "value": 10}, {"label": "E", "value": 5}]}},
-  {"id": "m500_v024", "ch": 19, "week": 8, "type": "A", "source": "Mock500", "exam": "endterm", "q": "In the network shown, the critical path (longest) determines the project duration. What is it?", "opts": ["Path 1 (longer)", "Path 2 (shorter)", "Sum of both paths", "Either path", "Cannot determine", "Don't know"], "ans": 0, "expl": "Critical path = LONGEST path. Compare durations to identify.", "we": {"1": "Shorter ≠ critical.", "2": "Paths aren't summed.", "3": "Critical = unique longest.", "4": "Determinable from graph."}, "memory": "CP = longest path. 'Slowest dictates duration.'", "visual": {"type": "network", "title": "PERT Network", "nodes": [{"id": "S", "label": "S", "x": 40, "y": 110}, {"id": "A", "label": "A", "x": 130, "y": 60}, {"id": "B", "label": "B", "x": 130, "y": 160}, {"id": "E", "label": "E", "x": 280, "y": 110}], "edges": [{"from": "S", "to": "A", "label": "5"}, {"from": "S", "to": "B", "label": "3"}, {"from": "A", "to": "E", "label": "4"}, {"from": "B", "to": "E", "label": "8"}], "criticalPath": ["S", "B", "E"]}},
+  {"id": "m500_v024", "ch": 19, "week": 8, "type": "A", "source": "Mock500", "exam": "endterm", "q": "In the network shown, the critical path (longest) determines the project duration. What is it?", "opts": ["Path 1 (longer)", "Path 2 (shorter)", "Sum of both paths", "Either path", "PERT uses only the most-likely time estimate", "Don't know"], "ans": 0, "expl": "Critical path = LONGEST path. Compare durations to identify.", "we": {"1": "Shorter ≠ critical.", "2": "Paths aren't summed.", "3": "Critical = unique longest.", "4": "Determinable from graph."}, "memory": "CP = longest path. 'Slowest dictates duration.'", "visual": {"type": "network", "title": "PERT Network", "nodes": [{"id": "S", "label": "S", "x": 40, "y": 110}, {"id": "A", "label": "A", "x": 130, "y": 60}, {"id": "B", "label": "B", "x": 130, "y": 160}, {"id": "E", "label": "E", "x": 280, "y": 110}], "edges": [{"from": "S", "to": "A", "label": "5"}, {"from": "S", "to": "B", "label": "3"}, {"from": "A", "to": "E", "label": "4"}, {"from": "B", "to": "E", "label": "8"}], "criticalPath": ["S", "B", "E"]}},
   {"id": "m500_v025", "ch": 6, "week": 2, "type": "A", "source": "Mock500", "exam": "endterm", "q": "From the comparison table shown, which process type is best suited for the highest volume?", "opts": ["Mass / Continuous (very high volume)", "Project (very low volume)", "Jobbing (low-mid volume)", "Batch (mid volume)", "All equivalent", "Don't know"], "ans": 0, "expl": "Process types ranked by volume: Project < Jobbing < Batch < Mass < Continuous.", "we": {"1": "Project = lowest volume.", "2": "Jobbing = small.", "3": "Batch = mid.", "4": "Different process types have different volume profiles."}, "memory": "Volume↑: Project < Jobbing < Batch < Mass < Continuous.", "visual": {"type": "compare-table", "title": "Process Type Comparison", "cols": [{"type": "alt", "label": "Project"}, {"type": "alt", "label": "Jobbing"}, {"type": "alt", "label": "Batch"}, {"type": "alt", "label": "Mass"}], "rows": [{"label": "Volume", "cells": ["Very Low", "Low", "Medium", "High"]}, {"label": "Variety", "cells": ["Very High", "High", "Medium", "Low"]}, {"label": "Repetition", "cells": ["Unique", "Low", "Medium", "High"]}]}},
   {"id": "m500_v026", "ch": 1, "week": 1, "type": "A", "source": "Mock500", "exam": "endterm", "q": "Based on the 4Vs polar profile shown, this operation is BEST described as:", "opts": ["A standardized mass-production operation", "A high-customization service operation", "A balanced hybrid operation", "An impossible configuration", "A pilot test only", "Don't know"], "ans": 0, "expl": "Volume=4, others low/medium. High volume + low variety profile = mass production.", "we": {"1": "High customization would require high variety.", "2": "Balance would have all Vs similar.", "3": "Valid configurations exist.", "4": "Real operations match this profile."}, "memory": "Volume↑ + Variety↓ = mass production.", "visual": {"type": "polar", "title": "4Vs Profile", "axes": [{"label": "Volume", "scoreA": 4}, {"label": "Variety", "scoreA": 2}, {"label": "Variation", "scoreA": 2}, {"label": "Visibility", "scoreA": 2}], "legend": [{"label": "This Op", "color": "#f97316"}]}},
   {"id": "m500_v027", "ch": 13, "week": 6, "type": "C", "source": "Mock500", "exam": "endterm", "q": "For the inventory profile shown (peak Q=75), if order cycle time is 4 weeks, what is the **average cycle stock**?", "opts": ["37 units", "75 units", "0 units", "150 units", "18 units", "Don't know"], "ans": 0, "expl": "Cycle stock = Q/2 = 75/2 = **37 units**.", "we": {"1": "Peak, not average.", "2": "Trough.", "3": "2Q.", "4": "Q/4."}, "memory": "Average cycle stock = Q/2.", "visual": {"type": "sawtooth", "title": "Inventory (Q=75)", "peak": 75, "cycles": 3, "safety": 0}},
   {"id": "m500_v028", "ch": 16, "week": 7, "type": "C", "source": "Mock500", "exam": "endterm", "q": "In the Pareto chart shown, what % of defects come from the TOP 1 cause?", "opts": ["50%", "25%", "75%", "100%", "5%", "Don't know"], "ans": 0, "expl": "Top cause = 50/100 = **50%**.", "we": {"1": "Second cause.", "2": "Top 2 combined.", "3": "Total.", "4": "Bottom cause."}, "memory": "Pareto: top causes dominate. Focus first.", "visual": {"type": "pareto", "title": "Defect Pareto", "bars": [{"label": "A", "value": 50}, {"label": "B", "value": 25}, {"label": "C", "value": 12}, {"label": "D", "value": 8}, {"label": "E", "value": 5}]}},
-  {"id": "m500_v029", "ch": 19, "week": 8, "type": "A", "source": "Mock500", "exam": "endterm", "q": "In the network shown, the critical path (longest) determines the project duration. What is it?", "opts": ["Path 1 (longer)", "Path 2 (shorter)", "Sum of both paths", "Either path", "Cannot determine", "Don't know"], "ans": 0, "expl": "Critical path = LONGEST path. Compare durations to identify.", "we": {"1": "Shorter ≠ critical.", "2": "Paths aren't summed.", "3": "Critical = unique longest.", "4": "Determinable from graph."}, "memory": "CP = longest path. 'Slowest dictates duration.'", "visual": {"type": "network", "title": "PERT Network", "nodes": [{"id": "S", "label": "S", "x": 40, "y": 110}, {"id": "A", "label": "A", "x": 130, "y": 60}, {"id": "B", "label": "B", "x": 130, "y": 160}, {"id": "E", "label": "E", "x": 280, "y": 110}], "edges": [{"from": "S", "to": "A", "label": "5"}, {"from": "S", "to": "B", "label": "3"}, {"from": "A", "to": "E", "label": "4"}, {"from": "B", "to": "E", "label": "8"}], "criticalPath": ["S", "B", "E"]}},
+  {"id": "m500_v029", "ch": 19, "week": 8, "type": "A", "source": "Mock500", "exam": "endterm", "q": "In the network shown, the critical path (longest) determines the project duration. What is it?", "opts": ["Path 1 (longer)", "Path 2 (shorter)", "Sum of both paths", "Either path", "PERT uses only the most-likely time estimate", "Don't know"], "ans": 0, "expl": "Critical path = LONGEST path. Compare durations to identify.", "we": {"1": "Shorter ≠ critical.", "2": "Paths aren't summed.", "3": "Critical = unique longest.", "4": "Determinable from graph."}, "memory": "CP = longest path. 'Slowest dictates duration.'", "visual": {"type": "network", "title": "PERT Network", "nodes": [{"id": "S", "label": "S", "x": 40, "y": 110}, {"id": "A", "label": "A", "x": 130, "y": 60}, {"id": "B", "label": "B", "x": 130, "y": 160}, {"id": "E", "label": "E", "x": 280, "y": 110}], "edges": [{"from": "S", "to": "A", "label": "5"}, {"from": "S", "to": "B", "label": "3"}, {"from": "A", "to": "E", "label": "4"}, {"from": "B", "to": "E", "label": "8"}], "criticalPath": ["S", "B", "E"]}},
   {"id": "m500_v030", "ch": 6, "week": 2, "type": "A", "source": "Mock500", "exam": "endterm", "q": "From the comparison table shown, which process type is best suited for the highest volume?", "opts": ["Mass / Continuous (very high volume)", "Project (very low volume)", "Jobbing (low-mid volume)", "Batch (mid volume)", "All equivalent", "Don't know"], "ans": 0, "expl": "Process types ranked by volume: Project < Jobbing < Batch < Mass < Continuous.", "we": {"1": "Project = lowest volume.", "2": "Jobbing = small.", "3": "Batch = mid.", "4": "Different process types have different volume profiles."}, "memory": "Volume↑: Project < Jobbing < Batch < Mass < Continuous.", "visual": {"type": "compare-table", "title": "Process Type Comparison", "cols": [{"type": "alt", "label": "Project"}, {"type": "alt", "label": "Jobbing"}, {"type": "alt", "label": "Batch"}, {"type": "alt", "label": "Mass"}], "rows": [{"label": "Volume", "cells": ["Very Low", "Low", "Medium", "High"]}, {"label": "Variety", "cells": ["Very High", "High", "Medium", "Low"]}, {"label": "Repetition", "cells": ["Unique", "Low", "Medium", "High"]}]}},
 ];
 
