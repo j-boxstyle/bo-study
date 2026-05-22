@@ -3522,23 +3522,83 @@ function escapeHtml(str) {
 function renderMd(str) {
   if (!str) return '';
   var s = String(str);
-  // 1) 許可された安全タグ（<sub>, <sup>, <br>, <strong>, <em>）を一時的に置き換え
   var safeTags = [];
   s = s.replace(/<\/?(?:sub|sup|strong|em|br)\s*\/?>/gi, function(m){
     safeTags.push(m);
-    return 'SAFETAG' + (safeTags.length - 1) + '';
+    return 'SAFETAG' + (safeTags.length - 1) + '';
   });
-  // 2) 残りの HTML をエスケープ
   s = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  // 3) Markdown 太字
+  var tablePlaceholders = [];
+  s = s.replace(/((?:^|\n)\|[^\n]+\|[^\n]*(?:\n\|[^\n]+\|[^\n]*)+)/g, function(m) {
+    tablePlaceholders.push(renderMarkdownTableInline(m.trim()));
+    return '\nTABLEPLACE' + (tablePlaceholders.length - 1) + '\n';
+  });
+  s = s.replace(/((?:^|\n)\d+\.\s[^\n]+(?:\n\d+\.\s[^\n]+)+)/g, function(m) {
+    var items = m.trim().split(/\n/).map(function(line) {
+      return line.replace(/^\d+\.\s+/, '');
+    });
+    return '\n<ol style="margin:8px 0;padding-left:24px;">' + items.map(function(it) {
+      return '<li style="margin:4px 0;line-height:1.6;">' + it + '</li>';
+    }).join('') + '</ol>\n';
+  });
+  s = s.replace(/((?:^|\n)[-*]\s[^\n]+(?:\n[-*]\s[^\n]+)+)/g, function(m) {
+    var items = m.trim().split(/\n/).map(function(line) {
+      return line.replace(/^[-*]\s+/, '');
+    });
+    return '\n<ul style="margin:8px 0;padding-left:24px;">' + items.map(function(it) {
+      return '<li style="margin:4px 0;line-height:1.6;">' + it + '</li>';
+    }).join('') + '</ul>\n';
+  });
+  s = s.replace(/(^|\n)###\s+([^\n]+)/g, '$1<h4 style="margin:14px 0 6px;font-size:18px;color:#fcd34d;">$2</h4>');
+  s = s.replace(/(^|\n)##\s+([^\n]+)/g, '$1<h3 style="margin:16px 0 8px;font-size:20px;color:#f97316;">$2</h3>');
+  s = s.replace(/`([^`\n]+)`/g, '<code style="background:#1e3a5f;padding:2px 6px;border-radius:4px;font-family:ui-monospace,monospace;font-size:0.92em;">$1</code>');
   s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  // 4) 改行
-  s = s.replace(/\n/g, '<br>');
-  // 5) 安全タグを復元
-  s = s.replace(/SAFETAG(\d+)/g, function(_, i){
+  s = s.replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>');
+  s = s.replace(/(?:<br>\s*){0,2}TABLEPLACE(\d+)(?:<br>\s*){0,2}/g, function(_, i) {
+    return tablePlaceholders[parseInt(i, 10)] || '';
+  });
+  s = s.replace(/SAFETAG(\d+)/g, function(_, i){
     return safeTags[parseInt(i, 10)];
   });
   return s;
+}
+
+function renderMarkdownTableInline(mdText) {
+  var lines = mdText.split(/\n/).map(function(l) { return l.trim(); }).filter(Boolean);
+  if (lines.length < 2) return mdText;
+  function splitCells(row) {
+    return row.replace(/^\|/, '').replace(/\|$/, '').split('|').map(function(c) { return c.trim(); });
+  }
+  var headers = splitCells(lines[0]);
+  var bodyStart = 1;
+  if (lines.length >= 2 && /^\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?$/.test(lines[1])) {
+    bodyStart = 2;
+  }
+  var h = '<div class="tbl-scroll-hint">← 横スクロール →</div><div class="tbl-scroll">';
+  h += '<table class="vis-compare"><thead><tr>';
+  for (var i = 0; i < headers.length; i++) {
+    var cls = i === 0 ? 'alt-col' : (i % 2 === 1 ? 'good-col' : 'bad-col');
+    h += '<th class="' + cls + '">' + processInlineMd(headers[i]) + '</th>';
+  }
+  h += '</tr></thead><tbody>';
+  for (var r = bodyStart; r < lines.length; r++) {
+    var cells = splitCells(lines[r]);
+    h += '<tr>';
+    for (var c = 0; c < cells.length; c++) {
+      if (c === 0) h += '<td class="label">' + processInlineMd(cells[c]) + '</td>';
+      else h += '<td>' + processInlineMd(cells[c]) + '</td>';
+    }
+    h += '</tr>';
+  }
+  h += '</tbody></table></div>';
+  return h;
+}
+
+function processInlineMd(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code style="background:#1e3a5f;padding:1px 4px;border-radius:3px;font-family:ui-monospace,monospace;font-size:0.9em;">$1</code>');
 }
 
 // ═══ RENDER MARKDOWN TABLE (extracted from question text) ═══
