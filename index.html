@@ -826,6 +826,7 @@ body{
 <div class="tab-bar">
   <button class="menu-btn" onclick="toggleDrawer()" aria-label="メニュー">☰</button>
   <button class="tab-btn active" data-tab="tab-textbook" onclick="switchTab('tab-textbook')">📖 教科書</button>
+  <button class="tab-btn" data-tab="tab-roadmap" onclick="switchTab('tab-roadmap')">🏠 ロードマップ</button>
   <button class="tab-btn" data-tab="tab-quiz" onclick="switchTab('tab-quiz')">❓ クイズ</button>
   <button class="tab-btn" data-tab="tab-compare" onclick="switchTab('tab-compare')">⚖️ 比較</button>
   <button class="tab-btn" data-tab="tab-calc" onclick="switchTab('tab-calc')">🧮 計算機</button>
@@ -870,6 +871,2164 @@ body{
     <div id="abbr-content"></div>
   </div>
 </div>
+
+<!-- Roadmap Tab (inline) -->
+<style id="roadmap-inline-style">
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, "Hiragino Sans", "Yu Gothic", sans-serif; background: #0a0e1a; color: #e8eef7; line-height: 1.6; }
+
+/* ============ HEADER ============ */
+header.hero {
+  background: linear-gradient(135deg, #d4a574 0%, #8b5a2b 100%);
+  padding: 32px 40px; color: #fff; position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+header h1 { font-size: 28px; margin-bottom: 6px; }
+header .sub { font-size: 14px; opacity: 0.9; }
+.company-box {
+  background: rgba(255,255,255,0.15); padding: 14px 18px; border-radius: 10px;
+  margin-top: 14px; font-size: 13px; backdrop-filter: blur(4px);
+}
+.company-box b { color: #ffe8b8; }
+
+/* ============ CONTROLS ============ */
+.controls {
+  position: sticky; top: 168px; z-index: 40;
+  background: #0f1726; padding: 12px 40px; border-bottom: 1px solid #243047;
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+}
+.controls input {
+  background: #1a2438; color: #fff; border: 1px solid #2d3a55;
+  padding: 8px 14px; border-radius: 8px; font-size: 14px; width: 260px;
+}
+.controls input:focus { outline: none; border-color: #6ab0ff; }
+.legend { display: flex; gap: 10px; font-size: 12px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+.filter-btn {
+  background: #1a2438; color: #aab8d0; border: 1px solid #2d3a55;
+  padding: 6px 14px; border-radius: 18px; cursor: pointer; font-size: 12px;
+  transition: all 0.2s;
+}
+.filter-btn:hover, .filter-btn.active { background: #2a4373; color: #fff; border-color: #4a7dd9; }
+
+/* ============ SIMPLE TREE ============ */
+.roadmap { padding: 24px 32px 80px; max-width: none; margin: 0; }
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.room {
+  margin-bottom: 48px;
+  background: #131b2d;
+  border-radius: 14px;
+  border-left: 6px solid;
+  padding: 26px 30px;
+}
+.room-head {
+  display: flex; align-items: center; gap: 14px;
+  padding-bottom: 18px; margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.room-head .icn { font-size: 42px; }
+.room-head .nm { font-size: 32px; font-weight: 700; }
+.room-head .jp { font-size: 18px; color: #aab8d0; margin-left: 8px; }
+
+/* ===== Family tree lines ===== */
+.branches {
+  padding-left: 28px;
+  margin-left: 14px;
+}
+
+.branch {
+  position: relative;
+  padding-top: 10px;
+}
+
+/* Horizontal tick connecting from vertical line to the node */
+.branch::before {
+  content: "";
+  position: absolute;
+  left: -28px;
+  top: 28px;   /* roughly vertical center of the node label */
+  width: 28px;
+  height: 2px;
+  background: var(--line-color, #4a7dd9);
+}
+
+/* Vertical line going through siblings */
+.branch::after {
+  content: "";
+  position: absolute;
+  left: -28px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--line-color, #4a7dd9);
+}
+
+/* Last sibling: cap the vertical at the tick */
+.branch:last-child::after {
+  height: 28px;
+}
+
+/* ===== Nodes (labels at each level) ===== */
+.node {
+  display: inline-block;
+}
+
+.sub-node {
+  font-size: 22px; color: #ffd66a; font-weight: 700;
+  padding: 8px 0;
+}
+
+.subsub-node {
+  font-size: 19px; color: #6ab0ff; font-weight: 600;
+  padding: 6px 0;
+}
+
+.leaf {
+  display: inline-block;
+  padding: 10px 18px;
+  font-size: 19px; color: #e8eef7;
+  background: #1a2438;
+  border: 1px solid #2d3a55;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.leaf:hover {
+  background: #2a4373; border-color: #6ab0ff;
+  color: #fff;
+}
+/* Parent leaf (has children/parts) - emphasized */
+.leaf.parent {
+  background: #232f4d;
+  border-color: #4a7dd9;
+  font-weight: 700;
+}
+.leaf.parent::after {
+  content: " ▾"; color: #6ab0ff; font-size: 14px;
+}
+/* Child part leaf - smaller, dimmer */
+.leaf.part {
+  background: transparent;
+  border: 1px dashed #3d4a68;
+  font-size: 17px; font-weight: 400;
+  color: #c4d0e6;
+  padding: 8px 14px;
+}
+.leaf.part:hover {
+  background: #1a2438; border-style: solid;
+}
+
+/* Modal: parts list */
+.parts-list { list-style: none; padding-left: 0; }
+.parts-list li {
+  padding: 10px 14px; margin-bottom: 6px;
+  background: #0f1626; border-radius: 8px;
+  border-left: 3px solid #6ab0ff;
+  font-size: 16px;
+}
+.parts-list li b { color: #ffd66a; font-size: 17px; }
+.concept-card .c-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.3; }
+.concept-card .c-hint { font-size: 11px; color: #8aa0c4; margin-top: 2px; }
+.concept-card.has-formula::after {
+  content: "ƒ"; position: absolute; top: 8px; right: 10px;
+  background: #d9b94a; color: #1a1a1a; width: 18px; height: 18px;
+  border-radius: 50%; font-size: 11px; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+}
+.concept-card.compare::before {
+  content: "⇄"; position: absolute; top: 8px; right: 10px;
+  color: #d97a4a; font-size: 14px; font-weight: bold;
+}
+.concept-card.has-formula.compare::after { right: 28px; }
+
+/* connection markers */
+.connect-row {
+  display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;
+}
+.connect-pill {
+  font-size: 9px; padding: 2px 6px; background: #243047;
+  border-radius: 10px; color: #aab8d0;
+}
+
+/* ============ MODAL ============ */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  display: none; align-items: center; justify-content: center; z-index: 100;
+  padding: 20px;
+}
+.modal-bg.show { display: flex; }
+.modal {
+  background: #131b2d; border-radius: 14px; max-width: 900px; width: 100%;
+  max-height: 92vh; overflow-y: auto; border: 1px solid #2d3a55;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.modal-header {
+  padding: 26px 32px; border-bottom: 1px solid #243047;
+  display: flex; justify-content: space-between; align-items: start;
+  position: sticky; top: 0; background: #131b2d; z-index: 2;
+}
+.modal-title { font-size: 28px; font-weight: 700; color: #fff; }
+.modal-meta { font-size: 15px; color: #8aa0c4; margin-top: 6px; }
+.close-btn {
+  background: #2d3a55; border: none; color: #fff; width: 40px; height: 40px;
+  border-radius: 50%; cursor: pointer; font-size: 22px;
+}
+.modal-body { padding: 26px 32px; }
+.modal-section { margin-bottom: 28px; }
+.modal-section h3 {
+  font-size: 16px; color: #ffd66a; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.modal-section p, .modal-section li { font-size: 17px; color: #d4ddee; line-height: 1.7; }
+.modal-section ul { padding-left: 24px; }
+.modal-section li { margin-bottom: 8px; }
+
+.example-box {
+  background: linear-gradient(135deg, #2a1d10 0%, #3a2a18 100%);
+  border-left: 5px solid #d4a574; padding: 18px 22px; border-radius: 10px;
+  font-size: 17px; color: #ffe8b8; line-height: 1.7;
+}
+.example-box b { color: #fff; }
+
+.formula-box {
+  background: #0a1220; border: 1px solid #4a7dd9; padding: 20px 22px;
+  border-radius: 10px; font-family: "Courier New", monospace; font-size: 20px;
+  color: #6ab0ff; text-align: center; line-height: 2;
+}
+.formula-box .note { font-size: 14px; color: #8aa0c4; font-family: -apple-system, sans-serif; }
+
+.memo-box {
+  background: #1a2438; border-left: 5px solid #d9b94a;
+  padding: 16px 22px; border-radius: 10px;
+}
+.memo-box ul { margin-top: 6px; }
+.memo-box li { font-size: 16px; }
+
+.compare-table {
+  width: 100%; border-collapse: collapse; font-size: 16px;
+  background: #0f1726; border-radius: 10px; overflow: hidden;
+}
+.compare-table th, .compare-table td {
+  padding: 14px 16px; border: 1px solid #243047; text-align: left;
+}
+.compare-table th { background: #1a2438; color: #ffd66a; font-weight: 600; }
+
+.related-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.related-chip {
+  background: #2a4373; color: #cce0ff; padding: 8px 14px; border-radius: 16px;
+  font-size: 15px; cursor: pointer; border: 1px solid transparent;
+}
+.related-chip:hover { border-color: #6ab0ff; }
+
+/* mini flow */
+.mini-flow {
+  display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+  padding: 16px; background: #0f1726; border-radius: 10px;
+}
+.mini-flow .node {
+  background: #2a4373; padding: 10px 16px; border-radius: 8px;
+  font-size: 15px; color: #fff;
+}
+.mini-flow .arrow { color: #6ab0ff; font-size: 22px; }
+
+@media (max-width: 768px) {
+  header.hero { padding: 20px; }
+  .controls { padding: 10px 20px; }
+  .roadmap { padding: 20px; }
+  .concept-grid { grid-template-columns: 1fr 1fr; }
+  .week-story { font-size: 11px; }
+}
+
+/* Scope roadmap styles to its panel only */
+#tab-roadmap .roadmap { padding-top: 8px; }
+#tab-roadmap header.hero { display: none !important; }
+#tab-roadmap .controls { position: relative; top: 0; }
+</style>
+<div class="panel" id="tab-roadmap" style="padding:0;margin:0;max-width:none;">
+
+
+
+
+<div class="controls">
+  <input type="text" id="search" placeholder="🔍 概念を検索（例：EOQ, Little, Lean...）">
+  <button class="filter-btn active" data-dom="all">全部屋</button>
+  <button class="filter-btn" data-dom="strategy">🎯 戦略</button>
+  <button class="filter-btn" data-dom="design">🏗️ 設計</button>
+  <button class="filter-btn" data-dom="planning">📅 計画・管理</button>
+  <button class="filter-btn" data-dom="inventory">📦 在庫</button>
+  <button class="filter-btn" data-dom="lean">⚡ 改善（Lean）</button>
+  <button class="filter-btn" data-dom="quality">✅ 品質・信頼性</button>
+  <div class="legend" style="margin-left:auto;">
+    <div class="legend-item"><span class="legend-dot" style="background:#d9b94a"></span>計算/公式</div>
+    <div class="legend-item"><span style="color:#d97a4a;font-weight:bold;">⇄</span>対比</div>
+  </div>
+</div>
+
+<div class="roadmap" id="roadmap"></div>
+
+<div class="modal-bg" id="modal-bg">
+  <div class="modal" id="modal"></div>
+</div>
+
+
+</div>
+<script id="roadmap-inline-script">
+(function() {
+
+/* ============================================================
+   全概念データ — De Gouden Wafel の事例で統一
+   ============================================================ */
+const CONCEPTS = [
+/* ============ WEEK 1 — Ch 1,2,3：オペレーションとは／戦略 ============ */
+{id:"w1_om", w:1, ch:"Ch1", group:"What is OM", name:"Operations Management",
+ def:"製品・サービスを生産する資源・活動を計画・管理・改善する機能。",
+ example:"De Gouden Wafel の OM は『焼成工場 + カフェ運営 + 配送』を統括し、原料→完成品→顧客までの全工程を管理する。",
+ memorize:["生産だけでなく『デリバリー』まで含む","会社の最大コスト＆価値の中心","Marketing/Finance/HR と並ぶ3大コア機能の1つ"],
+ related:["w1_3core","w1_ito","w1_strategy"]},
+
+{id:"w1_3core", w:1, ch:"Ch1", group:"What is OM", name:"3 Core Functions + Support",
+ def:"全企業に共通する3つの中核機能（Operations / Marketing / Product & Service Development）と支援機能（HR, Finance, IT...）。",
+ example:"De Gouden Wafel：Operations=焼成・流通、Marketing=Instagram広告・卸営業、Development=季節限定フレーバー開発。HR/経理が支援。",
+ memorize:["3つは『どの企業にも必要』","支援機能との境界は会社次第","『機能としての』Operationsと『活動としての』operationsを区別"],
+ related:["w1_om","w1_func_act"]},
+
+{id:"w1_ito", w:1, ch:"Ch1", group:"What is OM", name:"Input-Transformation-Output Model",
+ def:"全オペレーションは『投入資源→変換プロセス→出力（製品・サービス）』の構造を持つ。",
+ example:"De Gouden Wafel：Input=小麦粉・砂糖・労働力・オーブン、Transformation=混合・焼成・充填、Output=ストロープワッフル＋カフェ体験。",
+ visual:"flow",
+ flow:["Input：小麦粉・砂糖・労働者・オーブン","Transformation：混合→焼成→充填","Output：完成品＋顧客体験"],
+ memorize:["『変換』が中核","Inputには Transformed と Transforming の2種","Outputは Goods/Services の混合体"],
+ related:["w1_tformed","w1_tforming","w1_pvs"]},
+
+{id:"w1_tformed", w:1, ch:"Ch1", group:"What is OM", name:"Transformed Resources",
+ def:"変換される側の資源。Materials（材料）/ Information（情報）/ Customers（顧客）の3種。",
+ example:"De Gouden Wafel：Materials=小麦粉・砂糖（工場）、Information=オンライン注文データ、Customers=カフェ来店客。",
+ memorize:["M-I-C の3分類","ほとんどの operation は混合だが『支配的な1つ』がある","Wafel工場=Materials支配、カフェ=Customers支配"],
+ compare:true,
+ related:["w1_tforming","w1_ito","w1_4vs"]},
+
+{id:"w1_tforming", w:1, ch:"Ch1", group:"What is OM", name:"Transforming Resources",
+ def:"変換する側の資源。Facilities（建物・設備）と Staff（人材）の2種。",
+ example:"De Gouden Wafel：Facilities=焼成オーブン・冷蔵庫・カフェ店舗、Staff=ベイカー・バリスタ・営業担当。",
+ memorize:["F-S の2分類","StaffはTransformedにもなり得る（訓練を受ける時）","設備の自動化度合いが Process type に影響"],
+ compare:true,
+ related:["w1_tformed","w2_proc_types_m"]},
+
+{id:"w1_pvs", w:1, ch:"Ch1", group:"What is OM", name:"Products vs Services",
+ def:"Tangibility・Storability・Transportability・Simultaneity・Customer contact の5軸で違う。実際はほとんど『混合』。",
+ example:"De Gouden Wafel：箱詰めワッフル＝Products寄り（保管可能・輸送可能）。カフェの焼きたて体験＝Services寄り（同時性・顧客接触）。",
+ compare:true,
+ cmpTable:[
+   ["軸","Products","Services"],
+   ["有形性","High","Low"],
+   ["保管","可","不可"],
+   ["輸送","可","不可（顧客が来る）"],
+   ["同時生産消費","No","Yes"],
+   ["顧客接触","Low","High"]],
+ memorize:["完全な製品も完全なサービスも稀","混合の比率を見極めるのが OM"],
+ related:["w1_fb_office","w2_proc_types_s"]},
+
+{id:"w1_fb_office", w:1, ch:"Ch1", group:"What is OM", name:"Front-office vs Back-office",
+ def:"顧客接触する『前』部分と、顧客が見ない『後ろ』部分を区別する考え方。",
+ example:"De Gouden Wafel：カフェ接客＝front-office、工場の焼成＝back-office、配送センター＝back-office。",
+ compare:true,
+ memorize:["Front=customer-processing、Back=material/info-processing が中心","効率はBack高め、柔軟性はFront高め","両方の境界を意識して設計する"],
+ related:["w1_pvs"]},
+
+{id:"w1_hierarchy", w:1, ch:"Ch1", group:"What is OM", name:"Process Hierarchy",
+ def:"Supply Network → Operation → Process → Activity の階層構造。",
+ example:"De Gouden Wafel：サプライ網（小麦ミル→工場→AH店舗）⊃ 工場 ⊃ 焼成プロセス ⊃ オーブン投入作業。",
+ visual:"flow",
+ flow:["Supply Network","Operation（工場全体）","Process（焼成工程）","Activity（投入作業）"],
+ memorize:["分析のズーム倍率を選ぶための階層","上位ほどStrategy寄り、下位ほどOperational"],
+ related:["w2_network"]},
+
+{id:"w1_4vs", w:1, ch:"Ch1", group:"What is OM", name:"Four Vs (Volume・Variety・Variation・Visibility)",
+ def:"オペレーションの4特性。Vol↑・Var↓・Variation↓・Vis↓ ⇒ 低コスト型へ。",
+ example:"De Gouden Wafel工場：Vol高・Var低（標準品）・Variation低・Vis低 → 低コスト大量生産。直営カフェ：Vol低・Var高・Variation高・Vis高 → 高単価サービス。",
+ visual:"compare",
+ cmpTable:[
+   ["V","High Vol例","Low Vol例"],
+   ["Volume","工場焼成","カフェ焼きたて"],
+   ["Variety","ノーマル味のみ","季節フレーバー10種"],
+   ["Variation","通年安定","週末・クリスマス急増"],
+   ["Visibility","顧客は見えない","顧客の目の前で焼く"]],
+ memorize:["4つは独立だが相関しがち","High volume + Low variety + Low variation + Low visibility = 低コスト","逆=柔軟・高品質・高コスト"],
+ related:["w2_proc_types_m","w2_proc_types_s","w1_pvs"]},
+
+{id:"w1_func_act", w:1, ch:"Ch1", group:"What is OM", name:"Operations as Function vs Activity",
+ def:"『機能』としてのOM＝部門。『活動』としてのoperations＝全部門でやる業務。",
+ example:"De Gouden Wafel：OM部門は工場運営（機能）。同時にMarketing部門もキャンペーン運営という operations を実施（活動）。",
+ memorize:["大文字 OM = 部門","小文字 operations = どの部門にも存在する業務","非製造業（銀行・病院）でもOMの考え方は使える"],
+ related:["w1_3core"]},
+
+{id:"w1_stake", w:1, ch:"Ch2", group:"Performance", name:"Stakeholders",
+ def:"オペレーションのパフォーマンスに利害を持つ全関係者。",
+ example:"De Gouden Wafel：従業員・顧客・サプライヤー（小麦ミル）・株主・地域社会・規制当局（食品安全）。",
+ memorize:["Shareholdersではなく Stakeholders","全員を満たすトレードオフが OMの仕事","次の CSR/Triple Bottom Line につながる"],
+ related:["w1_csr"]},
+
+{id:"w1_csr", w:1, ch:"Ch2", group:"Performance", name:"CSR & Triple Bottom Line",
+ def:"People（社会）・Planet（環境）・Profit（経済）の3軸で評価する。",
+ example:"De Gouden Wafel：People=ベイカーの安全、Planet=容器のバイオプラ化、Profit=利益率。サステナ報告書で公開。",
+ memorize:["3P：People-Planet-Profit","利益だけでない多次元評価","SDGsとも繋がる"],
+ related:["w1_stake","w1_perf_meas"]},
+
+{id:"w1_quality", w:1, ch:"Ch2", group:"5 Perf Obj", name:"Quality",
+ def:"『仕様通り・誤りなし』にやること。外部=顧客満足、内部=ミス削減＝コストダウン。",
+ example:"De Gouden Wafel：1個あたり重量±2g、キャラメル充填率95%以上、焦げ率0.5%以下。",
+ memorize:["顧客起点（外部）と工程起点（内部）の二面性","品質高い＝コスト低い、というLean思想","次のSPC/FMEAに繋がる"],
+ related:["w1_speed","w1_tradeoff","w8_spc","w8_6dim"],
+ compare:true},
+
+{id:"w1_speed", w:1, ch:"Ch2", group:"5 Perf Obj", name:"Speed",
+ def:"注文から納品までの所要時間を短くすること。",
+ example:"De Gouden Wafel：オンライン注文→翌日配送、カフェは焼成完了から3分以内に提供。",
+ memorize:["在庫削減と直結","P:D Ratio で計測","顧客のWait time が短い＝価値"],
+ related:["w1_quality","w3_pd_ratio","w2_throughput"],
+ compare:true},
+
+{id:"w1_depend", w:1, ch:"Ch2", group:"5 Perf Obj", name:"Dependability",
+ def:"約束した時間・量で確実に届けること。",
+ example:"De Gouden Wafel：Albert Heijn向け納品リードタイム『毎週水曜±0』を99%達成。",
+ memorize:["平均ではなく『ばらつき』","On-time delivery rate で計測","Lean/SCMの基盤"],
+ related:["w1_speed","w3_loading","w8_reliability"],
+ compare:true},
+
+{id:"w1_flex", w:1, ch:"Ch2", group:"5 Perf Obj", name:"Flexibility",
+ def:"製品・量・配送・タイミングを変える能力。Mix-flex / Volume-flex / Delivery-flex / Product-flex の4種。",
+ example:"De Gouden Wafel：限定フレーバー月替わり（Mix）、繁忙期2倍生産（Volume）、出荷日変更可（Delivery）、新商品開発（Product）。",
+ memorize:["4種のflexibility","Agility=Flexibility+Speed","コストとtrade-off"],
+ related:["w1_tradeoff","w2_proc_types_m"],
+ compare:true},
+
+{id:"w1_cost", w:1, ch:"Ch2", group:"5 Perf Obj", name:"Cost & Productivity",
+ def:"投入を最小化すること。Q・S・D・F の良化はすべて Cost に効く。",
+ example:"De Gouden Wafel：1個あたり原価€0.45→€0.39に削減（5年で15%）。生産性=output / input。",
+ formula:"Productivity = Output / Input<br>Multi-factor Productivity = Output / (Labor + Material + Energy)",
+ memorize:["全パフォーマンスは結局 Cost に効く","Single-factor と Multi-factor","原材料の方が労務より大きいことが多い"],
+ related:["w1_quality","w1_perf_meas"],
+ compare:true},
+
+{id:"w1_tradeoff", w:1, ch:"Ch2", group:"Trade-offs", name:"Performance Trade-offs",
+ def:"5つの目標は同時に最大化できない。あるものを優先すると他が犠牲になる（短期）。",
+ example:"De Gouden Wafel：カフェの焼きたてサービス（Flex/Quality優先）はコスト高。工場は逆。",
+ memorize:["短期はトレードオフ、長期はLeanで全部改善可能","Efficient Frontier の概念","『何を優先するか』が戦略"],
+ related:["w1_frontier","w1_polar"],
+ compare:true},
+
+{id:"w1_polar", w:1, ch:"Ch2", group:"Trade-offs", name:"Polar Diagrams",
+ def:"5つのパフォーマンス目標をレーダーチャートで可視化する手法。",
+ example:"De Gouden Wafel：カフェ（外側に広い）vs 工場（コスト側だけ突出）の2つの Polar を比較。",
+ visual:"flow",
+ flow:["Quality","Speed","Dependability","Flexibility","Cost"],
+ memorize:["5軸レーダー","自社 vs 競合 vs 顧客期待を重ねる","Strategy formulation で使う"],
+ related:["w1_tradeoff","w1_strategy"]},
+
+{id:"w1_perf_meas", w:1, ch:"Ch2", group:"Trade-offs", name:"Performance Measurement",
+ def:"5目標を内部・外部・財務の複数次元で測る仕組み（Balanced Scorecard等）。",
+ example:"De Gouden Wafel：内部=不良率、外部=NPS、財務=粗利率。月次ダッシュボード。",
+ memorize:["『測れないものは管理できない』","BSCの4視点：Financial/Customer/Internal/Learning","KPIは少数精鋭で"],
+ related:["w1_cost","w1_csr"]},
+
+{id:"w1_strategy", w:1, ch:"Ch3", group:"Strategy", name:"Operations Strategy",
+ def:"Operationsを通じて長期的な競争優位を作るための decisions & actions のパターン。",
+ example:"De Gouden Wafel：『プレミアム品質＋オランダ伝統』を core にし、海外輸出比率20%を5年で達成する戦略。",
+ memorize:["Strategyは『パターン of decisions』","Corporate→Business→Operations の階層","Market vs Resources の2視点が交差する"],
+ related:["w1_isd","w1_4stages","w1_top_bottom","w1_market_res"]},
+
+{id:"w1_isd", w:1, ch:"Ch3", group:"Strategy", name:"Implementing / Supporting / Driving Strategy",
+ def:"OMが戦略に対して果たす3レベルの役割。Implementing→Supporting→Driving。",
+ example:"De Gouden Wafel：Implement（戦略を実行）→Support（戦略に貢献）→Drive（OM自体が戦略源泉）。Lean力で海外進出を可能にしたのが Driving。",
+ visual:"flow",
+ flow:["Implementing：戦略を実行","Supporting：戦略を強化","Driving：OMが戦略を生む"],
+ memorize:["3段階のレベル","Drivingは Hayes-Wheelwright Stage 4 に相当"],
+ related:["w1_4stages","w1_strategy"]},
+
+{id:"w1_4stages", w:1, ch:"Ch3", group:"Strategy", name:"Hayes & Wheelwright 4 Stages",
+ def:"OMの貢献度合いを Stage 1（Internal Neutrality）→ 2→ 3→ 4（External Supportive）の4段階で評価。",
+ example:"De Gouden Wafel：旧本店時代=Stage 2 → 全国展開でStage 3 → 現在は Stage 4（Lean力で他社に真似されない）。",
+ visual:"compare",
+ cmpTable:[
+   ["Stage","名前","内容"],
+   ["1","Internal Neutrality","足を引っ張らないだけ"],
+   ["2","External Neutrality","業界平均レベル"],
+   ["3","Internally Supportive","社内で『良い』レベル"],
+   ["4","Externally Supportive","業界をリード"]],
+ memorize:["1-4 で進化","3=社内、4=外向き","Drivingは Stage 4"],
+ related:["w1_isd"]},
+
+{id:"w1_top_bottom", w:1, ch:"Ch3", group:"Strategy", name:"Top-down vs Bottom-up Strategy",
+ def:"Top-down=経営層が定義。Bottom-up=現場の改善が積み上がって形成。両方必要。",
+ example:"De Gouden Wafel：CEO『高品質プレミアム』が Top-down。工場での Lean Kaizen 提案が積み上がるのが Bottom-up。",
+ compare:true,
+ memorize:["両方の融合が現実","Bottom-upはLeanと相性","Top-onlyだと現場が乖離"],
+ related:["w1_strategy","w7_lean"]},
+
+{id:"w1_market_res", w:1, ch:"Ch3", group:"Strategy", name:"Market Requirements vs Operations Resources",
+ def:"市場が要求するもの（外）と、自社が持つ資源・能力（内）の2視点。両者の整合がStrategy。",
+ example:"De Gouden Wafel：市場=『プレミアム品質・グルテンフリー需要』、資源=『100年の焼成技術・自家製シロップ』。市場機会＋資源強み の重なりに集中。",
+ visual:"compare",
+ cmpTable:[
+   ["視点","内容","ツール"],
+   ["Market","顧客が望むこと","Order-winning/Qualifier"],
+   ["Resources","自社が持つもの","RBV、Core competence"]],
+ compare:true,
+ memorize:["Outside-in と Inside-out","両方のラインが交わる『Line of Fit』が理想","次の Order-winning/Qualifier に繋がる"],
+ related:["w1_owq","w1_fit"]},
+
+{id:"w1_owq", w:1, ch:"Ch3", group:"Strategy", name:"Order-winning / Qualifying / Less Important",
+ def:"市場要因の3分類。Order-winning=勝つ決め手、Qualifying=最低限の条件、Less=影響小。",
+ example:"De Gouden Wafel：オーガニック市場では Quality=Order-winning、価格=Qualifier、配送速度=Less。スーパー向けは逆に Cost=Order-winning。",
+ compare:true,
+ memorize:["Qualifierは閾値、満たさないと土俵に乗れない","Order-winnerは閾値超えると比例的に勝つ","セグメントごとに異なる"],
+ related:["w1_market_res","w1_lifecycle"]},
+
+{id:"w1_lifecycle", w:1, ch:"Ch3", group:"Strategy", name:"Product/Service Life Cycle",
+ def:"Introduction→Growth→Maturity→Decline の4段階。各段階で Order-winner が変化。",
+ example:"De Gouden Wafel：抹茶味は Introduction（Flex/Quality重視）。定番味は Maturity（Cost重視）。",
+ visual:"flow",
+ flow:["Introduction（Flex）","Growth（Quality/Speed）","Maturity（Cost）","Decline（Cost/Flex）"],
+ memorize:["4段階で Order-winner が変わる","Introductionは Flex、Maturity は Cost","Process choiceにも影響"],
+ related:["w1_owq","w2_pp_matrix"]},
+
+{id:"w1_frontier", w:1, ch:"Ch3", group:"Strategy", name:"Efficient Frontier",
+ def:"2軸（例：Cost vs Quality）上で達成可能な最良の組合せの曲線。フロンティア上＝Operationally efficient。",
+ example:"De Gouden Wafel：高品質・低コストのフロンティア上に位置するが、ライバルA社はフロンティア内側で非効率。",
+ memorize:["フロンティア上＝効率的","内側＝改善余地","フロンティア自体を押し出すのが Long-term improvement"],
+ related:["w1_tradeoff","w1_fit"]},
+
+{id:"w1_fit", w:1, ch:"Ch3", group:"Strategy", name:"Line of Fit",
+ def:"Market requirements と Operations capability が一致する45度線。両者のバランス。",
+ example:"De Gouden Wafel：プレミアム市場（高要求）には高度な Lean 工場で対応＝Line上。安売り市場には参入しない（capability過剰）。",
+ memorize:["要求 vs 能力 のバランス","下回ると顧客不満、上回ると無駄","Strategyは Line を保ちつつ右上に進む"],
+ related:["w1_market_res","w1_frontier"]},
+
+{id:"w1_strategy_form", w:1, ch:"Ch3", group:"Strategy", name:"Operations Strategy Formulation",
+ def:"4要素：Performance objectives, Decision areas（Structure/Infrastructure）, Market requirements, Resources。",
+ example:"De Gouden Wafel：Perf=Quality/Cost、Structure=新工場建設、Infrastructure=Lean、Market=プレミアム、Resources=熟練職人。",
+ memorize:["4要素のマトリックスで戦略をマッピング","Structure=設備・キャパ、Infrastructure=人・仕組み","次の Week 2 の Network/Capacity に繋がる"],
+ related:["w1_strategy","w2_network"]},
+
+/* ============ WEEK 2 — Ch 5,6,7：Network・Capacity・Process ============ */
+{id:"w2_network", w:2, ch:"Ch5", group:"Supply Network", name:"Supply Network Structure & Scope",
+ def:"自社を含むサプライヤー・顧客・競合の繋がり全体。Tier 1/2/3、Immediate/Total network。",
+ example:"De Gouden Wafel：Tier1=小麦ミル・砂糖サプライヤー、Tier2=小麦農家、Customer Tier1=Albert Heijn、Tier2=消費者。",
+ visual:"flow",
+ flow:["Tier2 サプライヤー","Tier1 サプライヤー","De Gouden Wafel","Tier1 顧客（AH）","Tier2 顧客（消費者）"],
+ memorize:["上流（Upstream）と下流（Downstream）","Total network 視点で意思決定","Process Hierarchy の最上位"],
+ related:["w1_hierarchy","w2_disinter","w2_vertical"]},
+
+{id:"w2_disinter", w:2, ch:"Ch5", group:"Supply Network", name:"Disintermediation",
+ def:"中間業者を飛ばして直接取引する動き（D2C）。",
+ example:"De Gouden Wafel：従来は卸→スーパーだったが、オンラインショップで消費者へ直販開始＝disintermediation。",
+ memorize:["中間排除","Margin取り戻し vs 物流負担","Co-opetitionの裏返しでもある"],
+ related:["w2_network","w2_coopet"]},
+
+{id:"w2_coopet", w:2, ch:"Ch5", group:"Supply Network", name:"Co-opetition & Business Ecosystem",
+ def:"競合と協力する戦略（Cooperation + Competition）。エコシステム全体での価値創造。",
+ example:"De Gouden Wafel：他のオランダ伝統菓子メーカーと『Dutch Heritage Sweets』展示会で共同出展。最終顧客取り合いは別。",
+ memorize:["敵にも味方にも","Win-Win 領域を切り出す","プラットフォーム時代の必須思考"],
+ related:["w2_network","w2_disinter"]},
+
+{id:"w2_eos", w:2, ch:"Ch5", group:"Capacity", name:"Economies & Diseconomies of Scale",
+ def:"規模拡大で単位コスト低下（EoS）→ある点を超えると逆に増加（DoS：複雑性・物流・管理コスト）。",
+ example:"De Gouden Wafel：工場拡大で€/個 が下がるが、3工場目から管理コスト爆発・品質ばらつき＝DoS。",
+ visual:"flow",
+ flow:["小規模：高コスト","最適規模：最低コスト","過大規模：管理コスト増（DoS）"],
+ formula:"U字カーブ：Unit Cost vs Capacity",
+ memorize:["EoSは固定費分散・購買力","DoSは複雑性・通信・士気","『大きいほど良い』は嘘"],
+ related:["w2_break_even","w2_cap_timing"],
+ compare:true},
+
+{id:"w2_cap_timing", w:2, ch:"Ch5", group:"Capacity", name:"Capacity Timing (Lead / Lag / Smoothing)",
+ def:"需要拡大に対するキャパ追加のタイミング戦略。",
+ example:"De Gouden Wafel：海外市場進出で、Lead=先に工場拡張→在庫過剰リスク、Lag=売上後追加→品切れリスク、Smoothing=在庫で吸収（中間）。",
+ visual:"compare",
+ cmpTable:[
+   ["戦略","タイミング","リスク"],
+   ["Lead","需要前に増設","過剰投資"],
+   ["Lag","需要後に増設","機会損失"],
+   ["Smoothing","在庫で吸収","在庫コスト"]],
+ compare:true,
+ memorize:["3戦略の trade-off","Lead=Aggressive、Lag=Cautious","Smoothing は in-between"],
+ related:["w2_eos","w3_capacity","w3_level_plan"]},
+
+{id:"w2_break_even", w:2, ch:"Ch5", group:"Capacity", name:"Break-even Analysis",
+ def:"固定費を回収する販売量。BEP = FC / (P − VC)。",
+ example:"De Gouden Wafel新工場：FC=€500,000/年、P=€3.50/箱、VC=€1.50/箱。BEP=500,000/(3.5−1.5)=250,000箱/年。",
+ formula:"BEP = FC / (P − VC)<br>BEP（金額） = FC / (1 − VC/P)",
+ memorize:["FCを単位貢献利益で割る","Multi-product なら加重平均","Capacity拡張の最低需要量を計算"],
+ related:["w2_eos","w2_cap_timing","w2_location"]},
+
+{id:"w2_location", w:2, ch:"Ch5", group:"Capacity", name:"Location Decision",
+ def:"立地の決定。Supply-side（コスト要因）vs Demand-side（売上要因）の両面で評価。",
+ example:"De Gouden Wafel：工場=アムステルダム郊外（労務コスト・物流）。カフェ=観光地中心部（需要側）。",
+ compare:true,
+ cmpTable:[
+   ["Supply-side","Demand-side"],
+   ["労務コスト・原料・エネルギー","顧客近接・イメージ・人口"]],
+ memorize:["工場≠サービス：要因が逆","Center-of-gravity、Weighted score 手法","Globalization で複雑化"],
+ related:["w2_offshoring","w2_vertical"]},
+
+{id:"w2_vertical", w:2, ch:"Ch5", group:"Supply Network", name:"Vertical Integration",
+ def:"上流／下流方向に事業を取り込むこと。Direction（上/下）×Extent×Balance。",
+ example:"De Gouden Wafel：上流統合=小麦ミル買収（原料安定）、下流統合=自社カフェ展開＝完全な垂直統合。",
+ visual:"flow",
+ flow:["上流（小麦ミル買収）","自社（焼成・包装）","下流（直営カフェ）"],
+ memorize:["Backward（上流）と Forward（下流）","Extent=どこまで取り込むか","Balance=自社用 vs 外販"],
+ related:["w2_outsource","w2_up_down","w2_pros_cons"]},
+
+{id:"w2_outsource", w:2, ch:"Ch5", group:"Supply Network", name:"Outsourcing vs In-house",
+ def:"外部委託か自社運営かの選択。コア・コンピタンスは内製、それ以外は外注。",
+ example:"De Gouden Wafel：焼成（コア）=内製、IT/会計=Outsource、配送=3PLにOutsource。",
+ compare:true,
+ cmpTable:[
+   ["要因","In-house有利","Outsource有利"],
+   ["戦略重要性","高い","低い"],
+   ["スキル","自社優位","外部優位"],
+   ["コスト","規模で内製安","外注で変動費化"]],
+ memorize:["Coreを見極める","『Make or Buy』の判断","Vertical integrationの逆"],
+ related:["w2_vertical","w2_offshoring"]},
+
+{id:"w2_offshoring", w:2, ch:"Ch5", group:"Supply Network", name:"Offshoring",
+ def:"国外への移転（必ずしも外注ではなく、自社海外子会社のことも）。",
+ example:"De Gouden Wafel：包装材製造をポーランド工場へ移転＝offshoring（自社のまま）。",
+ compare:true,
+ memorize:["Outsourceとは別概念（混同注意）","近年は Reshoring（戻し）も","コスト・品質・物流のトレードオフ"],
+ related:["w2_outsource","w2_location"]},
+
+{id:"w2_up_down", w:2, ch:"Ch5", group:"Supply Network", name:"Upstream vs Downstream Integration",
+ def:"上流（原料側）か下流（顧客側）かの方向性。",
+ example:"De Gouden Wafel：Upstream=砂糖サプライヤー買収、Downstream=自社カフェ展開・オンライン直販。",
+ compare:true,
+ memorize:["Upstream=Backward、Downstream=Forward","上流=コスト支配、下流=顧客接点支配","Disintermediationは Downstream Integrationの一形態"],
+ related:["w2_vertical","w2_disinter"]},
+
+{id:"w2_pros_cons", w:2, ch:"Ch5", group:"Supply Network", name:"VI Advantages & Disadvantages",
+ def:"垂直統合の長所（管理可能・利益取り戻し）と短所（柔軟性低下・投資負担）。",
+ example:"De Gouden Wafel：小麦ミル統合で原料品質保証＋10%粗利改善（長所）。だが小麦相場下落時に競合より高コスト（短所）。",
+ compare:true,
+ cmpTable:[
+   ["長所","短所"],
+   ["品質管理","柔軟性低下"],
+   ["利益内製","投資負担"],
+   ["情報統合","リスク集中"],
+   ["差別化","コア外への分散"]],
+ memorize:["長所4 / 短所4","状況依存：Disintegration（逆）も戦略","次の Process Design に繋がる"],
+ related:["w2_vertical"]},
+
+{id:"w2_proc_obj", w:2, ch:"Ch6", group:"Process Design", name:"Process Design Objectives",
+ def:"プロセス設計は5パフォーマンス目標を具体的に達成する手段。",
+ example:"De Gouden Wafel：自動充填ラインで Quality（充填精度）↑・Cost↓、ただし Flexibility↓（フレーバー切替難）。",
+ memorize:["Process design = 5 perf obj の実装","Volume-Variety位置で形が決まる","次の Process types へ"],
+ related:["w1_quality","w2_proc_types_m","w2_pp_matrix"]},
+
+{id:"w2_proc_types_m", w:2, ch:"Ch6", group:"Process Design", name:"Process Types — Manufacturing",
+ def:"Project / Jobbing / Batch / Mass / Continuous の5型。Volume↑・Variety↓ の順。",
+ example:"De Gouden Wafel：限定アート缶=Jobbing、季節フレーバー=Batch、通常品=Mass production、シロップ自家製造=Continuous。",
+ visual:"compare",
+ cmpTable:[
+   ["型","Vol","Var","例"],
+   ["Project","極小","極大","ウエディング特注ボックス"],
+   ["Jobbing","小","大","個別注文アート缶"],
+   ["Batch","中","中","季節フレーバー"],
+   ["Mass","大","小","レギュラー品"],
+   ["Continuous","極大","極小","シロップ製造"]],
+ compare:true,
+ memorize:["5型を左上→右下に","Volume↑Variety↓","対応する Layout が決まる"],
+ related:["w1_4vs","w2_proc_types_s","w2_pp_matrix","w2_layouts"]},
+
+{id:"w2_proc_types_s", w:2, ch:"Ch6", group:"Process Design", name:"Process Types — Services",
+ def:"Professional / Service Shop / Mass Service の3型。",
+ example:"De Gouden Wafel：オーダーメイドギフト=Professional、カフェ接客=Service Shop、オンライン注文=Mass Service。",
+ visual:"compare",
+ cmpTable:[
+   ["型","顧客接触","カスタマイズ","例"],
+   ["Professional","高","高","ギフトコンサル"],
+   ["Service Shop","中","中","カフェ"],
+   ["Mass Service","低","低","オンラインストア"]],
+ compare:true,
+ memorize:["3型 ←→ 製造業の5型と対応","Volume-Variety の縦軸は同じ","Product-Process Matrix で統合"],
+ related:["w2_proc_types_m","w2_pp_matrix","w1_pvs"]},
+
+{id:"w2_pp_matrix", w:2, ch:"Ch6", group:"Process Design", name:"Product-Process Matrix",
+ def:"製品の Vol-Var ポジションとプロセス型を対角線上に並べたマトリックス（Hayes & Wheelwright）。",
+ example:"De Gouden Wafel：レギュラー品（Vol大Var小）→ Mass production が対角線。逆に Vol大なのに Jobbing は非効率。",
+ visual:"flow",
+ flow:["対角線上＝最適","対角線から離れる＝非効率"],
+ memorize:["対角線が最適","Diagonalから外れる=Cost↑かFlex↓","Product life cycle と連動して移動"],
+ related:["w2_proc_types_m","w2_proc_types_s","w1_lifecycle","w2_layouts"]},
+
+{id:"w2_proc_map", w:2, ch:"Ch6", group:"Process Design", name:"Process Mapping",
+ def:"プロセスを記号で図示する手法。Operation/Inspection/Transport/Delay/Storage の5記号。",
+ example:"De Gouden Wafel：『小麦投入→計量（Inspection）→混合→搬送→寝かせ（Delay）→焼成→冷却→包装→倉庫（Storage）』を図示。",
+ visual:"flow",
+ flow:["○ Operation","□ Inspection","→ Transport","D Delay","▽ Storage"],
+ memorize:["5記号 ASME","可視化が改善の第一歩","VSM の基礎"],
+ related:["w7_vsm","w2_bottleneck"]},
+
+{id:"w2_throughput", w:2, ch:"Ch6", group:"Process Design", name:"Throughput / Cycle / WIP — Little's Law",
+ def:"Little's Law：WIP = Throughput Rate × Throughput Time（または Cycle Time）。",
+ example:"De Gouden Wafel焼成ライン：Throughput Time=2時間、Throughput Rate=500個/時間 → WIP=1000個（仕掛り）。",
+ formula:"WIP = TH × T<br>Throughput Time = WIP / TH<br>Cycle Time = 1 / TH",
+ memorize:["3変数の関係式","どれか2つで残り1つが出る","Lean の根本指標"],
+ related:["w2_bottleneck","w2_long_thin","w7_lean","w3_capacity"]},
+
+{id:"w2_thr_eff", w:2, ch:"Ch6", group:"Process Design", name:"Throughput Efficiency",
+ def:"Throughput Efficiency = Value-added Time / Throughput Time × 100%。",
+ example:"De Gouden Wafel：ワッフル1個の Value-added 時間（実際の加工）=12分、Throughput Time=4時間 → 5%。Leanで20%目標。",
+ formula:"η = (Value-added Time / Throughput Time) × 100%",
+ memorize:["多くの工場で 1〜10%しかない","残りはすべて Waste","TIMWOOD削減の指標"],
+ related:["w2_throughput","w7_lean","w7_timwood"]},
+
+{id:"w2_bottleneck", w:2, ch:"Ch6", group:"Process Design", name:"Process Bottlenecks",
+ def:"プロセス内で最も遅い工程＝全体のスループットを決定する。",
+ example:"De Gouden Wafel：焼成5分・充填2分・包装3分 → 焼成がボトルネック。Throughput=12個/時間（5分単位）。",
+ formula:"System Throughput = min(各工程のCapacity)",
+ memorize:["最遅工程が全体律速","ボトルネックの1分=全体の1分","TOC（制約理論）の基礎"],
+ related:["w2_throughput","w3_dbr","w7_dbr_push_pull"]},
+
+{id:"w2_long_thin", w:2, ch:"Ch6", group:"Process Design", name:"Long-thin vs Short-fat",
+ def:"プロセスを長い1本（多工程・分業）にするか、短い太いライン（少工程・並列）にするか。",
+ example:"De Gouden Wafel：Long-thin=10工程ライン1本（効率・専門化）。Short-fat=3工程ライン3並列（柔軟性・故障時継続）。",
+ visual:"compare",
+ cmpTable:[
+   ["軸","Long-thin","Short-fat"],
+   ["効率","高","中"],
+   ["柔軟性","低","高"],
+   ["故障リスク","全体停止","部分停止"],
+   ["スキル要求","低","高"]],
+ compare:true,
+ memorize:["分業 vs 多能工","Long=Mass、Short=Cell","Lean は Short-fat 寄り"],
+ related:["w2_throughput","w2_layouts","w7_lean"]},
+
+{id:"w2_var_util", w:2, ch:"Ch6", group:"Process Design", name:"Process Variability & Utilization",
+ def:"Utilization↑ で待ち時間が指数的に増加。Variability があると更に悪化（Kingman/Queueing）。",
+ example:"De Gouden Wafel焼成：稼働率90%で平均WIP急増。需要ばらつき大の繁忙期は更に倍。",
+ formula:"Wq ≈ (Ca²+Cs²)/2 × U/(1−U) × Ts<br>U = 平均稼働率",
+ memorize:["U→1で待ちは∞","Lean は U を下げて Speed を上げる","次の Queuing Theory で詳細"],
+ related:["w3_queuing","w7_lean","w2_throughput"]},
+
+{id:"w2_layouts", w:2, ch:"Ch7", group:"Layout", name:"Four Layout Types",
+ def:"Fixed-position / Functional / Cell / Product の4種。Volume-Variety で選ぶ。",
+ example:"De Gouden Wafel：建屋建設=Fixed、職人工房=Functional、ギフト箱詰めセル=Cell、レギュラーライン=Product。",
+ visual:"compare",
+ cmpTable:[
+   ["Layout","Vol-Var","例"],
+   ["Fixed","極小Vol極大Var","巨大特注ケーキ"],
+   ["Functional","小Vol大Var","ジョブショップ"],
+   ["Cell","中Vol中Var","セル生産"],
+   ["Product","大Vol小Var","流れ作業"]],
+ compare:true,
+ memorize:["Process Types と1対1対応","Vol↑ で Product layout に","Cell は Lean の典型"],
+ related:["w2_proc_types_m","w2_pp_matrix","w2_layout_cost"]},
+
+{id:"w2_fixed", w:2, ch:"Ch7", group:"Layout", name:"Fixed-Position Layout",
+ def:"製品が動かず、人・機械・材料が来る。建設・造船型。",
+ example:"De Gouden Wafel：『1mサイズの巨大ストロープワッフルアート（イベント用）』は動かず、職人が来る。",
+ memorize:["製品が動かない","Volume極小・カスタム極大","スケジュール調整が肝"],
+ related:["w2_layouts"]},
+
+{id:"w2_func", w:2, ch:"Ch7", group:"Layout", name:"Functional Layout",
+ def:"同種の機械・スキルをまとめて配置。Job shop型。",
+ example:"De Gouden Wafel：『計量エリア』『混合エリア』『焼成エリア』を機能別に配置。製品ごとに経路が違う。",
+ memorize:["機能（部署）でまとめる","柔軟性高い・流れ複雑","Spaghetti diagramで見える化"],
+ related:["w2_layouts","w2_long_thin"]},
+
+{id:"w2_cell", w:2, ch:"Ch7", group:"Layout", name:"Cell Layout",
+ def:"類似製品を1つの『細胞（セル）』で完結処理。多能工が動く。",
+ example:"De Gouden Wafel：ギフトボックス用に『計量→混合→焼成→充填→包装』を1つの U字セルにまとめる。",
+ memorize:["U字型が典型","多能工＋Quick changeover","Lean／JIT との親和性"],
+ related:["w2_layouts","w7_lean","w7_smed"]},
+
+{id:"w2_product", w:2, ch:"Ch7", group:"Layout", name:"Product / Line Layout",
+ def:"製品の流れに沿ってライン配置。Mass production型。",
+ example:"De Gouden Wafel：レギュラー品ライン『混合→焼成→充填→包装』を一直線にコンベヤで繋ぐ。",
+ memorize:["流れ作業","ライン同期＝Takt time","故障で全停止リスク"],
+ related:["w2_layouts","w7_jit"]},
+
+{id:"w2_mixed", w:2, ch:"Ch7", group:"Layout", name:"Mixed Layouts",
+ def:"複数Layoutを組み合わせる現実的解。",
+ example:"De Gouden Wafel工場全体：混合（Functional）→焼成（Product line）→ギフト箱詰め（Cell）の混合。",
+ memorize:["現実はほぼ Mixed","各セクションで最適化","Master plan で統合"],
+ related:["w2_layouts"]},
+
+{id:"w2_vv_layout", w:2, ch:"Ch7", group:"Layout", name:"Volume-Variety vs Layout Choice",
+ def:"Vol-Var ポジションに対応する Layout を選ぶマッピング。",
+ example:"De Gouden Wafel：通年定番（Vol大Var小）→Product layout、限定品（Vol小Var大）→Functional layout。",
+ visual:"flow",
+ flow:["低Vol高Var→Fixed/Functional","中Vol中Var→Cell","高Vol低Var→Product"],
+ memorize:["対角線ルール","Product types matrix と相似","逆を選ぶと非効率"],
+ related:["w2_layouts","w2_pp_matrix"]},
+
+{id:"w2_layout_cost", w:2, ch:"Ch7", group:"Layout", name:"Layout Cost Trade-offs",
+ def:"各レイアウトには固定費・変動費のカーブがある。Vol によって最適 Layout が変わる。",
+ example:"De Gouden Wafel：低Vol=Functional（FC安、VC高）→中Vol=Cell→高Vol=Product（FC高、VC安）。",
+ visual:"flow",
+ flow:["低Vol：Functional 安","中Vol：Cell 安","高Vol：Product 安"],
+ memorize:["Vol軸でクロス","BEPと同じ考え方","戦略の Capacity timing にも繋がる"],
+ related:["w2_break_even","w2_cap_timing"]},
+
+/* ============ WEEK 3 — Ch 10,11：Planning & Control + Capacity ============ */
+{id:"w3_plan_ctrl", w:3, ch:"Ch10", group:"Planning & Control", name:"Planning vs Control",
+ def:"Planning=未来何をやるか決める。Control=実行中の調整。境界は曖昧。",
+ example:"De Gouden Wafel：来年の生産計画=Plan、毎日の発注調整=Control。",
+ compare:true,
+ cmpTable:[["軸","Planning","Control"],
+   ["時間軸","未来","現在"],
+   ["性質","正式・計画的","対応・調整的"],
+   ["頻度","低","高"]],
+ memorize:["未来 vs 今","Long→Plan寄り、Short→Control寄り","ループで繰返す"],
+ related:["w3_horizons","w3_monitor"]},
+
+{id:"w3_horizons", w:3, ch:"Ch10", group:"Planning & Control", name:"Long / Medium / Short-term P&C",
+ def:"時間軸別の P&C。Long=戦略（年単位）、Medium=Aggregate（月）、Short=Operational（日・時）。",
+ example:"De Gouden Wafel：Long=新工場建設、Medium=四半期生産計画、Short=毎時シフト調整。",
+ visual:"flow",
+ flow:["Long: 戦略・キャパ計画","Medium: Aggregate plan","Short: 日次・時間スケジュール"],
+ memorize:["3層構造","上位ほどデータ少・抽象","下位ほどデータ多・具体"],
+ related:["w3_plan_ctrl","w3_capacity"]},
+
+{id:"w3_dep_indep", w:3, ch:"Ch10", group:"Planning & Control", name:"Dependent vs Independent Demand",
+ def:"Independent=最終顧客需要（予測）。Dependent=部品需要（最終品から計算可）。",
+ example:"De Gouden Wafel：ワッフル箱の需要=Independent（予測）。小麦粉・砂糖の需要=Dependent（MRPで計算）。",
+ compare:true,
+ cmpTable:[["軸","Independent","Dependent"],
+   ["源","顧客","上位部品"],
+   ["手法","Forecast","MRP計算"],
+   ["例","完成品","原材料"]],
+ memorize:["上位は予測、下位は計算","MRPはDependentの処理","次の MRP（W6）へ"],
+ related:["w6_mrp","w3_pd_ratio"]},
+
+{id:"w3_pd_ratio", w:3, ch:"Ch10", group:"Planning & Control", name:"P:D Ratio",
+ def:"P=Production lead time、D=Demand lead time（顧客が待てる時間）。比率で MTS/MTO戦略が決まる。",
+ example:"De Gouden Wafel：MTS（在庫販売）はP>>D（顧客は即取り）。カフェ焼きたては P≒D。",
+ formula:"P:D 比 → 在庫戦略を決める<br>P>D → MTS（予測生産）<br>P≤D → MTO（受注生産）",
+ memorize:["P>D=MTS、P≤D=MTO/ATO","在庫 vs 待ち時間のトレードオフ","Decoupling Point と直結"],
+ related:["w3_mts_mto","w6_decoupling","w1_speed"]},
+
+{id:"w3_loading", w:3, ch:"Ch10", group:"Planning & Control", name:"Loading (Finite vs Infinite)",
+ def:"作業を機械・人に割り当てる。Finite=容量上限内に収める、Infinite=入れて後で調整。",
+ example:"De Gouden Wafel：焼成オーブンは Finite（容量決まる）。営業の受注は Infinite（全部受けて後で調整）。",
+ compare:true,
+ cmpTable:[["軸","Finite","Infinite"],
+   ["容量","厳守","無視（仮）"],
+   ["在庫","オーバーフロー無","オーバーフロー可"],
+   ["例","コンサート座席","病院ER"]],
+ memorize:["容量を厳守するか","Finiteは予約系、Infiniteは飛び込み可","次の Sequencing/Scheduling へ"],
+ related:["w3_seq","w3_sched"]},
+
+{id:"w3_seq", w:3, ch:"Ch10", group:"Planning & Control", name:"Sequencing Rules",
+ def:"FIFO / LIFO / SOT（最短処理時間）/ LOT / EDD（締切早い順）/ Customer priority など。",
+ example:"De Gouden Wafel：オンライン注文=FIFO。Albert Heijn納品=EDD（締切厳守）。長い VIPギフト＝Priority。",
+ visual:"compare",
+ cmpTable:[["Rule","内容","強み"],
+   ["FIFO","先入先出","公平"],
+   ["LIFO","後入先出","物理制約（棚奥）"],
+   ["SOT(SPT)","短いの先","平均待ち最小"],
+   ["LOT","長いの先","稀"],
+   ["EDD","締切早い先","納期遵守"],
+   ["Priority","重要顧客先","売上守る"]],
+ compare:true,
+ memorize:["SOTで平均待ち最小","EDDで納期遵守最大","『どの目標』で選ぶか"],
+ related:["w3_loading","w3_sched","w3_gantt"]},
+
+{id:"w3_sched", w:3, ch:"Ch10", group:"Planning & Control", name:"Scheduling (Forward / Backward)",
+ def:"Forward=今からできるだけ早く着手。Backward=締切から逆算。",
+ example:"De Gouden Wafel：クリスマス受注 → Backward（12/24逆算で各工程着手日決定）。即納商品 → Forward。",
+ compare:true,
+ cmpTable:[["軸","Forward","Backward"],
+   ["起点","現在","締切"],
+   ["在庫リスク","早完で在庫","ぎりぎりで遅延"],
+   ["利用","急ぎ・現場","プロジェクト"]],
+ memorize:["起点の違い","Backwardは在庫を持たない（Lean寄り）","Forwardはバッファあり"],
+ related:["w3_loading","w3_seq","w3_gantt","w8_cpm"]},
+
+{id:"w3_gantt", w:3, ch:"Ch10", group:"Planning & Control", name:"Gantt Charts",
+ def:"時間軸上に作業のスケジュールをバーで表示する手法。",
+ example:"De Gouden Wafel：新フレーバー開発の8週Ganttチャート。混合試作→官能評価→量産トライアル。",
+ memorize:["時間×作業の見える化","依存関係は別途","CPM/PERTで拡張"],
+ related:["w3_sched","w8_cpm"]},
+
+{id:"w3_monitor", w:3, ch:"Ch10", group:"Planning & Control", name:"Monitoring & Control",
+ def:"Plan ⇒ Do ⇒ Check ⇒ Act（PDCA）のループで実行を監視・修正。",
+ example:"De Gouden Wafel：毎時の焼成歩留りをモニター→閾値割れで温度調整。",
+ memorize:["PDCAサイクル","Feedback loopが鍵","Push/Pullで作動方式が変わる"],
+ related:["w3_push_pull","w8_spc"]},
+
+{id:"w3_push_pull", w:3, ch:"Ch10", group:"Planning & Control", name:"Push vs Pull Control",
+ def:"Push=計画から前へ送る（MRP型）。Pull=後工程の引取りで動く（Kanban型）。",
+ example:"De Gouden Wafel：焼成→在庫→出荷=Push。直営カフェの注文→工房バック焼成=Pull。",
+ visual:"compare",
+ cmpTable:[["軸","Push","Pull"],
+   ["起点","中央計画","下流要求"],
+   ["在庫","多め","少なめ"],
+   ["変動への強さ","弱い","強い"],
+   ["代表","MRP","JIT/Kanban"]],
+ compare:true,
+ memorize:["押し vs 引き","Pull=Lean寄り、Push=MRP","DBRはハイブリッド"],
+ related:["w3_dbr","w6_mrp","w7_jit","w7_dbr_push_pull"]},
+
+{id:"w3_dbr", w:3, ch:"Ch10", group:"Planning & Control", name:"Drum-Buffer-Rope (TOC)",
+ def:"制約理論。Drum=ボトルネックがリズム設定、Buffer=その前に在庫、Rope=投入を制約に同期。",
+ example:"De Gouden Wafel：焼成オーブンがDrum。前に小バッファ確保。原料投入は焼成ペースに同期。",
+ visual:"flow",
+ flow:["投入（Rope同期）","→ Buffer 在庫","→ Drum（焼成）","→ 後工程"],
+ memorize:["3要素：Drum/Buffer/Rope","ボトルネックを満杯維持","Goldratt の TOC"],
+ related:["w2_bottleneck","w3_push_pull","w7_dbr_push_pull"]},
+
+{id:"w3_mts_mto", w:3, ch:"Ch10", group:"Planning & Control", name:"MTS / MTO / ATO / ETO",
+ def:"顧客注文と生産の関係。MTS=見込→在庫販売、MTO=受注後生産、ATO=部品在庫し最終組立、ETO=設計から。",
+ example:"De Gouden Wafel：レギュラー品=MTS、季節限定=MTO、ギフト箱詰め=ATO（中身在庫＋注文後ラッピング）、ウエディング特注=ETO。",
+ visual:"compare",
+ cmpTable:[["型","在庫位置","リードタイム","例"],
+   ["MTS","完成品","短","通常品"],
+   ["ATO","部品","中","ギフトセット"],
+   ["MTO","原料","長","季節限定"],
+   ["ETO","なし","最長","特注"]],
+ compare:true,
+ memorize:["在庫を持つ位置=Decoupling Point","MTS→ATO→MTO→ETOで遅くなる","P:D比とリンク"],
+ related:["w3_pd_ratio","w6_decoupling"]},
+
+{id:"w3_capacity", w:3, ch:"Ch11", group:"Capacity Mgmt", name:"Capacity Definition & Measurement",
+ def:"Capacity=単位時間あたりに処理できる量。Output指標 or Input指標。",
+ example:"De Gouden Wafel：オーブン1台 80kg/時間（Output）、または1時間あたり（Input）。",
+ formula:"Capacity = Output / Time<br>or = Input × Yield",
+ memorize:["Output vs Input指標","製品Mixで実効容量変動","Bottleneck=System Capacity"],
+ related:["w2_bottleneck","w3_design_eff","w3_horizons"]},
+
+{id:"w3_design_eff", w:3, ch:"Ch11", group:"Capacity Mgmt", name:"Design / Effective / Actual Capacity",
+ def:"Design=理論最大、Effective=計画ロス引いた現実上限、Actual=実績。Utilization・Efficiency で評価。",
+ example:"De Gouden Wafel：Design 1000箱/日、Effective 850（保守時間引く）、Actual 720（故障・段替え）。",
+ formula:"Utilization = Actual / Design<br>Efficiency = Actual / Effective<br>OEE = Availability × Performance × Quality",
+ memorize:["3レベルの容量","Util vs Eff の違い","OEE=Leanの代表KPI"],
+ related:["w3_capacity","w7_tpm","w7_red_queen"]},
+
+{id:"w3_forecast", w:3, ch:"Ch11", group:"Capacity Mgmt", name:"Demand Forecasting & Seasonality",
+ def:"需要予測。定性・定量（時系列・回帰）。季節性=規則的変動。",
+ example:"De Gouden Wafel：12月需要は平均の2.5倍（季節指数2.5）。前年比＋安全係数で予測。",
+ memorize:["定性 vs 定量","誤差（Bias, MAD, MAPE）で評価","予測しても不確実→Safety stockへ"],
+ related:["w6_safety","w6_newsvendor","w3_level_plan"]},
+
+{id:"w3_level_plan", w:3, ch:"Ch11", group:"Capacity Mgmt", name:"Level Capacity Plan",
+ def:"生産レベルを一定に保ち、需要変動は在庫で吸収。",
+ example:"De Gouden Wafel：通年で1日500箱生産→クリスマス前に在庫1万箱を積み上げ。",
+ compare:true,
+ memorize:["生産安定・在庫変動","固定費効率↑、在庫費↑","Stable demand用"],
+ related:["w3_chase","w3_dm_plan","w2_cap_timing"]},
+
+{id:"w3_chase", w:3, ch:"Ch11", group:"Capacity Mgmt", name:"Chase Demand Plan",
+ def:"生産を需要に合わせて変える（残業・派遣・サブコン）。",
+ example:"De Gouden Wafel：12月だけ臨時パート＋夜勤シフト追加で需要追随。",
+ compare:true,
+ cmpTable:[["軸","Level","Chase"],
+   ["生産量","一定","変動"],
+   ["在庫","変動（積上）","低"],
+   ["人件費","安定","変動・割増"],
+   ["向き","保存可","保存不可（サービス）"]],
+ memorize:["Level vs Chase","ハイブリッドが現実","サービスはChase寄り（在庫不可）"],
+ related:["w3_level_plan","w3_dm_plan"]},
+
+{id:"w3_dm_plan", w:3, ch:"Ch11", group:"Capacity Mgmt", name:"Demand Management Plan",
+ def:"需要側を動かす（価格・予約・プロモ）。Yield management 含む。",
+ example:"De Gouden Wafel：閑散期に20%OFF、繁忙期は予約限定・価格据置。",
+ memorize:["供給を動かさず需要を動かす","価格弾力性が前提","Yield mgmt と接続"],
+ related:["w3_yield","w3_level_plan"]},
+
+{id:"w3_yield", w:3, ch:"Ch11", group:"Capacity Mgmt", name:"Yield Management",
+ def:"在庫不可・容量固定・予約可・需要セグメント可の条件で、価格を動かし収益最大化。",
+ example:"De Gouden Wafel工場見学ツアー：平日€10、週末€20、繁忙期€30。空席を埋めて収益最大化。",
+ memorize:["4条件：在庫不可・固定容量・予約可・セグメント可","ホテル・航空が原型","容量を固定で収益最大化"],
+ related:["w3_dm_plan","w3_capacity"]},
+
+{id:"w3_queuing", w:3, ch:"Ch11", group:"Capacity Mgmt", name:"Queuing Theory & Wq",
+ def:"待ち行列理論。Utilization U、Variability Ca/Cs、平均サービス時間Tsから待ち時間Wqを推定。",
+ example:"De Gouden Wafelカフェレジ：U=85%、Ts=2分 → Wq≈11分（混雑時）。スタッフ追加でU↓→Wq急減。",
+ formula:"Wq ≈ (Ca²+Cs²)/2 × U/(1−U) × Ts",
+ memorize:["3要素：U、Variability、Ts","U=1で発散","Lean は U を下げて Speed UP"],
+ related:["w2_var_util","w7_lean","w1_speed"]},
+
+/* ============ WEEK 6 — Ch 13,14：Inventory ============ */
+{id:"w6_inv_types", w:6, ch:"Ch13", group:"Inventory Basics", name:"Inventory Types",
+ def:"4種：Buffer/Safety、Cycle（バッチ生産）、Anticipation（予測積上）、Pipeline（輸送中）。",
+ example:"De Gouden Wafel：Buffer=不良時用予備、Cycle=バッチ焼成在庫、Anticipation=12月用クリスマス在庫、Pipeline=AH配送中の箱。",
+ visual:"compare",
+ cmpTable:[["種類","目的","例"],
+   ["Buffer/Safety","変動吸収","予備在庫"],
+   ["Cycle","バッチ間在庫","次焼成までの分"],
+   ["Anticipation","季節需要先取り","クリスマス前積上"],
+   ["Pipeline","輸送・処理中","船積み中"]],
+ compare:true,
+ memorize:["4種を見分ける","目的別管理","次の EOQ で Cycle 在庫を最適化"],
+ related:["w6_hold_order","w6_eoq","w6_safety"]},
+
+{id:"w6_hold_order", w:6, ch:"Ch13", group:"Inventory Basics", name:"Holding vs Ordering Costs",
+ def:"Holding=保管・陳腐化・資本コスト。Ordering=発注・段替・輸送固定費。EOQ はこの2つのバランス。",
+ example:"De Gouden Wafel小麦粉：保管€0.05/kg/月、1回発注コスト€80。発注頻度が両者のトレードオフ。",
+ formula:"Total Cost = Holding Cost + Ordering Cost<br>= (Q/2)×Ch + (D/Q)×Co",
+ compare:true,
+ cmpTable:[["軸","Holding","Ordering"],
+   ["増加要因","在庫量","発注回数"],
+   ["減らすには","発注頻繁化","ロット大化"],
+   ["相反","逆相関"]],
+ memorize:["増えると減る関係","EOQはこの2つの交点","Lean は両方下げる（小ロット化）"],
+ related:["w6_eoq","w7_smed"]},
+
+{id:"w6_eoq", w:6, ch:"Ch13", group:"Inventory Basics", name:"EOQ & EBQ",
+ def:"Economic Order Quantity：総コスト最小の発注ロット。EBQ=自社生産時の Economic Batch Quantity。",
+ example:"De Gouden Wafel小麦粉：D=120,000kg/年、Co=€80、Ch=€0.6/kg → EOQ=√(2×120000×80/0.6)=5,657kg/回。",
+ formula:"EOQ = √(2 × D × Co / Ch)<br>EBQ = √(2DCo / Ch(1−d/p))<br>d=需要率、p=生産率",
+ memorize:["√(2DCo/Ch)","EBQは生産中も在庫が減るので分母調整","SMEDでCo低下→EOQ低下＝Lean"],
+ related:["w6_hold_order","w6_safety","w7_smed"]},
+
+{id:"w6_safety", w:6, ch:"Ch13", group:"Inventory Basics", name:"Safety Stock & Reorder Level",
+ def:"Safety stock=変動吸収。ROL=平均需要×LT+SS。SS=Z×σ×√LT。",
+ example:"De Gouden Wafelシロップ：平均D=20kg/日、LT=5日、需要σ=4kg、95%サービス → SS=1.65×4×√5≈15kg、ROL=20×5+15=115kg。",
+ formula:"ROL = d̄ × LT + SS<br>SS = Z × σ_d × √LT",
+ memorize:["Service level → Z値（95%=1.65, 99%=2.33）","LT変動も加味する版あり","予測誤差を在庫で吸収"],
+ related:["w3_forecast","w6_eoq","w6_newsvendor"]},
+
+{id:"w6_abc", w:6, ch:"Ch13", group:"Inventory Basics", name:"ABC Classification (Pareto)",
+ def:"金額の20%でも全体の80%を占めるアイテムをA、次がB、その他がC。管理レベルを変える。",
+ example:"De Gouden Wafel：A=シロップ・特殊粉（高額・厳密管理）、B=砂糖（中）、C=包装材ボルト（簡易）。",
+ visual:"flow",
+ flow:["Aアイテム：20% of items, 80% of value（厳密管理）","Bアイテム：30% of items, 15%","Cアイテム：50% of items, 5%"],
+ memorize:["80/20の法則","Aは厳密、Cはざっくり","XYZ分類（変動性）と併用も"],
+ related:["w6_mrp","w6_inv_types"]},
+
+{id:"w6_mrp", w:6, ch:"Ch14", group:"Inventory Mgmt", name:"MRP — Material Requirements Planning",
+ def:"BOM × MPS から逆算して各部品の発注・生産タイミング・量を計算する仕組み。Dependent demand 専用。",
+ example:"De Gouden Wafel：MPS『来週ワッフル箱5000個』→BOM展開→小麦200kg、砂糖80kg、シロップ40Lを 何日前に発注かを計算。",
+ visual:"flow",
+ flow:["MPS（生産計画）","BOM（部品表）","Inventory records","→ MRP計算","→ 発注・製造指示"],
+ memorize:["Push型の代表","BOM, MPS, Inventory が入力","ERPの中核、Lean(JIT)とは対","次の Decoupling Point に繋がる"],
+ related:["w3_push_pull","w3_dep_indep","w6_decoupling","w7_jit"]},
+
+{id:"w6_pooling", w:6, ch:"Ch14", group:"Inventory Mgmt", name:"Pooling Effect & Two/Three-Bin",
+ def:"在庫を統合すると変動が打ち消し合い必要量↓。Two-bin=空になったら発注（視覚式）。",
+ example:"De Gouden Wafel：3カフェの砂糖在庫を1中央倉庫に集約→Safety stock 30%減。包装テープは Two-bin で空箱見たら発注。",
+ formula:"統合後σ ≈ √(σ₁² + σ₂² + ...) < Σσᵢ",
+ memorize:["Pooling=分散の二乗和の√","√Nの法則で在庫減","Two-binは『見える化』管理の代表"],
+ related:["w6_safety","w7_lean"]},
+
+{id:"w6_holding_toyota", w:6, ch:"Ch14", group:"Inventory Mgmt", name:"Holding Cost % & Toyota City",
+ def:"Holding cost は通常 在庫価値の20-30%/年。Toyota は近接サプライヤー集約で在庫＆物流削減（Toyota City戦略）。",
+ example:"De Gouden Wafel：小麦ミルを工場5km圏内に集約→輸送LT 4時間→2時間、安全在庫半減。",
+ formula:"Annual Holding Cost ≈ 在庫価値 × 25%",
+ memorize:["25%が目安","Toyota City=近接統合","Lean/JITの前提条件"],
+ related:["w6_hold_order","w7_jit"]},
+
+{id:"w6_newsvendor", w:6, ch:"Ch14", group:"Inventory Mgmt", name:"Newsvendor Model",
+ def:"単一期間在庫の最適発注量。Cu=品切れ損、Co=売れ残り損。Critical Ratio=Cu/(Cu+Co)。",
+ example:"De Gouden Wafelクリスマス限定ボックス：P=€20、C=€8、廃棄€2。Cu=12、Co=10 → CR=12/22≈0.55 → 需要分布の55パーセンタイル発注。",
+ formula:"Cu = 価格 − コスト（不足の損失）<br>Co = コスト − 残価（過剰の損失）<br>Service level* = Cu / (Cu + Co)<br>Q* = μ + Z(SL) × σ",
+ memorize:["Single-period（鮮魚・新聞・季節品）","Cu>Co → SL>50%（強気発注）","CR=最適サービス水準"],
+ related:["w6_safety","w3_forecast","w3_dm_plan"]},
+
+{id:"w6_decoupling", w:6, ch:"Ch14", group:"Inventory Mgmt", name:"Order Decoupling Point",
+ def:"顧客注文と Push 生産が出会う点＝どこに在庫を持つか。MTS/ATO/MTO/ETO で位置が違う。",
+ example:"De Gouden Wafel：MTS=完成品倉庫、ATO=ギフトの中身在庫→注文後ラッピング、MTO=原料倉庫→注文後焼成、ETO=設計から。",
+ visual:"flow",
+ flow:["MTS：完成品","ATO：部品在庫＋組立","MTO：原料在庫＋生産","ETO：設計から"],
+ memorize:["Decoupling Point=在庫位置","上流ほどLT長・カスタム可","P:D比とMTS-MTO選択の原理"],
+ related:["w3_mts_mto","w3_pd_ratio","w6_mrp"]},
+
+/* ============ WEEK 7 — Ch 15,16：Lean ============ */
+{id:"w7_lean", w:7, ch:"Ch15", group:"Lean Basics", name:"Lean & 7 Wastes (TIMWOOD)",
+ def:"流れを止めずムダを徹底排除する思想。TIMWOOD=Transport/Inventory/Motion/Waiting/Over-production/Over-processing/Defects。",
+ example:"De Gouden Wafel工場：Transport=倉庫遠い、Inventory=過剰在庫、Motion=道具探し、Waiting=焼成待ち、Over-prod=売れない分焼く、Over-proc=過剰デコ、Defects=焦げ品。",
+ visual:"compare",
+ cmpTable:[["記号","ムダ","例"],
+   ["T","Transport","遠隔倉庫往復"],
+   ["I","Inventory","6ヶ月分滞留"],
+   ["M","Motion","道具を探す"],
+   ["W","Waiting","オーブン空き待ち"],
+   ["O","Over-production","売れない量"],
+   ["O","Over-processing","過剰梱包"],
+   ["D","Defects","焦げ品再焼成"]],
+ memorize:["7文字 TIMWOOD","Over-prodが最悪（他を引き起こす）","『価値を生まない作業は全部ムダ』"],
+ related:["w7_jit","w7_vsm","w2_thr_eff"]},
+
+{id:"w7_jit", w:7, ch:"Ch15", group:"Lean Basics", name:"JIT, Kanban & Lean Tools",
+ def:"JIT=必要な物を必要な時に必要な量だけ。Kanban=Pull信号カード。5S、SMED、Poka-Yoke なども含む。",
+ example:"De Gouden Wafel：シロップタンクが半分→自動Kanban信号でサプライヤー発注。在庫は2日分のみ。",
+ visual:"flow",
+ flow:["顧客需要","→ Kanban信号","→ 後工程の作動","→ 前工程の補充"],
+ memorize:["Pull型の代表","JIT+Jidoka=TPSの2本柱","次のLean Houseで全体像"],
+ related:["w3_push_pull","w7_lean_house","w7_lean_wip","w6_mrp"]},
+
+{id:"w7_lean_wip", w:7, ch:"Ch15", group:"Lean Basics", name:"Lean & WIP",
+ def:"Little's Law：WIP=TH×T。WIPを下げると Throughput Time が短くなる。ただし変動が大きいと欠品。",
+ example:"De Gouden Wafel：WIP=200箱→100箱に減らすと、TT が4時間→2時間に短縮。ただし焼成変動を Lean で抑える必要。",
+ formula:"WIP = Throughput × Throughput Time<br>低WIPを成立させる ⇒ 変動を下げる必要",
+ memorize:["WIP↓ → Speed↑","ただしVariability低が前提","Kingmanの式（Variability×Util）に繋がる"],
+ related:["w2_throughput","w2_var_util","w7_lean","w3_queuing"]},
+
+{id:"w7_vsm", w:7, ch:"Ch15", group:"Lean Basics", name:"Value Stream Mapping",
+ def:"製品の流れを Current State→Future State で図示。Value-added と Non-value-added を区別。",
+ example:"De Gouden Wafel：原料受入→保管(2日待)→計量→混合→焼成→冷却(1日)→出荷。VA=工程時間20分／Total=72時間 → η≈0.5%。",
+ formula:"η = Value-added Time / Total Lead Time",
+ memorize:["Current → Future","Process Mapping の進化版","Lean改善の最重要ツール"],
+ related:["w2_proc_map","w2_thr_eff","w7_lean"]},
+
+{id:"w7_batch_flow", w:7, ch:"Ch15", group:"Lean Basics", name:"Batch vs Continuous Flow",
+ def:"Batch=ロット単位で工程移動（待ち多）。Continuous=1個流し（待ち最小）。",
+ example:"De Gouden Wafel：旧来 50個バッチで工程間移動→全部終わるまで次工程待ち。1個流しに変えると Throughput Time が1/10。",
+ visual:"compare",
+ cmpTable:[["軸","Batch","Continuous Flow"],
+   ["移動単位","ロット","1個"],
+   ["WIP","多","少"],
+   ["Throughput Time","長","短"],
+   ["不良発見","遅い","早い"]],
+ compare:true,
+ memorize:["1個流しがLeanの理想","Batchは段替コスト時に妥協","SMEDで Batch→Flow へ"],
+ related:["w7_smed","w7_lean_wip","w2_long_thin"]},
+
+{id:"w7_lean_3layer", w:7, ch:"Ch15", group:"Lean Basics", name:"Lean 3層フレーム",
+ def:"哲学（顧客価値・改善）／技術（JIT・自働化・5S）／計画管理（Kanban・Heijunka）の3層。",
+ example:"De Gouden Wafel：哲学＝『新鮮品質至上』、技術＝SMED導入、管理＝週次 Heijunka 平準化。",
+ visual:"flow",
+ flow:["哲学：顧客価値・継続改善","技術：JIT・自働化・5S・SMED","計画管理：Kanban・Heijunka・Standardized Work"],
+ memorize:["3層を区別","哲学なしの技術導入は失敗","Toyota Wayの体系"],
+ related:["w7_lean_house","w7_lean","w7_smed"]},
+
+{id:"w7_smed", w:7, ch:"Ch15", group:"Lean Basics", name:"SMED — 段取り短縮 4手法",
+ def:"Single-Minute Exchange of Dies。①内・外段取り分離、②内→外変換、③並列化、④機構改善。",
+ example:"De Gouden Wafelフレーバー切替：従来30分→外段取り（次品準備）と並列化で7分に短縮。EOQも自動的に減少。",
+ visual:"flow",
+ flow:["①内/外段取り分離","②内→外変換","③並列化","④機構改善"],
+ memorize:["4段階で短縮","Co低下→EOQ低下→Lean可能","Batch→Flow の鍵"],
+ related:["w6_eoq","w7_batch_flow","w7_lean"]},
+
+{id:"w7_red_queen", w:7, ch:"Ch15", group:"Lean Basics", name:"Red Queen Effect",
+ def:"競合も改善するので、自社も改善し続けないと相対的に後退する。『同じ場所にいるために全力で走る必要がある』。",
+ example:"De Gouden Wafel：競合A社も Lean 化→自社も毎年5%改善しないと市場シェア低下。",
+ memorize:["停滞=後退","継続的Kaizenが必要","Strategy の Dynamic capabilityと繋がる"],
+ related:["w7_lean","w1_strategy"]},
+
+{id:"w7_lean_house", w:7, ch:"Ch15", group:"Lean Basics", name:"Lean House — TPS構造",
+ def:"屋根=高品質低コスト短LT。柱=JIT＋Jidoka。土台=Heijunka・Standardized Work・Kaizen・5S。",
+ example:"De Gouden Wafel：屋根=プレミアム品質維持＋コスト最適、柱=JIT発注＋Jidokaセンサー、土台=週次平準化・5S。",
+ visual:"flow",
+ flow:["屋根：Q↑・C↓・LT↓","柱1：JIT","柱2：Jidoka（自働化）","土台：Heijunka / Standardized Work / Kaizen / 5S"],
+ memorize:["TPSの全体像","屋根=目標、柱=手段、土台=基礎","全部揃って機能する"],
+ related:["w7_jit","w7_lean_3layer","w8_poka_yoke"]},
+
+{id:"w7_dbr_push_pull", w:7, ch:"Ch15", group:"Lean Basics", name:"Push / Pull / DBR 比較",
+ def:"3制御方式の比較。Push=計画駆動、Pull=後工程駆動、DBR=ボトルネック駆動。",
+ example:"De Gouden Wafel：原料調達=Push（MRP）、カフェ焼成=Pull（Kanban）、工場焼成=DBR（オーブン制約）。",
+ visual:"compare",
+ cmpTable:[["軸","Push","Pull","DBR"],
+   ["起点","計画","下流","制約"],
+   ["在庫","多","少","制約前のみ"],
+   ["代表","MRP","Kanban","TOC"]],
+ compare:true,
+ memorize:["3方式を場面で使い分け","Pull=最も Lean","DBR=制約集中"],
+ related:["w3_push_pull","w3_dbr","w7_jit","w6_mrp"]},
+
+{id:"w7_tpm", w:7, ch:"Ch16", group:"Lean Mgmt", name:"TPM — Total Productive Maintenance",
+ def:"設備総合効率（OEE）を全員参加で改善。自主保全＋計画保全＋改善活動の3本柱。",
+ example:"De Gouden Wafelオーブン：自主保全（オペレーター毎朝点検）、計画保全（月次部品交換）、Kaizen（故障パターン分析）→OEE 65%→85%。",
+ formula:"OEE = Availability × Performance × Quality",
+ memorize:["OEE=A×P×Q","Loss 6種：故障・段替・空転・速度低下・不良・立上","Leanの設備版"],
+ related:["w3_design_eff","w7_lean","w8_reliability"]},
+
+/* ============ WEEK 8 — Ch 17,18,19：Quality・Reliability・PM ============ */
+{id:"w8_spc", w:8, ch:"Ch17", group:"Quality", name:"SPC & Control Charts",
+ def:"工程を統計的に管理。X̄-R Chart で平均と範囲を監視。UCL/LCL=μ±3σ。",
+ example:"De Gouden Wafelワッフル重量：目標30g、UCL=30.6, LCL=29.4。毎時5個サンプリング、平均が外れたら工程停止。",
+ formula:"UCL = X̄̄ + A₂R̄<br>LCL = X̄̄ − A₂R̄<br>±3σ ≈ 99.73%（Common cause）",
+ memorize:["Common cause vs Special cause","6σ=不良 3.4ppm","Cpk=工程能力指数（≥1.33 が目安）"],
+ related:["w1_quality","w8_fmea","w8_6dim"]},
+
+{id:"w8_fmea", w:8, ch:"Ch17", group:"Quality", name:"FMEA",
+ def:"Failure Mode and Effects Analysis。RPN=Severity × Occurrence × Detection。RPN高い順に対策。",
+ example:"De Gouden Wafel：『焼成温度センサー故障』S=8、O=4、D=3 → RPN=96 → 二重センサー化で D=1→ RPN=32。",
+ formula:"RPN = S × O × D<br>各 1-10 スケール → 最大1000",
+ memorize:["3要素 SOD","Severity 下げにくいので O・D を下げる","FTA は逆向き（結果→原因）"],
+ related:["w8_fta","w8_poka_yoke","w8_risk3"]},
+
+{id:"w8_coq", w:8, ch:"Ch17", group:"Quality", name:"Cost of Quality & Control Plan",
+ def:"PAF model：Prevention＋Appraisal=投資、Internal＋External Failure=損失。総コスト最小点を狙う。",
+ example:"De Gouden Wafel：予防（訓練・SMED）€20K、評価（検査）€15K、内部不良（廃棄）€8K、外部不良（クレーム）€5K → 総 €48K。",
+ visual:"compare",
+ cmpTable:[["分類","内容","De Gouden Wafel例"],
+   ["Prevention","予防","訓練・FMEA"],
+   ["Appraisal","検査","SPC・抜取検査"],
+   ["Internal Failure","内部不良","焦げ品廃棄"],
+   ["External Failure","外部不良","返品・クレーム"]],
+ memorize:["PAF 4分類","予防コスト1$=Failureコスト10$削減","Lean=Prevention重視"],
+ related:["w8_spc","w8_gap_model","w7_lean"]},
+
+{id:"w8_reliability", w:8, ch:"Ch17", group:"Quality", name:"Reliability: A, MTBF, λ",
+ def:"Availability=A=MTBF/(MTBF+MTTR)。Failure rate λ=1/MTBF。",
+ example:"De Gouden Wafelオーブン：MTBF=200時間、MTTR=2時間 → A=200/202=99%。",
+ formula:"A = MTBF / (MTBF + MTTR)<br>λ = 1 / MTBF<br>R(t) = e^(−λt)",
+ memorize:["MTBF=平均故障間隔、MTTR=平均修復時間","Aは%表示","次の System reliabilityへ"],
+ related:["w8_sys_rel","w7_tpm","w1_depend"]},
+
+{id:"w8_cpm", w:8, ch:"Ch18", group:"Project Mgmt", name:"Project Management & CPM",
+ def:"プロジェクト=一回限り・期限あり。CPM=最長経路がプロジェクトLT＝Critical Path。",
+ example:"De Gouden Wafel新工場：基礎8w → 建屋12w → 設備10w → 試運転4w → 計34w。並列の電気配線6w は Critical でない。",
+ visual:"flow",
+ flow:["基礎(8w)","→ 建屋(12w)","→ 設備(10w)","→ 試運転(4w)"],
+ memorize:["Critical Path=最長経路","Slack=その作業に許される遅延","Crashingで短縮"],
+ related:["w8_crashing","w3_gantt","w3_sched"]},
+
+{id:"w8_6dim", w:8, ch:"Ch18", group:"Quality", name:"6 Quality Dimensions",
+ def:"Functionality / Appearance / Reliability / Durability / Recovery / Contact の6次元。製品・サービス両方に適用。",
+ example:"De Gouden Wafel：Functionality=味、Appearance=焼き色、Reliability=毎回同じ品質、Durability=賞味期限、Recovery=不良時返金、Contact=スタッフ対応。",
+ memorize:["6次元 → 全部測れる","Service Quality は Recovery と Contact が特に重要","Gap Model と接続"],
+ related:["w8_gap_model","w1_quality","w8_spc"]},
+
+{id:"w8_resist", w:8, ch:"Ch18", group:"Quality", name:"Resistance to Change & MacLeamy",
+ def:"変革への抵抗。MacLeamy曲線=設計段階での変更コスト小、後工程になるほどコスト爆発。",
+ example:"De Gouden Wafel新ライン：設計時の変更=€1K、建設中=€20K、稼働後=€500K。早期に決めるべき。",
+ visual:"flow",
+ flow:["設計段階：変更コスト 小","建設段階：中","稼働後：大"],
+ memorize:["前ローディング（Front-loading）が重要","変革には人の抵抗もある（Kotter 8段階等）","次の Gap Model に繋がる"],
+ related:["w8_gap_model","w8_cpm"]},
+
+{id:"w8_fta", w:8, ch:"Ch18", group:"Quality", name:"Fault-Tree Analysis (FTA)",
+ def:"トップイベント（事故）から AND/OR ゲートで原因を木構造に展開する。確率計算で原因の寄与を出す。",
+ example:"De Gouden Wafel：『焦げ品出荷』Top → ORで（焼成温度高 AND 検査見逃し）。各確率を掛けて全体P算出。",
+ compare:true,
+ memorize:["上から下へ（結果→原因）","FMEAの逆方向","定量的P計算可"],
+ related:["w8_fmea","w8_risk3","w8_sys_rel"]},
+
+{id:"w8_poka_yoke", w:8, ch:"Ch18", group:"Quality", name:"Poka-Yoke",
+ def:"ミスを物理的・手順的に不可能にするデザイン。Lean House の土台。",
+ example:"De Gouden Wafel：シロップ充填ノズルにセンサー→未充填箱は次工程に進まない。検査ではなくミス自体を防ぐ。",
+ memorize:["ミス防止 ≠ ミス検査","設計で物理的に不可能化","Jidoka と兄弟"],
+ related:["w7_lean_house","w8_risk3","w8_fmea"]},
+
+{id:"w8_sys_rel", w:8, ch:"Ch18", group:"Quality", name:"System Reliability — Serial/Parallel",
+ def:"直列=R_total=R₁×R₂×...（弱い）、並列=1−(1−R₁)(1−R₂)（冗長性で強化）。",
+ example:"De Gouden Wafel焼成ライン：センサー1個 R=0.95 → 直列5個=0.95⁵≈0.77。並列冗長化2個=1−0.05²=0.9975。",
+ formula:"Serial：R = R₁ × R₂ × ... × Rₙ<br>Parallel：R = 1 − (1−R₁)(1−R₂)...(1−Rₙ)",
+ memorize:["直列は弱い、並列は強い","冗長化でAvailability急上昇","重要系統は並列化"],
+ related:["w8_reliability","w8_fta","w7_tpm"]},
+
+{id:"w8_crashing", w:8, ch:"Ch18", group:"Project Mgmt", name:"Crashing — Project短縮",
+ def:"Critical Path 上の作業に追加資源投入でLT短縮。Cost slope=増分コスト/短縮日。一番安い作業から短縮。",
+ example:"De Gouden Wafel工場：基礎工事 8w→6w（追加€20K）vs 設備設置 10w→8w（€50K）→基礎を先に短縮。",
+ formula:"Cost Slope = (Crash Cost − Normal Cost) / (Normal Time − Crash Time)<br>Critical Path 上で Slope 最小の作業から短縮",
+ memorize:["Cost slope 小さい順に潰す","Critical Path 上のみ意味あり","短縮で別のPathがCriticalに変わることも"],
+ related:["w8_cpm","w3_sched"]},
+
+{id:"w8_gap_model", w:8, ch:"Ch19", group:"Service Quality", name:"Gap Model of Quality",
+ def:"サービス品質の4ギャップ：①顧客期待 vs 経営の認識、②認識 vs 仕様、③仕様 vs 提供、④提供 vs コミュニケーション。",
+ example:"De Gouden Wafelカフェ：①観光客の期待を本部が理解せず、②マニュアル古い、③スタッフ訓練不足、④広告で過剰約束。",
+ visual:"flow",
+ flow:["Gap1：顧客期待↔経営認識","Gap2：認識↔仕様","Gap3：仕様↔提供","Gap4：提供↔コミュニケーション"],
+ memorize:["4ギャップ","サービス特有","SERVQUAL でも測定"],
+ related:["w8_6dim","w1_quality","w1_pvs"]},
+
+{id:"w8_risk3", w:8, ch:"Ch19", group:"Quality", name:"リスク軽減の3階層",
+ def:"Prevention（予防）→Detection（検知）→Containment（封じ込め）の3段階で守る。",
+ example:"De Gouden Wafel：Prevention=Poka-Yoke、Detection=SPC、Containment=ロット隔離・リコール手順。",
+ visual:"flow",
+ flow:["Prevention：起こさない","Detection：早く気付く","Containment：被害を抑える"],
+ memorize:["3階層の防御","上流ほど安い","FMEA/Poka-Yoke は Prevention 中心"],
+ related:["w8_fmea","w8_poka_yoke","w8_spc"]},
+];
+
+/* ============================================================
+   Week metadata (used for the small week-badge on each card)
+   ============================================================ */
+const WEEK_COLORS = {1:"#4a7dd9", 2:"#5fb88a", 3:"#d97a4a", 6:"#c95c8b", 7:"#9a6ad9", 8:"#d9b94a"};
+
+/* ============================================================
+   PARTS — 複合概念を兄弟（parts）として分解
+   家系図で「子ノード」として表示される。
+   クリックで親概念のモーダルを開き、parts セクションを見る。
+   ============================================================ */
+const PARTS = {
+  /* === 定義 === */
+  w1_3core: [
+    {name:"Operations", brief:"製品・サービスを生産・提供する機能"},
+    {name:"Marketing", brief:"顧客需要を生み出す機能"},
+    {name:"Product/Service Development", brief:"新製品・新サービスを開発する機能"},
+    {name:"Support Functions", brief:"HR・Finance・IT などの支援"}
+  ],
+  w1_tformed: [
+    {name:"Materials（材料）", brief:"物理的材料（製造業の主）"},
+    {name:"Information（情報）", brief:"データ・情報（IT・銀行の主）"},
+    {name:"Customers（顧客）", brief:"顧客自身（サービス業の主）"}
+  ],
+  w1_tforming: [
+    {name:"Facilities（設備）", brief:"建物・機械・土地"},
+    {name:"Staff（人材）", brief:"労働力・スキル"}
+  ],
+  w1_4vs: [
+    {name:"Volume（量）", brief:"生産量の大小。高Vol=低コスト・標準化"},
+    {name:"Variety（種類）", brief:"製品種類の幅。高Var=柔軟性・高コスト"},
+    {name:"Variation（変動）", brief:"需要の時間変動。繁閑・季節性"},
+    {name:"Visibility（可視性）", brief:"顧客から見える度合い。高Vis=サービス寄り"}
+  ],
+
+  /* === パフォーマンス === */
+  w1_flex: [
+    {name:"Mix flexibility", brief:"製品種類を変える能力"},
+    {name:"Volume flexibility", brief:"生産量を変える能力"},
+    {name:"Delivery flexibility", brief:"配送タイミングを変える能力"},
+    {name:"Product flexibility", brief:"新製品を導入する能力"}
+  ],
+
+  /* === 戦略 === */
+  w1_4stages: [
+    {name:"Stage 1：Internal Neutrality", brief:"足を引っ張らないだけ"},
+    {name:"Stage 2：External Neutrality", brief:"業界平均レベル"},
+    {name:"Stage 3：Internally Supportive", brief:"社内で『良い』と評価"},
+    {name:"Stage 4：Externally Supportive", brief:"業界をリード"}
+  ],
+  w1_owq: [
+    {name:"Order-winning（勝つ決め手）", brief:"閾値超で比例的に勝つ"},
+    {name:"Qualifying（最低条件）", brief:"満たさないと土俵に乗れない"},
+    {name:"Less Important（影響小）", brief:"優先度低"}
+  ],
+  w1_lifecycle: [
+    {name:"Introduction（導入期）", brief:"Flex重視・少量多品種"},
+    {name:"Growth（成長期）", brief:"Quality/Speed重視"},
+    {name:"Maturity（成熟期）", brief:"Cost重視・大量生産"},
+    {name:"Decline（衰退期）", brief:"Cost/Flex・退出戦略"}
+  ],
+  w1_csr: [
+    {name:"People（社会）", brief:"従業員・地域・人権"},
+    {name:"Planet（環境）", brief:"環境負荷・サステナ"},
+    {name:"Profit（経済）", brief:"財務的利益"}
+  ],
+
+  /* === キャパシティ === */
+  w2_cap_timing: [
+    {name:"Lead（先取り）", brief:"需要前に増設。過剰投資リスク"},
+    {name:"Lag（後追い）", brief:"需要後に増設。機会損失リスク"},
+    {name:"Smoothing（平準化）", brief:"在庫で吸収。中間策"}
+  ],
+
+  /* === プロセス型 === */
+  w2_proc_types_m: [
+    {name:"Project", brief:"極小Vol極大Var。1点物（例：特注ケーキ）"},
+    {name:"Jobbing", brief:"小Vol大Var。個別注文（例：アート缶）"},
+    {name:"Batch", brief:"中Vol中Var。ロット生産（例：季節フレーバー）"},
+    {name:"Mass production", brief:"大Vol小Var。流れ作業"},
+    {name:"Continuous", brief:"極大Vol極小Var。連続生産（例：シロップ）"}
+  ],
+  w2_proc_types_s: [
+    {name:"Professional service", brief:"高接触・高カスタマイズ（コンサル）"},
+    {name:"Service shop", brief:"中接触・中カスタマイズ（カフェ）"},
+    {name:"Mass service", brief:"低接触・低カスタマイズ（オンラインショップ）"}
+  ],
+
+  /* === 計画 === */
+  w3_horizons: [
+    {name:"Long-term（長期）", brief:"年単位。戦略・キャパ計画"},
+    {name:"Medium-term（中期）", brief:"月単位。Aggregate plan"},
+    {name:"Short-term（短期）", brief:"日・時単位。Operational"}
+  ],
+  w3_seq: [
+    {name:"FIFO", brief:"先入先出。公平"},
+    {name:"LIFO", brief:"後入先出。物理制約"},
+    {name:"SOT (SPT)", brief:"短い処理時間先。平均待ち最小"},
+    {name:"LOT", brief:"長いの先（稀）"},
+    {name:"EDD", brief:"締切早い先。納期遵守最大"},
+    {name:"Customer Priority", brief:"重要顧客先。売上守る"}
+  ],
+  w3_sched: [
+    {name:"Forward（前進）", brief:"現在から早く着手。バッファあり"},
+    {name:"Backward（後退）", brief:"締切から逆算。在庫を持たない"}
+  ],
+  w3_push_pull: [
+    {name:"Push（押し）", brief:"中央計画から前へ送る。MRP代表"},
+    {name:"Pull（引き）", brief:"後工程の引取りで動く。Kanban代表"}
+  ],
+  w3_mts_mto: [
+    {name:"MTS（Make-to-Stock）", brief:"完成品在庫。最短LT（通常品）"},
+    {name:"ATO（Assemble-to-Order）", brief:"部品在庫＋注文後組立（ギフトセット）"},
+    {name:"MTO（Make-to-Order）", brief:"原料在庫＋注文後生産（季節限定）"},
+    {name:"ETO（Engineer-to-Order）", brief:"設計から。最長LT（特注）"}
+  ],
+  w3_design_eff: [
+    {name:"Design Capacity（設計）", brief:"理論最大容量"},
+    {name:"Effective Capacity（実効）", brief:"計画ロス引いた上限"},
+    {name:"Actual Capacity（実績）", brief:"実際に出た量"}
+  ],
+
+  /* === 在庫 === */
+  w6_inv_types: [
+    {name:"Buffer / Safety（安全）", brief:"変動吸収の予備"},
+    {name:"Cycle（サイクル）", brief:"バッチ生産による在庫"},
+    {name:"Anticipation（予測）", brief:"将来需要の先取り（季節）"},
+    {name:"Pipeline（輸送中）", brief:"輸送・処理中の在庫"}
+  ],
+  w6_hold_order: [
+    {name:"Holding Cost（保管費）", brief:"在庫量に比例。保管・陳腐化・資本コスト"},
+    {name:"Ordering Cost（発注費）", brief:"発注回数に比例。段取・輸送固定費"}
+  ],
+
+  /* === Lean === */
+  w7_lean: [
+    {name:"T - Transport", brief:"不要な運搬"},
+    {name:"I - Inventory", brief:"過剰在庫"},
+    {name:"M - Motion", brief:"作業者の不要な動作"},
+    {name:"W - Waiting", brief:"待ち時間"},
+    {name:"O - Over-production", brief:"過剰生産（最悪のムダ）"},
+    {name:"O - Over-processing", brief:"過剰な加工"},
+    {name:"D - Defects", brief:"不良・手直し"}
+  ],
+  w7_lean_3layer: [
+    {name:"哲学（Philosophy）", brief:"顧客価値・継続改善・人尊重"},
+    {name:"技術（Technique）", brief:"JIT・自働化・5S・SMED"},
+    {name:"計画管理（Management）", brief:"Kanban・Heijunka・標準作業"}
+  ],
+  w7_lean_house: [
+    {name:"屋根：Q↑・C↓・LT↓", brief:"TPSの目標"},
+    {name:"柱 1：JIT", brief:"必要な時に必要だけ"},
+    {name:"柱 2：Jidoka", brief:"自働化（異常で自動停止）"},
+    {name:"土台：Heijunka", brief:"生産平準化"},
+    {name:"土台：Standardized Work", brief:"標準作業"},
+    {name:"土台：Kaizen / 5S", brief:"継続改善と整理整頓"}
+  ],
+  w7_smed: [
+    {name:"① 内/外段取りの分離", brief:"機械停止中(内)と稼働中(外)を区別"},
+    {name:"② 内→外への変換", brief:"内段取りを外に移す"},
+    {name:"③ 並列化", brief:"複数作業者で同時実施"},
+    {name:"④ 機構改善", brief:"クランプ・ワンタッチ化"}
+  ],
+
+  /* === 品質 === */
+  w8_coq: [
+    {name:"P - Prevention（予防）", brief:"訓練・FMEA・設計改善"},
+    {name:"A - Appraisal（評価）", brief:"検査・SPC・サンプリング"},
+    {name:"F - Internal Failure", brief:"内部不良：廃棄・手直し"},
+    {name:"F - External Failure", brief:"外部不良：返品・クレーム"}
+  ],
+  w8_6dim: [
+    {name:"Functionality", brief:"機能・性能"},
+    {name:"Appearance", brief:"外観"},
+    {name:"Reliability", brief:"信頼性（再現性）"},
+    {name:"Durability", brief:"耐久性"},
+    {name:"Recovery", brief:"不良時の回復"},
+    {name:"Contact", brief:"対応・接客品質"}
+  ],
+  w8_gap_model: [
+    {name:"Gap 1：期待 ↔ 経営認識", brief:"経営が顧客を理解しない"},
+    {name:"Gap 2：認識 ↔ 仕様", brief:"認識を仕様に落とせない"},
+    {name:"Gap 3：仕様 ↔ 提供", brief:"仕様通りに実行できない"},
+    {name:"Gap 4：提供 ↔ コミュニケーション", brief:"広告と実態のズレ"}
+  ],
+  w8_risk3: [
+    {name:"Prevention（予防）", brief:"起こさない（最も安い）"},
+    {name:"Detection（検知）", brief:"早く気付く（中コスト）"},
+    {name:"Containment（封じ込め）", brief:"被害を最小化（高コスト）"}
+  ],
+
+  /* ====== 追加分：vs / & で並列にくっついているもの全て ====== */
+  w1_pvs: [
+    {name:"Products（製品）", brief:"有形・保管可・輸送可・顧客接触低"},
+    {name:"Services（サービス）", brief:"無形・保管不可・同時生産消費・顧客接触高"}
+  ],
+  w1_fb_office: [
+    {name:"Front-office", brief:"顧客接触する部分（接客・販売）"},
+    {name:"Back-office", brief:"顧客が見ない裏側（製造・物流・経理）"}
+  ],
+  w1_func_act: [
+    {name:"as Function（機能）", brief:"OM部門という組織機能"},
+    {name:"as Activity（活動）", brief:"全部門で行う業務活動"}
+  ],
+  w1_top_bottom: [
+    {name:"Top-down", brief:"経営層が戦略を定義する"},
+    {name:"Bottom-up", brief:"現場の改善が積み上がって形成"}
+  ],
+  w1_market_res: [
+    {name:"Market Requirements（市場要件）", brief:"顧客が望むもの（Outside-in）"},
+    {name:"Operations Resources（自社資源）", brief:"自社が持つ能力（Inside-out）"}
+  ],
+  w1_isd: [
+    {name:"Implementing（実行）", brief:"戦略をそのまま実行"},
+    {name:"Supporting（支援）", brief:"戦略の実現を強化"},
+    {name:"Driving（牽引）", brief:"OM自体が戦略の源泉"}
+  ],
+  w1_cost: [
+    {name:"Cost（投入の最小化）", brief:"入力コストを下げる"},
+    {name:"Productivity（生産性）", brief:"Output / Input の最大化"}
+  ],
+
+  w2_eos: [
+    {name:"Economies of Scale", brief:"規模拡大で単位コスト低下"},
+    {name:"Diseconomies of Scale", brief:"過大規模で管理コスト爆発"}
+  ],
+  w2_outsource: [
+    {name:"Outsourcing（外注）", brief:"外部委託"},
+    {name:"In-house（内製）", brief:"自社運営"}
+  ],
+  w2_up_down: [
+    {name:"Upstream（上流統合）", brief:"原料側を取り込む（Backward）"},
+    {name:"Downstream（下流統合）", brief:"顧客側を取り込む（Forward）"}
+  ],
+  w2_pros_cons: [
+    {name:"Advantages（長所）", brief:"管理可能・利益取り戻し・差別化"},
+    {name:"Disadvantages（短所）", brief:"柔軟性低下・投資負担・リスク集中"}
+  ],
+  w2_throughput: [
+    {name:"Throughput Rate（処理速度）", brief:"単位時間あたりの処理量"},
+    {name:"Throughput Time（通過時間）", brief:"全工程の所要時間"},
+    {name:"Cycle Time（サイクル時間）", brief:"1単位の処理時間 = 1/Rate"},
+    {name:"WIP（仕掛り）", brief:"工程中の在庫量"}
+  ],
+  w2_thr_eff: [
+    {name:"Value-added Time", brief:"実際に加工している時間"},
+    {name:"Throughput Efficiency", brief:"VA時間 / 総通過時間"}
+  ],
+  w2_long_thin: [
+    {name:"Long-thin（長く細く）", brief:"多工程・分業・専門化"},
+    {name:"Short-fat（短く太く）", brief:"少工程・並列・多能工"}
+  ],
+  w2_var_util: [
+    {name:"Variability（変動）", brief:"需要・処理時間のばらつき"},
+    {name:"Utilization（利用率）", brief:"稼働率 U=Actual/Capacity"}
+  ],
+
+  w3_plan_ctrl: [
+    {name:"Planning（計画）", brief:"未来何をやるか決める"},
+    {name:"Control（制御）", brief:"実行中の調整"}
+  ],
+  w3_dep_indep: [
+    {name:"Independent Demand", brief:"最終顧客需要。予測で対応"},
+    {name:"Dependent Demand", brief:"部品需要。MRPで計算"}
+  ],
+  w3_loading: [
+    {name:"Finite Loading", brief:"容量上限内に収める"},
+    {name:"Infinite Loading", brief:"全部受けて後で調整"}
+  ],
+  w3_dbr: [
+    {name:"Drum（ドラム）", brief:"ボトルネック工程＝リズム設定"},
+    {name:"Buffer（バッファ）", brief:"ボトルネック前の在庫"},
+    {name:"Rope（ロープ）", brief:"投入をボトルネックに同期"}
+  ],
+
+  w6_eoq: [
+    {name:"EOQ", brief:"発注の経済的ロット（外部発注）"},
+    {name:"EBQ", brief:"生産の経済的ロット（内部生産）"}
+  ],
+  w6_safety: [
+    {name:"Safety Stock（安全在庫）", brief:"変動吸収 SS=Z·σ·√LT"},
+    {name:"Reorder Level (ROL)", brief:"発注タイミング = d̄·LT + SS"}
+  ],
+  w6_pooling: [
+    {name:"Pooling Effect（集約効果）", brief:"在庫を統合すると σ↓→SS↓"},
+    {name:"Two-Bin System", brief:"視覚式：空きビンを見たら発注"}
+  ],
+  w6_holding_toyota: [
+    {name:"Holding Cost %", brief:"在庫価値の約20-30%/年"},
+    {name:"Toyota City Strategy", brief:"近接サプライヤー集約で在庫＆物流削減"}
+  ],
+
+  w7_jit: [
+    {name:"JIT（Just-In-Time）", brief:"必要な時に必要だけ"},
+    {name:"Kanban", brief:"Pull信号のカード"},
+    {name:"5S・Lean Tools", brief:"その他の Lean 道具"}
+  ],
+  w7_batch_flow: [
+    {name:"Batch Flow", brief:"ロット単位で工程移動。WIP多"},
+    {name:"Continuous Flow", brief:"1個流し。WIP最小"}
+  ],
+  w7_dbr_push_pull: [
+    {name:"Push", brief:"中央計画駆動（MRP）"},
+    {name:"Pull", brief:"後工程駆動（Kanban）"},
+    {name:"DBR", brief:"ボトルネック駆動（TOC）"}
+  ],
+
+  w8_reliability: [
+    {name:"Availability (A)", brief:"A = MTBF / (MTBF + MTTR)"},
+    {name:"MTBF（平均故障間隔）", brief:"故障から次の故障までの平均時間"},
+    {name:"Failure Rate (λ)", brief:"λ = 1 / MTBF"}
+  ],
+  w8_resist: [
+    {name:"Resistance to Change", brief:"変革への人的抵抗"},
+    {name:"MacLeamy Curve", brief:"設計段階の変更コスト最小→後で爆発"}
+  ],
+  w8_cpm: [
+    {name:"Project Management", brief:"一回限り・期限あり・複数活動"},
+    {name:"Critical Path (CPM)", brief:"最長経路＝プロジェクトLT"}
+  ]
+};
+// merge parts into concept records
+Object.entries(PARTS).forEach(([cid, parts]) => {
+  const c = CONCEPTS.find(x => x.id === cid);
+  if (c) c.parts = parts;
+});
+
+/* CHILDREN — concept ごとに「子ノード（=独立した別概念）」を持たせる
+   parts と違い、children は独立した完全な概念。クリックで自分のモーダルが開く。
+   家系図上では parent → children の本物の枝分かれとして表示。 */
+const CHILDREN = {
+  // ITO Model の Input には2種類ある（Transformed と Transforming）
+  w1_ito: ["w1_tformed","w1_tforming"],
+  // 4 Layout Types の具体5型
+  w2_layouts: ["w2_fixed","w2_func","w2_cell","w2_product","w2_mixed"]
+};
+Object.entries(CHILDREN).forEach(([cid, children]) => {
+  const c = CONCEPTS.find(x => x.id === cid);
+  if (c) c.children = children;
+});
+
+/* RENAME — parts/childrenが既にあるのに名前にも書き出されている冗長な名前を短縮 */
+const RENAME = {
+  w1_4vs: "Four Vs",
+  w1_3core: "3 Core Functions",
+  w1_owq: "Order-winning / Qualifying",
+  w2_proc_types_m: "Manufacturing Process Types",
+  w2_proc_types_s: "Services Process Types",
+  w2_cap_timing: "Capacity Timing",
+  w3_horizons: "Planning Horizons",
+  w3_seq: "Sequencing Rules",
+  w3_sched: "Scheduling",
+  w3_mts_mto: "Responding to Demand",
+  w3_design_eff: "Capacity 3層",
+  w7_lean: "Lean & 7 Wastes",
+  w7_lean_3layer: "Lean 3層フレーム",
+  w7_smed: "SMED",
+  w7_lean_house: "Lean House",
+  w8_6dim: "6 Quality Dimensions",
+  w8_gap_model: "Gap Model",
+  w8_risk3: "リスク軽減の3階層",
+  w8_sys_rel: "System Reliability"
+};
+Object.entries(RENAME).forEach(([cid, n]) => {
+  const c = CONCEPTS.find(x => x.id === cid);
+  if (c) c.name = n;
+});
+
+/* ============================================================
+   HOUSE HIERARCHY — 大きな家 → 部屋 → 小部屋 → 概念
+   ============================================================
+   各 domain（部屋）の中に sub-room（小部屋）があり、
+   さらに sub-sub（孫部屋）で深い階層を表現
+   ============================================================ */
+const HOUSE = [
+  /* ===== 戦略エリア（4部屋） ===== */
+  {id:"r_define", icon:"🔍", title:"OMの定義", jp:"そもそもオペレーションとは何か", color:"#4a7dd9",
+   subrooms:[
+     {title:"OMの位置づけ（機能・部門）", concepts:["w1_om","w1_3core","w1_func_act"]},
+     {title:"ITO モデル — 投入→変換→出力", concepts:["w1_ito"]},
+     {title:"製品 vs サービス", concepts:["w1_pvs","w1_fb_office"]},
+     {title:"階層と特性", concepts:["w1_hierarchy","w1_4vs"]}
+   ]},
+
+  {id:"r_perf", icon:"📊", title:"パフォーマンス目標", jp:"全てを測る共通モノサシ Q-S-D-F-C", color:"#5fb0e0",
+   subrooms:[
+     {title:"5つの目標", concepts:["w1_quality","w1_speed","w1_depend","w1_flex","w1_cost"]},
+     {title:"トレードオフと可視化", concepts:["w1_tradeoff","w1_polar","w1_frontier"]},
+     {title:"測定の仕組み", concepts:["w1_perf_meas"]}
+   ]},
+
+  {id:"r_strategy", icon:"♟️", title:"戦略策定", jp:"市場↔資源 から戦略を組む", color:"#6a8dd9",
+   subrooms:[
+     {title:"戦略の枠組み", subsub:[
+       {title:"戦略とは", concepts:["w1_strategy","w1_strategy_form"]},
+       {title:"OMの戦略的役割（成熟度）", concepts:["w1_isd","w1_4stages"]}
+     ]},
+     {title:"戦略の方向性", subsub:[
+       {title:"プロセスの方向（誰が作るか）", concepts:["w1_top_bottom"]},
+       {title:"焦点の方向（外向き vs 内向き）", concepts:["w1_market_res","w1_fit"]}
+     ]},
+     {title:"市場要因の理解", subsub:[
+       {title:"勝つ要因の分類", concepts:["w1_owq"]},
+       {title:"時間軸（製品ライフ）", concepts:["w1_lifecycle"]}
+     ]}
+   ]},
+
+  {id:"r_csr", icon:"🌍", title:"ステークホルダー・CSR", jp:"利益だけでない多次元評価", color:"#7d9fd9",
+   subrooms:[
+     {title:"利害関係者", concepts:["w1_stake"]},
+     {title:"3P（People・Planet・Profit）", concepts:["w1_csr"]}
+   ]},
+
+  /* ===== 構造設計エリア（5部屋） ===== */
+  {id:"r_network", icon:"🕸️", title:"サプライ網", jp:"自社の境界をどこに引くか", color:"#5fb88a",
+   subrooms:[
+     {title:"網の構造", concepts:["w2_network","w2_disinter","w2_coopet"]},
+     {title:"垂直統合", subsub:[
+       {title:"統合の方向と範囲", concepts:["w2_vertical","w2_up_down"]},
+       {title:"統合の損得", concepts:["w2_pros_cons"]}
+     ]},
+     {title:"アウトソース・グローバル化", concepts:["w2_outsource","w2_offshoring"]}
+   ]},
+
+  {id:"r_capdesign", icon:"📐", title:"キャパシティ戦略", jp:"工場規模・立地・損益分岐", color:"#4a9d77",
+   subrooms:[
+     {title:"規模の経済", concepts:["w2_eos"]},
+     {title:"タイミング戦略（Lead/Lag/Smoothing）", concepts:["w2_cap_timing"]},
+     {title:"損益分岐", concepts:["w2_break_even"]},
+     {title:"立地", concepts:["w2_location"]}
+   ]},
+
+  {id:"r_process", icon:"⚙️", title:"プロセス型選択", jp:"Volume-Variety → プロセス型", color:"#7fc05f",
+   subrooms:[
+     {title:"設計の出発点", concepts:["w2_proc_obj"]},
+     {title:"プロセス型", subsub:[
+       {title:"製造業（5型）", concepts:["w2_proc_types_m"]},
+       {title:"サービス業（3型）", concepts:["w2_proc_types_s"]},
+       {title:"製品 × プロセス マトリックス", concepts:["w2_pp_matrix"]}
+     ]},
+     {title:"可視化", concepts:["w2_proc_map"]}
+   ]},
+
+  {id:"r_throughput", icon:"🌀", title:"スループット（Little's Law）", jp:"WIP × 時間 × レートの数学", color:"#6abf8d",
+   subrooms:[
+     {title:"基本式", concepts:["w2_throughput","w2_thr_eff"]},
+     {title:"制約とライン構成", concepts:["w2_bottleneck","w2_long_thin"]},
+     {title:"変動と稼働率", concepts:["w2_var_util"]}
+   ]},
+
+  {id:"r_layout", icon:"📍", title:"レイアウト", jp:"設備をどう配置するか", color:"#82c75f",
+   subrooms:[
+     {title:"4つの基本型（+ Mixed）", concepts:["w2_layouts"]},
+     {title:"選択と費用", concepts:["w2_vv_layout","w2_layout_cost"]}
+   ]},
+
+  /* ===== 計画・運用エリア（6部屋） ===== */
+  {id:"r_planbasic", icon:"🧭", title:"計画の基礎", jp:"未来 vs 現在、独立 vs 従属", color:"#d97a4a",
+   subrooms:[
+     {title:"計画 vs 制御 と 時間軸", concepts:["w3_plan_ctrl","w3_horizons"]},
+     {title:"需要の性質と LT", concepts:["w3_dep_indep","w3_pd_ratio"]}
+   ]},
+
+  {id:"r_schedule", icon:"📋", title:"スケジューリング", jp:"順番・タイミングを決める", color:"#e0985f",
+   subrooms:[
+     {title:"作業割当", concepts:["w3_loading","w3_seq"]},
+     {title:"時間割（Forward / Backward）", concepts:["w3_sched","w3_gantt"]},
+     {title:"モニタリング", concepts:["w3_monitor"]}
+   ]},
+
+  {id:"r_control", icon:"🎛️", title:"制御方式（Push vs Pull）", jp:"工場を動かすエンジン", color:"#d96f3a",
+   subrooms:[
+     {title:"3つの制御方式", concepts:["w3_push_pull","w3_dbr"]}
+   ]},
+
+  {id:"r_orderstrat", icon:"📦", title:"注文戦略（Decoupling Point）", jp:"在庫位置で MTS/MTO が決まる", color:"#e08c5a",
+   subrooms:[
+     {title:"4戦略 MTS/ATO/MTO/ETO", concepts:["w3_mts_mto"]},
+     {title:"在庫の置き場所", concepts:["w6_decoupling"]}
+   ]},
+
+  {id:"r_capmgmt", icon:"📈", title:"キャパシティ運用", jp:"需要を予測し供給を合わせる", color:"#d98a5a",
+   subrooms:[
+     {title:"容量の測定", concepts:["w3_capacity","w3_design_eff"]},
+     {title:"需要予測", concepts:["w3_forecast"]},
+     {title:"供給合わせの戦略", subsub:[
+       {title:"供給側を動かす", concepts:["w3_level_plan","w3_chase"]},
+       {title:"需要側を動かす", concepts:["w3_dm_plan","w3_yield"]}
+     ]}
+   ]},
+
+  {id:"r_queue", icon:"⏱️", title:"待ち行列（Queuing）", jp:"利用率と変動が待ち時間を決める", color:"#dba072",
+   subrooms:[
+     {title:"Kingman の式", concepts:["w3_queuing"]}
+   ]},
+
+  /* ===== 在庫エリア（3部屋） ===== */
+  {id:"r_invbasic", icon:"📚", title:"在庫の基礎", jp:"種類とコスト構造", color:"#c95c8b",
+   subrooms:[
+     {title:"在庫の分類", concepts:["w6_inv_types","w6_abc"]},
+     {title:"コスト構造", concepts:["w6_hold_order","w6_holding_toyota"]}
+   ]},
+
+  {id:"r_order", icon:"🧮", title:"発注モデル", jp:"いつ・いくつ発注するか", color:"#e07ba5",
+   subrooms:[
+     {title:"反復発注（多期間）", subsub:[
+       {title:"発注量・周期", concepts:["w6_eoq"]},
+       {title:"安全在庫", concepts:["w6_safety"]},
+       {title:"集約効果", concepts:["w6_pooling"]}
+     ]},
+     {title:"単一期間（季節品）", concepts:["w6_newsvendor"]}
+   ]},
+
+  {id:"r_invsys", icon:"🔌", title:"在庫システム（MRP）", jp:"従属需要を計算で出す", color:"#b54772",
+   subrooms:[
+     {title:"計算システム", concepts:["w6_mrp"]}
+   ]},
+
+  /* ===== Lean エリア（3部屋） ===== */
+  {id:"r_leanphil", icon:"🧠", title:"Lean 思想", jp:"何がムダか・なぜ改善し続けるか", color:"#9a6ad9",
+   subrooms:[
+     {title:"ムダの認識（7 wastes）", concepts:["w7_lean"]},
+     {title:"全体フレーム", concepts:["w7_lean_3layer","w7_lean_house"]},
+     {title:"動機 — なぜ続けるか", concepts:["w7_red_queen"]}
+   ]},
+
+  {id:"r_leantech", icon:"🔧", title:"Lean 技術", jp:"具体的な道具・手法", color:"#8e5fd1",
+   subrooms:[
+     {title:"Pull の動力", concepts:["w7_jit","w7_dbr_push_pull"]},
+     {title:"流れを作る", subsub:[
+       {title:"ロットを小さく", concepts:["w7_batch_flow","w7_smed"]},
+       {title:"WIP を減らす", concepts:["w7_lean_wip"]}
+     ]},
+     {title:"可視化", concepts:["w7_vsm"]}
+   ]},
+
+  {id:"r_tpm", icon:"🛠️", title:"TPM・OEE", jp:"設備を Lean 化する", color:"#af83e0",
+   subrooms:[
+     {title:"設備総合効率", concepts:["w7_tpm"]}
+   ]},
+
+  /* ===== 品質・信頼性エリア（5部屋） ===== */
+  {id:"r_quality", icon:"📉", title:"品質管理（SPC・PAF）", jp:"工程を統計的に守る", color:"#d9b94a",
+   subrooms:[
+     {title:"統計的工程管理", concepts:["w8_spc"]},
+     {title:"品質コスト（PAF）", concepts:["w8_coq"]}
+   ]},
+
+  {id:"r_qualdim", icon:"📋", title:"品質の次元", jp:"何を『品質』と呼ぶか", color:"#e0c050",
+   subrooms:[
+     {title:"6 つの次元（製品・サービス共通）", concepts:["w8_6dim"]},
+     {title:"サービス品質（Gap Model）", concepts:["w8_gap_model"]}
+   ]},
+
+  {id:"r_risk", icon:"⚠️", title:"リスク分析・予防", jp:"壊れる前に手を打つ", color:"#e0a050",
+   subrooms:[
+     {title:"分析手法", subsub:[
+       {title:"前向き分析（原因→結果）", concepts:["w8_fmea"]},
+       {title:"後ろ向き分析（結果→原因）", concepts:["w8_fta"]}
+     ]},
+     {title:"予防デザイン", concepts:["w8_poka_yoke","w8_risk3"]}
+   ]},
+
+  {id:"r_reliability", icon:"🔋", title:"信頼性工学", jp:"故障を確率で管理する", color:"#d9a73a",
+   subrooms:[
+     {title:"信頼性指標", concepts:["w8_reliability"]},
+     {title:"システム構成", concepts:["w8_sys_rel"]}
+   ]},
+
+  {id:"r_project", icon:"🏗️", title:"プロジェクト管理", jp:"一回限りの変化を制御する", color:"#d99750",
+   subrooms:[
+     {title:"工程ネットワーク", subsub:[
+       {title:"最長経路", concepts:["w8_cpm"]},
+       {title:"短縮", concepts:["w8_crashing"]}
+     ]},
+     {title:"変化への抵抗", concepts:["w8_resist"]}
+   ]}
+];
+
+/* ============================================================
+   Render the house
+   ============================================================ */
+const root = document.getElementById('roadmap');
+
+function matchQuery(c, q) {
+  if (!q) return true;
+  const qq = q.toLowerCase();
+  return (c.name||'').toLowerCase().includes(qq)
+      || (c.def||'').toLowerCase().includes(qq)
+      || (c.example||'').toLowerCase().includes(qq);
+}
+
+function countConcepts(domain) {
+  let n = 0;
+  domain.subrooms.forEach(s => {
+    if (s.concepts) n += s.concepts.length;
+    if (s.subsub) s.subsub.forEach(ss => n += ss.concepts.length);
+  });
+  return n;
+}
+
+function getConcept(id) { return CONCEPTS.find(x => x.id === id); }
+function openModalById(id) { openModal(getConcept(id)); }
+function getName(id) { const c = getConcept(id); return c ? c.name.slice(0, 18) : id; }
+
+/* Room → Area mapping (for area filter) */
+const ROOM_AREAS = {
+  r_define:"strategy", r_perf:"strategy", r_strategy:"strategy", r_csr:"strategy",
+  r_network:"design", r_capdesign:"design", r_process:"design", r_throughput:"design", r_layout:"design",
+  r_planbasic:"planning", r_schedule:"planning", r_control:"planning", r_orderstrat:"planning", r_capmgmt:"planning", r_queue:"planning",
+  r_invbasic:"inventory", r_order:"inventory", r_invsys:"inventory",
+  r_leanphil:"lean", r_leantech:"lean", r_tpm:"lean",
+  r_quality:"quality", r_qualdim:"quality", r_risk:"quality", r_reliability:"quality", r_project:"quality"
+};
+
+/* ======== Simple tree render ======== */
+function renderRoadmap(filter='all', query='') {
+  let inner = '';
+  HOUSE.forEach(domain => {
+    if (filter !== 'all' && ROOM_AREAS[domain.id] !== filter) return;
+    const tree = renderTree(domain, query);
+    if (tree) inner += tree;
+  });
+  root.innerHTML = `<div class="rooms-grid">${inner}</div>`;
+}
+
+function renderTree(domain, query) {
+  const color = domain.color;
+
+  const leafBranch = c => {
+    const hasParts = c.parts && c.parts.length > 0;
+    const hasChildren = c.children && c.children.length > 0;
+
+    if (!hasParts && !hasChildren) {
+      return `<div class="branch"><span class="leaf" onclick="openModalById('${c.id}')">${c.name}</span></div>`;
+    }
+
+    // Render children (independent concepts) — recursive
+    let childrenHtml = '';
+    if (hasChildren) {
+      childrenHtml = c.children
+        .map(cid => getConcept(cid))
+        .filter(cc => cc && matchQuery(cc, query))
+        .map(cc => leafBranch(cc))
+        .join('');
+    }
+    // Render parts (descriptive elements) as siblings of children
+    let partsHtml = '';
+    if (hasParts) {
+      partsHtml = c.parts.map(p =>
+        `<div class="branch"><span class="leaf part" onclick="openModalById('${c.id}')" title="${p.brief.replace(/"/g,'&quot;')}">${p.name}</span></div>`
+      ).join('');
+    }
+
+    return `<div class="branch">
+      <span class="leaf parent" onclick="openModalById('${c.id}')">${c.name}</span>
+      <div class="branches">${childrenHtml}${partsHtml}</div>
+    </div>`;
+  };
+
+  // Build sub-rooms as branches
+  const subBranches = [];
+  domain.subrooms.forEach(sub => {
+    let innerBranches = '';
+    if (sub.subsub) {
+      const ssBranches = [];
+      sub.subsub.forEach(ss => {
+        const leaves = ss.concepts.map(getConcept).filter(c => c && matchQuery(c, query));
+        if (leaves.length === 0) return;
+        ssBranches.push(`<div class="branch">
+          <span class="node subsub-node">${ss.title}</span>
+          <div class="branches">${leaves.map(leafBranch).join('')}</div>
+        </div>`);
+      });
+      if (ssBranches.length === 0) return;
+      innerBranches = `<div class="branches">${ssBranches.join('')}</div>`;
+    } else if (sub.concepts) {
+      const leaves = sub.concepts.map(getConcept).filter(c => c && matchQuery(c, query));
+      if (leaves.length === 0) return;
+      innerBranches = `<div class="branches">${leaves.map(leafBranch).join('')}</div>`;
+    }
+    if (!innerBranches) return;
+    subBranches.push(`<div class="branch">
+      <span class="node sub-node">${sub.title}</span>
+      ${innerBranches}
+    </div>`);
+  });
+
+  if (subBranches.length === 0) return '';
+
+  return `<div class="room" id="tree-${domain.id}" style="border-color:${color};">
+    <div class="room-head">
+      <span class="icn">${domain.icon}</span>
+      <span class="nm" style="color:${color};">${domain.title.split('（')[0]}</span>
+      <span class="jp">${domain.jp}</span>
+    </div>
+    <div class="branches" style="--line-color:${color};">
+      ${subBranches.join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   Modal
+   ============================================================ */
+const modalBg = document.getElementById('modal-bg');
+const modal = document.getElementById('modal');
+
+/* find which room/sub-room a concept belongs to */
+function findLocation(id) {
+  for (const d of HOUSE) {
+    for (const s of d.subrooms) {
+      if (s.concepts && s.concepts.includes(id)) return {domain:d, sub:s, subsub:null};
+      if (s.subsub) {
+        for (const ss of s.subsub) {
+          if (ss.concepts.includes(id)) return {domain:d, sub:s, subsub:ss};
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function openModal(c) {
+  if (!c) return;
+  const wColor = WEEK_COLORS[c.w] || '#4a7dd9';
+  const loc = findLocation(c.id);
+  const breadcrumb = loc ? `${loc.domain.icon} ${loc.domain.title.split('（')[0]} › ${loc.sub.icon || '▸'} ${loc.sub.title}${loc.subsub?' › '+loc.subsub.title:''}` : '';
+  let html = `
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">${c.name}</div>
+        <div class="modal-meta">
+          <span style="background:${wColor};color:#fff;padding:2px 8px;border-radius:4px;">Week ${c.w}</span>
+          ${c.ch}
+        </div>
+        <div style="font-size:11px;color:#8aa0c4;margin-top:6px;">📍 ${breadcrumb}</div>
+      </div>
+      <button class="close-btn" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <h3>📖 意味</h3>
+        <p>${c.def || ''}</p>
+      </div>
+
+      <div class="modal-section">
+        <h3>🥞 De Gouden Wafel での例</h3>
+        <div class="example-box">${c.example || ''}</div>
+      </div>
+  `;
+
+  if (c.parts && c.parts.length) {
+    html += `
+      <div class="modal-section">
+        <h3>🔸 構成要素（各論）</h3>
+        <ul class="parts-list">
+          ${c.parts.map(p => `<li><b>${p.name}</b> — ${p.brief}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  if (c.formula) {
+    html += `
+      <div class="modal-section">
+        <h3>ƒ 公式・計算</h3>
+        <div class="formula-box">${c.formula}</div>
+      </div>
+    `;
+  }
+
+  if (c.visual === 'flow' && c.flow) {
+    html += `
+      <div class="modal-section">
+        <h3>🔀 フロー / 構造</h3>
+        <div class="mini-flow">
+          ${c.flow.map((n,i) => `<div class="node">${n}</div>${i<c.flow.length-1?'<span class="arrow">→</span>':''}`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  if (c.cmpTable) {
+    html += `
+      <div class="modal-section">
+        <h3>⇄ 比較表</h3>
+        <table class="compare-table">
+          <tr>${c.cmpTable[0].map(h=>`<th>${h}</th>`).join('')}</tr>
+          ${c.cmpTable.slice(1).map(row=>`<tr>${row.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}
+        </table>
+      </div>
+    `;
+  }
+
+  if (c.memorize && c.memorize.length) {
+    html += `
+      <div class="modal-section">
+        <h3>🎯 覚えるべきポイント</h3>
+        <div class="memo-box">
+          <ul>${c.memorize.map(m=>`<li>${m}</li>`).join('')}</ul>
+        </div>
+      </div>
+    `;
+  }
+
+  if (c.related && c.related.length) {
+    // Group related concepts by domain to show cross-room connections
+    const byDomain = {};
+    c.related.forEach(r => {
+      const t = getConcept(r);
+      if (!t) return;
+      const l = findLocation(r);
+      const dKey = l ? l.domain.id : 'other';
+      if (!byDomain[dKey]) byDomain[dKey] = {domain:l ? l.domain : null, items:[]};
+      byDomain[dKey].items.push({c:t, loc:l});
+    });
+    const ownDom = loc ? loc.domain.id : null;
+    let relatedHtml = '';
+    Object.values(byDomain).forEach(grp => {
+      const d = grp.domain;
+      const isSameRoom = d && d.id === ownDom;
+      const label = d ? `${d.icon} ${d.title.split('（')[0]} ${isSameRoom?'（同じ部屋内）':'（別の部屋へ）'}` : 'その他';
+      relatedHtml += `<div style="margin-bottom:10px;">
+        <div style="font-size:11px;color:${d?d.color:'#8aa0c4'};margin-bottom:4px;font-weight:600;">${label}</div>
+        <div class="related-row">
+          ${grp.items.map(({c:t})=>`<span class="related-chip" onclick="jumpTo('${t.id}')">W${t.w} ・ ${t.name}</span>`).join('')}
+        </div>
+      </div>`;
+    });
+    html += `
+      <div class="modal-section">
+        <h3>🔗 繋がっている概念（部屋を越えて）</h3>
+        ${relatedHtml}
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+  modal.innerHTML = html;
+  modalBg.classList.add('show');
+}
+
+function closeModal() {
+  modalBg.classList.remove('show');
+}
+
+function jumpTo(id) {
+  const c = CONCEPTS.find(x => x.id === id);
+  if (c) openModal(c);
+}
+
+modalBg.onclick = (e) => { if (e.target === modalBg) closeModal(); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ============================================================
+   Filter & Search
+   ============================================================ */
+let currentFilter = 'all';
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.dom;
+    renderRoadmap(currentFilter, document.getElementById('search').value);
+  };
+});
+
+document.getElementById('search').oninput = (e) => {
+  renderRoadmap(currentFilter, e.target.value);
+};
+
+// initial render
+renderRoadmap();
+
+
+// Expose functions used by inline onclick handlers in the rendered HTML
+window.openModalById = openModalById;
+window.closeModal = closeModal;
+window.jumpTo = jumpTo;
+window.toggleAllCross = (typeof toggleAllCross === 'function') ? toggleAllCross : undefined;
+window.flashTree = (typeof flashTree === 'function') ? flashTree : undefined;
+
+console.log(`✅ Loaded ${CONCEPTS.length} concepts across ${HOUSE.length} rooms`);
+
+})();
+</script>
 
 <!-- Textbook Tab -->
 <div class="panel active" id="tab-textbook">
