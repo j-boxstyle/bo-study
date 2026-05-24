@@ -5347,12 +5347,14 @@ function selectOption(chosen) {
       fb += '</details>';
     }
   }
-  // ── 1問ごとAI解説プロンプト生成ボタン ──
+  // ── 1問ごとAI解説プロンプト生成ボタン (タップで即コピー) ──
   fb += '<div style="margin-top:14px;padding:12px 14px;background:rgba(59,130,246,0.08);border-radius:10px;border:1px dashed #3b82f6;">';
   fb += '<div style="font-size:16px;color:#3b82f6;font-weight:700;margin-bottom:6px;">🤖 AI でさらに詳しく学ぶ</div>';
-  fb += '<div style="color:#94a3b8;font-size:13px;margin-bottom:8px;">この問題専用のプロンプトを生成。Claude/ChatGPT に貼り付けて、徹底解説と覚え方を取得できます。</div>';
-  fb += '<button onclick="showSingleQAIPrompt(' + idx + ', ' + chosen + ', ' + correct + ')" style="background:#3b82f6;color:#fff;border:none;padding:9px 14px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">📋 この問題のAIプロンプトを生成</button>';
-  fb += '</div>';
+  fb += '<div style="color:#94a3b8;font-size:13px;margin-bottom:8px;">タップで即コピー → Claude / ChatGPT に貼り付けて徹底解説を取得。</div>';
+  fb += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  fb += '<button id="single-q-copy-inline-' + idx + '" onclick="copySingleQPromptInline(' + idx + ', ' + chosen + ', ' + correct + ', this)" style="background:#3b82f6;color:#fff;border:none;padding:9px 14px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">📋 プロンプトを作成 (即コピー)</button>';
+  fb += '<button onclick="showSingleQAIPrompt(' + idx + ', ' + chosen + ', ' + correct + ')" style="background:#1a2940;color:#3b82f6;border:1px solid #3b82f6;padding:9px 14px;border-radius:8px;font-size:14px;cursor:pointer;">👁 プレビュー</button>';
+  fb += '</div></div>';
   document.getElementById('q-feedback').innerHTML = fb;
 
   // ── 自動rating: 誤答 or Don't know選択 → notunderstood ──
@@ -5685,6 +5687,51 @@ function showSingleQAIPrompt(qIdx, chosen, correct) {
   document.body.appendChild(overlay);
   document.getElementById('single-q-prompt-text').value = prompt;
   overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+}
+
+function copySingleQPromptInline(qIdx, chosen, correct, btn) {
+  var prompt = generateSingleQAIPrompt(qIdx, chosen, correct);
+  if (!prompt) { alert('プロンプト生成に失敗しました'); return; }
+  var ok = false;
+  // Try modern clipboard API first
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(prompt).then(function() {
+      flashCopySuccess(btn, true);
+    }).catch(function() {
+      // Fallback: temporary textarea
+      var ta = document.createElement('textarea');
+      ta.value = prompt;
+      ta.style.cssText = 'position:fixed;top:-1000px;left:-1000px;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select(); ta.setSelectionRange(0, 999999);
+      try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+      document.body.removeChild(ta);
+      flashCopySuccess(btn, ok);
+    });
+  } else {
+    // Direct fallback
+    var ta = document.createElement('textarea');
+    ta.value = prompt;
+    ta.style.cssText = 'position:fixed;top:-1000px;left:-1000px;opacity:0;';
+    document.body.appendChild(ta);
+    ta.select(); ta.setSelectionRange(0, 999999);
+    try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+    document.body.removeChild(ta);
+    flashCopySuccess(btn, ok);
+  }
+}
+
+function flashCopySuccess(btn, ok) {
+  if (!btn) return;
+  var orig = btn.innerHTML;
+  var origBg = btn.style.background;
+  btn.innerHTML = ok ? '✅ コピーしました！Claude/ChatGPTに貼り付け' : '⚠️ 失敗 — プレビューで手動コピーしてください';
+  btn.style.background = ok ? '#22c55e' : '#ef4444';
+  btn.style.color = '#fff';
+  setTimeout(function() {
+    btn.innerHTML = orig;
+    btn.style.background = origBg || '#3b82f6';
+  }, 2500);
 }
 
 function copySingleQPrompt() {
