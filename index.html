@@ -5155,7 +5155,17 @@ function renderQuizHome() {
     html += '</div>';
   }
 
-  html += '<button class="start-btn" onclick="startQuiz()">Start Quiz (5 Questions)</button>';
+  // ── Question count selector ──
+  var savedCount = parseInt(loadState('quiz_count', 5), 10) || 5;
+  html += '<div style="margin:14px 0 8px;"><div style="font-size:20px;color:#94a3b8;margin-bottom:8px;">問題数:</div>';
+  html += '<div class="mode-selector">';
+  [5, 10, 15, 20, 30].forEach(function(n) {
+    var act = (savedCount === n) ? ' active' : '';
+    html += '<div class="mode-btn' + act + '" onclick="setQuizCount(' + n + ')">' + n + '問</div>';
+  });
+  html += '</div></div>';
+
+  html += '<button class="start-btn" onclick="startQuiz(' + savedCount + ')">Start Quiz (' + savedCount + ' Questions)</button>';
   document.getElementById('quiz-home').innerHTML = html;
   document.getElementById('quiz-home').classList.remove('hidden');
   document.getElementById('quiz-active').classList.add('hidden');
@@ -5229,7 +5239,13 @@ function buildPool(ratings) {
   return pool;
 }
 
-function startQuiz() {
+function setQuizCount(n) {
+  saveState('quiz_count', n);
+  renderQuizHome();
+}
+
+function startQuiz(n) {
+  var count = n || parseInt(loadState('quiz_count', 5), 10) || 5;
   var ratings = loadState('ratings', {});
   var pool = buildPool(ratings);
   // Shuffle
@@ -5237,7 +5253,7 @@ function startQuiz() {
     var j = Math.floor(Math.random() * (i + 1));
     var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
   }
-  quizState.currentBlock = pool.slice(0, 5);
+  quizState.currentBlock = pool.slice(0, count);
   quizState.currentIndex = 0;
   quizState.blockResults = [];
   quizState.answered = false;
@@ -5396,7 +5412,22 @@ function selectOption(chosen) {
       fb += '</details>';
     }
   }
+  // ── 1問ごとAI解説プロンプト生成ボタン ──
+  fb += '<div style="margin-top:14px;padding:12px 14px;background:rgba(59,130,246,0.08);border-radius:10px;border:1px dashed #3b82f6;">';
+  fb += '<div style="font-size:16px;color:#3b82f6;font-weight:700;margin-bottom:6px;">🤖 AI でさらに詳しく学ぶ</div>';
+  fb += '<div style="color:#94a3b8;font-size:13px;margin-bottom:8px;">この問題専用のプロンプトを生成。Claude/ChatGPT に貼り付けて、徹底解説と覚え方を取得できます。</div>';
+  fb += '<button onclick="showSingleQAIPrompt(' + idx + ', ' + chosen + ', ' + correct + ')" style="background:#3b82f6;color:#fff;border:none;padding:9px 14px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">📋 この問題のAIプロンプトを生成</button>';
+  fb += '</div>';
   document.getElementById('q-feedback').innerHTML = fb;
+
+  // ── 自動rating: 誤答 or Don't know選択 → notunderstood ──
+  var origOpt = q.opts[chosenOrigIdx] || '';
+  var isDontKnow = origOpt.toLowerCase().trim() === "don't know" || origOpt === 'わからない';
+  if (!correct || isDontKnow) {
+    var ratings = loadState('ratings', {});
+    ratings[q.id] = 'notunderstood';
+    saveState('ratings', ratings);
+  }
 
   quizState.blockResults.push({ qIdx: idx, chosen: chosen, correct: correct, shuffledCorrect: shuffledCorrect });
   document.getElementById('quiz-footer').classList.add('show');
@@ -5639,6 +5670,109 @@ function copyAIPrompt() {
   }
 }
 
+function generateSingleQAIPrompt(qIdx, chosen, correct) {
+  var q = QUESTIONS[qIdx];
+  if (!q) return null;
+  var letters = ['A','B','C','D','E','F'];
+  var chosenOrigIdx = (quizState.currentShuffle && quizState.currentShuffle[chosen] !== undefined) ? quizState.currentShuffle[chosen] : chosen;
+  var origOpt = q.opts[chosenOrigIdx] || '';
+  var isDontKnow = origOpt.toLowerCase().trim() === "don't know" || origOpt === 'わからない';
+
+  var lines = [];
+  lines.push('# UvA Business Operations 問題の徹底解説リクエスト');
+  lines.push('');
+  lines.push('Slack et al. "Operations Management" 教科書を使った、UvA "Business Operations and Processes" 試験の練習問題です。');
+  lines.push('');
+  lines.push('## 問題 (Ch ' + q.ch + ' · Week ' + (q.week || '?') + ')');
+  lines.push('');
+  lines.push(q.q);
+  lines.push('');
+  lines.push('## 選択肢');
+  lines.push('');
+  for (var i = 0; i < q.opts.length; i++) {
+    var marker = (i === q.ans) ? ' ✅ (正解)' : (i === chosenOrigIdx ? ' ← 自分の選択' : '');
+    lines.push('- **' + letters[i] + ')** ' + q.opts[i] + marker);
+  }
+  lines.push('');
+  lines.push('## 結果');
+  lines.push('');
+  if (correct) {
+    lines.push('**正解しましたが、より深く理解したいです。**');
+  } else if (isDontKnow) {
+    lines.push('**「わからない」を選びました。** 解説を一から教えてください。');
+  } else {
+    lines.push('**間違えました**。私は ' + letters[chosenOrigIdx] + ') を選び、正解は ' + letters[q.ans] + ') でした。');
+  }
+  lines.push('');
+  if (q.expl) {
+    lines.push('## 公式解説 (参考)');
+    lines.push('');
+    lines.push(q.expl);
+    lines.push('');
+  }
+  lines.push('## あなたへの依頼');
+  lines.push('');
+  lines.push('以下を **長くなっても構わないので徹底的に** 教えてください:');
+  lines.push('');
+  lines.push('1. **概念の根本理解**: この問題が問うているコア概念を、Slack教科書での扱いに沿って詳しく解説。');
+  lines.push('2. **なぜ正解が正解か**: 公式・原理を含めて、論理的に説明。');
+  lines.push('3. **各誤答がなぜ違うか**: 5つの選択肢ひとつひとつについて、なぜ違うのか、よくある誤解パターンも含めて。');
+  if (!correct && !isDontKnow) {
+    lines.push('4. **私の間違いの根本原因**: なぜ ' + letters[chosenOrigIdx] + ') を選んでしまったのか、考えられる誤解を分析。');
+  }
+  lines.push((!correct && !isDontKnow ? '5' : '4') + '. **覚え方 (Memory aid)**: 頭文字法・比喩・図解・語呂合わせなど **複数案**。');
+  lines.push((!correct && !isDontKnow ? '6' : '5') + '. **試験で同様の問題が出たときの判断手順**: 3-5ステップで「こういう聞かれ方をしたらこう考える」を明示。');
+  lines.push((!correct && !isDontKnow ? '7' : '6') + '. **関連概念・公式**: この問題と関連する周辺知識を整理。');
+  lines.push('');
+  lines.push('**重要**: 単純な「もう一度勉強しましょう」では不十分です。私が試験で確実に正解できるよう、概念レベルで根本理解できるように深掘りしてください。');
+  return lines.join('\n');
+}
+
+function showSingleQAIPrompt(qIdx, chosen, correct) {
+  var prompt = generateSingleQAIPrompt(qIdx, chosen, correct);
+  if (!prompt) { alert('プロンプト生成に失敗しました'); return; }
+  var existing = document.getElementById('ai-prompt-modal');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'ai-prompt-modal';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#0f1c2e;border:2px solid #3b82f6;border-radius:14px;padding:18px 16px;max-width:680px;width:100%;max-height:90vh;display:flex;flex-direction:column;gap:10px;';
+  box.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+      '<div style="font-size:20px;font-weight:800;color:#3b82f6;">🤖 この問題のAIプロンプト</div>' +
+      '<button onclick="document.getElementById(\'ai-prompt-modal\').remove()" style="background:transparent;border:none;color:#94a3b8;font-size:28px;cursor:pointer;line-height:1;">×</button>' +
+    '</div>' +
+    '<div style="color:#94a3b8;font-size:14px;">下のボタンでコピーし、Claude (Opus推奨) や ChatGPT (GPT-4推奨) に貼り付けて徹底解説をもらってください。</div>' +
+    '<button onclick="copySingleQPrompt()" id="single-q-copy-btn" style="background:#3b82f6;color:#fff;border:none;padding:10px 16px;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;width:fit-content;">📋 コピー</button>' +
+    '<textarea id="single-q-prompt-text" readonly style="flex:1;min-height:300px;width:100%;background:#1a2940;color:#e2e8f0;border:1px solid #1e3a5f;border-radius:8px;padding:12px;font-size:13px;font-family:monospace;line-height:1.5;resize:none;"></textarea>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  document.getElementById('single-q-prompt-text').value = prompt;
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+}
+
+function copySingleQPrompt() {
+  var ta = document.getElementById('single-q-prompt-text');
+  if (!ta) return;
+  ta.select(); ta.setSelectionRange(0, 999999);
+  var ok = false;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(ta.value); ok = true;
+    } else {
+      ok = document.execCommand('copy');
+    }
+  } catch(e) { ok = false; }
+  var btn = document.getElementById('single-q-copy-btn');
+  if (btn) {
+    var orig = btn.innerHTML;
+    btn.innerHTML = ok ? '✅ コピーしました!' : '⚠️ 手動でコピー';
+    btn.style.background = ok ? '#22c55e' : '#ef4444';
+    setTimeout(function() { btn.innerHTML = orig; btn.style.background = '#3b82f6'; }, 2000);
+  }
+}
+
 function offerAIPromptIfMilestone() {
   if (!quizState.pendingAIPromptMilestone) return;
   var milestone = quizState.pendingAIPromptMilestone;
@@ -5655,12 +5789,26 @@ function showBlockReview() {
   document.getElementById('quiz-footer').classList.remove('show');
   quizState.active = false;
 
-  var html = '<div class="section-title">Block Review</div>';
+  var count = parseInt(loadState('quiz_count', 5), 10) || 5;
   var correctCount = 0;
+  for (var i = 0; i < quizState.blockResults.length; i++) {
+    if (quizState.blockResults[i].correct) correctCount++;
+  }
+
+  var html = '';
+  // ── Score header + "Next N" button moved to TOP ──
+  html += '<div style="text-align:center;margin:8px 0 14px;font-size:32px;font-weight:800;color:#f97316;">' +
+    correctCount + ' / ' + quizState.blockResults.length + ' correct</div>';
+
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">';
+  html += '<button class="start-btn" style="flex:1;min-width:160px;background:#22c55e;color:#0f1c2e;" onclick="continueQuiz(' + count + ')">▶ 次の' + count + '問</button>';
+  html += '<button class="start-btn" style="flex:1;min-width:160px;background:#1a2940;color:#cbd5e1;border:2px solid #1e3a5f;" onclick="goQuizHome()">メニューに戻る</button>';
+  html += '</div>';
+
+  html += '<div class="section-title">Block Review</div>';
   for (var i = 0; i < quizState.blockResults.length; i++) {
     var res = quizState.blockResults[i];
     var q = QUESTIONS[res.qIdx];
-    if (res.correct) correctCount++;
     var cls = res.correct ? 'review-correct' : 'review-wrong';
     html += '<div class="review-card ' + cls + '">';
     html += '<div style="font-size:22px;color:#94a3b8;">Q' + (i + 1) + ' (Ch' + q.ch + ')</div>';
@@ -5669,8 +5817,6 @@ function showBlockReview() {
       (res.correct ? '&#10004; Correct' : '&#10008; Wrong - Answer: ' + String.fromCharCode(65 + res.shuffledCorrect)) + '</div>';
     html += '</div>';
   }
-  html += '<div style="text-align:center;margin:20px 0;font-size:30px;font-weight:700;color:#f97316;">' +
-    correctCount + ' / ' + quizState.blockResults.length + ' correct</div>';
 
   // Show AI-prompt milestone offer if reached
   var totalAns = (loadState('answer_history', []) || []).length;
@@ -5687,8 +5833,9 @@ function showBlockReview() {
     html += '</div></div>';
   }
 
+  // Bottom action (same as top, for convenience after scrolling)
   html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">';
-  html += '<button class="start-btn" style="flex:1;min-width:160px;background:#22c55e;" onclick="continueQuiz(5)">▶ 次の5問</button>';
+  html += '<button class="start-btn" style="flex:1;min-width:160px;background:#22c55e;color:#0f1c2e;" onclick="continueQuiz(' + count + ')">▶ 次の' + count + '問</button>';
   html += '<button class="start-btn" style="flex:1;min-width:160px;background:#1a2940;color:#cbd5e1;border:2px solid #1e3a5f;" onclick="goQuizHome()">メニューに戻る</button>';
   html += '</div>';
   document.getElementById('quiz-review').innerHTML = html;
@@ -15966,11 +16113,11 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4016, ch: 13, week: 6, source: "Mock+Original", exam: "endterm",
     q: "Coffee shop \"Brouwer\" sells **D = 7,300 kg** of beans per year. Each order costs **C₀ = €40** in shipping + admin. Annual holding cost per kg is **Cₕ = €2.50**. Using the standard EOQ formula, what is the optimal order size (rounded to nearest 10)?",
     opts: [
-      "480 kg",
-      "Around 480 kg, ordering ~15 times per year",
-      "340 kg",
-      "Around 600 kg, ordering ~12 times per year",
-      "Around 480 kg, ordering ~7 times per year (near-duplicate trap on frequency)",
+      "480 kg, ordered roughly 15 times per year",
+      "340 kg, ordered roughly 21 times per year",
+      "600 kg, ordered roughly 12 times per year",
+      "240 kg, ordered roughly 30 times per year",
+      "960 kg, ordered roughly 8 times per year",
       "Don't know"
     ],
     ans: 1,
