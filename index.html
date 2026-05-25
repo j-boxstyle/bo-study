@@ -8089,6 +8089,9 @@ function renderQuestion() {
   for (var ti = 0; ti < mdTables.length; ti++) {
     html += renderMarkdownTable(mdTables[ti]);
   }
+  // 参照テーブル（Z値・VUT・Little・EOQ）を選択肢の前に表示
+  var refTables = getReferenceTableHTML(q);
+  if (refTables) html += refTables;
   html += '<div class="q-opts" id="q-opts">';
   for (var i = 0; i < optOrder.length; i++) {
     var origIdx = optOrder[i];
