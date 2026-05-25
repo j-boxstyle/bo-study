@@ -1096,15 +1096,9 @@ body{
             var dup = body.querySelector('#'+id);
             if (dup) dup.removeAttribute('id');
           });
-          // モーダル内で sticky/fixed な要素を強制的に静的化（CSSキャッシュ対策で JS インライン適用）
-          var stickyVictims = body.querySelectorAll('.controls, header.hero, header, .modal-header, .drawer-close');
-          stickyVictims.forEach(function(el){
-            el.style.setProperty('position', 'static', 'important');
-            el.style.setProperty('top', 'auto', 'important');
-          });
-          // クローンされた header.hero は完全に消す（重複タイトル）
-          var dupHero = body.querySelector('header.hero');
-          if (dupHero) dupHero.style.setProperty('display', 'none', 'important');
+          // モーダル内では「検索バー＋フィルタ」「重複ヘッダー」を完全削除（邪魔なので）
+          var toRemove = body.querySelectorAll('.controls, header.hero, header');
+          toRemove.forEach(function(el){ el.remove(); });
           body.dataset.loaded = '1';
 
           // モーダル内の検索ボックスにフィルタロジックを取り付ける
