@@ -1183,7 +1183,7 @@ body{
       <div class="ch-pill active" data-acat="all" onclick="filterAbbrCat('all')">全て</div>
       <div class="ch-pill" data-acat="inventory" onclick="filterAbbrCat('inventory')">📦 在庫・計画</div>
       <div class="ch-pill" data-acat="lean" onclick="filterAbbrCat('lean')">🌀 Lean・改善</div>
-      <div class="ch-pill" data-acat="quality" onclick="filterAbbrCat('quality')">✅ 品質・リスク</div>
+      <div class="ch-pill" data-acat="quality" onclick="filterAbbrCat('quality')"> 品質・リスク</div>
       <div class="ch-pill" data-acat="project" onclick="filterAbbrCat('project')">📅 PM</div>
       <div class="ch-pill" data-acat="process" onclick="filterAbbrCat('process')">⚙️ プロセス</div>
       <div class="ch-pill" data-acat="strategy" onclick="filterAbbrCat('strategy')">🎯 戦略</div>
@@ -1560,7 +1560,7 @@ header .sub { font-size: 14px; opacity: 0.9; }
   <button class="filter-btn" data-dom="planning">📅 計画・管理</button>
   <button class="filter-btn" data-dom="inventory">📦 在庫</button>
   <button class="filter-btn" data-dom="lean">⚡ 改善（Lean）</button>
-  <button class="filter-btn" data-dom="quality">✅ 品質・信頼性</button>
+  <button class="filter-btn" data-dom="quality"> 品質・信頼性</button>
   <div class="legend" style="margin-left:auto;">
     <div class="legend-item"><span class="legend-dot" style="background:#d9b94a"></span>計算/公式</div>
     <div class="legend-item"><span style="color:#d97a4a;font-weight:bold;">⇄</span>対比</div>
@@ -3552,7 +3552,7 @@ document.getElementById('search').oninput = (e) => {
 // initial render
 renderRoadmap();
 
-console.log(`✅ Loaded ${CONCEPTS.length} concepts across ${HOUSE.length} rooms`);
+console.log(` Loaded ${CONCEPTS.length} concepts across ${HOUSE.length} rooms`);
 
 
 // Expose functions used by inline onclick handlers in the rendered HTML
@@ -7459,7 +7459,7 @@ function renderConceptDiagram(conceptId) {
         '<text x="140" y="155" text-anchor="middle" fill="#94a3b8" font-size="18">プロのコーディネート</text>' +
         '<text x="140" y="185" text-anchor="middle" fill="#94a3b8" font-size="18">ユニークなセット販売</text>' +
         '<rect x="280" y="20" width="240" height="240" rx="14" fill="rgba(249,115,22,0.08)" stroke="#f97316" stroke-width="3"/>' +
-        '<text x="400" y="55" text-anchor="middle" fill="#f97316" font-size="22" font-weight="700">✅ Qualifying</text>' +
+        '<text x="400" y="55" text-anchor="middle" fill="#f97316" font-size="22" font-weight="700"> Qualifying</text>' +
         '<text x="400" y="85" text-anchor="middle" fill="#e2e8f0" font-size="16">最低限必要な条件</text>' +
         '<text x="400" y="125" text-anchor="middle" fill="#94a3b8" font-size="18">J-BOX:</text>' +
         '<text x="400" y="155" text-anchor="middle" fill="#94a3b8" font-size="18">商品の品質基準</text>' +
@@ -8437,7 +8437,7 @@ function generateAIPrompt(scope) {
     lines.push("");
     var letters = ['A','B','C','D','E','F'];
     for (var oi = 0; oi < w.opts.length; oi++) {
-      var marker = (oi === w.ans) ? ' ✅ (正解)' : (oi === w.chosenOrig ? ' ← あなたの選択' : '');
+      var marker = (oi === w.ans) ? '' : (oi === w.chosenOrig ? ' ← あなたの選択' : '');
       lines.push("- **" + letters[oi] + ")** " + w.opts[oi] + marker);
     }
     lines.push("");
@@ -8743,7 +8743,7 @@ function copyAIPrompt() {
   var btn = document.getElementById('ai-prompt-copy-btn');
   if (btn) {
     var orig = btn.innerHTML;
-    btn.innerHTML = ok ? '✅ コピーしました!' : '⚠️ 手動でコピー';
+    btn.innerHTML = ok ? ' コピーしました!' : '⚠️ 手動でコピー';
     btn.style.background = ok ? '#22c55e' : '#ef4444';
     setTimeout(function(){
       btn.innerHTML = orig;
@@ -8994,13 +8994,13 @@ function generateSingleQAIPrompt(qIdx, chosen, correct) {
   lines.push('## 選択肢');
   lines.push('');
   for (var i = 0; i < q.opts.length; i++) {
-    var marker = (i === q.ans) ? ' ✅ (正解)' : (i === chosenOrigIdx ? ' ← 自分の選択' : '');
+    var marker = (i === q.ans) ? '' : (i === chosenOrigIdx ? ' ← 自分の選択' : '');
     lines.push('- **' + letters[i] + ')** ' + q.opts[i] + marker);
   }
   lines.push('');
   lines.push('## 結果');
   lines.push('');
-  if (correct) {
+  if {
     lines.push('**正解しましたが、より深く理解したいです。**');
   } else if (isDontKnow) {
     lines.push('**「わからない」を選びました。** 解説を一から教えてください。');
@@ -9039,7 +9039,7 @@ function generateSingleQAIPrompt(qIdx, chosen, correct) {
   lines.push('## 🎯 1. 核心概念');
   lines.push('[Slack教科書 Ch.X での扱いに沿って詳しく。日英用語併記。3〜5文]');
   lines.push('');
-  lines.push('## ✅ 2. なぜ正解が正解か（順方向の計算/論理）');
+  lines.push('## 2. なぜ正解が正解か（順方向の計算/論理）');
   lines.push('[公式・原理を step-by-step で。途中式全部書く。単位もチェック]');
   lines.push('');
   lines.push('## 🔁 3. 逆方向検算（正解の答えが本当に正しいか）');
@@ -9103,7 +9103,7 @@ function generateSingleQAIPrompt(qIdx, chosen, correct) {
   lines.push('8. **「ひっかけパターン」セクション** を 5秒判断フローの後に必ず付ける。');
   lines.push('9. **1行サマリー** で締める（記憶のフック）。');
   lines.push('');
-  lines.push('## ✅ 自己チェック（出力する前に1つずつ確認）');
+  lines.push('## 自己チェック（出力する前に1つずつ確認）');
   lines.push('');
   lines.push('- [ ] `<thinking>` ブロックに (a)〜(f) **全6項目** 書いた');
   lines.push('- [ ] (d) 逆方向検算を **実際に計算** して書いた（計算問題のみ）');
@@ -9185,7 +9185,7 @@ function flashCopySuccess(btn, ok) {
   if (!btn) return;
   var orig = btn.innerHTML;
   var origBg = btn.style.background;
-  btn.innerHTML = ok ? '✅ コピーしました！Claude/ChatGPTに貼り付け' : '⚠️ 失敗 — プレビューで手動コピーしてください';
+  btn.innerHTML = ok ? ' コピーしました！Claude/ChatGPTに貼り付け' : '⚠️ 失敗 — プレビューで手動コピーしてください';
   btn.style.background = ok ? '#22c55e' : '#ef4444';
   btn.style.color = '#fff';
   setTimeout(function() {
@@ -9209,7 +9209,7 @@ function copySingleQPrompt() {
   var btn = document.getElementById('single-q-copy-btn');
   if (btn) {
     var orig = btn.innerHTML;
-    btn.innerHTML = ok ? '✅ コピーしました!' : '⚠️ 手動でコピー';
+    btn.innerHTML = ok ? ' コピーしました!' : '⚠️ 手動でコピー';
     btn.style.background = ok ? '#22c55e' : '#ef4444';
     setTimeout(function() { btn.innerHTML = orig; btn.style.background = '#3b82f6'; }, 2000);
   }
@@ -9661,7 +9661,7 @@ var ABBREVIATIONS = [
   { abbr:'Mura', full:'斑 (Unevenness)', cat:'lean', ja:'ムラ', desc:'ばらつき・不均一。Heijunkaで対処。' },
   { abbr:'Muri', full:'無理 (Overburden)', cat:'lean', ja:'ムリ', desc:'過負荷。無理な要求がブレークダウンを生む。' },
 
-  // ✅ 品質・リスク (Ch 17-18)
+  // 品質・リスク (Ch 17-18)
   { abbr:'SPC', full:'Statistical Process Control', cat:'quality', ja:'統計的工程管理', desc:'管理図でリアルタイム監視。UCL/LCL=μ±3σ。' },
   { abbr:'UCL', full:'Upper Control Limit', cat:'quality', ja:'上方管理限界', desc:'μ + 3σ。これを超えたら out-of-control。' },
   { abbr:'LCL', full:'Lower Control Limit', cat:'quality', ja:'下方管理限界', desc:'μ − 3σ。これを下回ったら out-of-control。' },
@@ -9737,7 +9737,7 @@ function renderAbbreviations() {
   var catInfo = {
     inventory: {icon:'📦', label:'在庫・計画', color:'#f97316'},
     lean: {icon:'🌀', label:'Lean・改善', color:'#a855f7'},
-    quality: {icon:'✅', label:'品質・リスク', color:'#22c55e'},
+    quality: {icon:'', label:'品質・リスク', color:'#22c55e'},
     project: {icon:'📅', label:'プロジェクト管理', color:'#3b82f6'},
     process: {icon:'⚙️', label:'プロセス・容量', color:'#eab308'},
     strategy: {icon:'🎯', label:'戦略', color:'#ef4444'},
@@ -15607,7 +15607,7 @@ var CONCEPTS_W7 = [
     },
     punchline: "DMAIC 5段階 (D→M→A→I→C) + 8ステップ詳細 + 4原則 + 7ツール + 役割体系 (Champion/BB/GB/YB)。Six Sigma の全体像を一節で。",
     defEN: "**Six Sigma** = data-driven improvement methodology targeting ≤ 3.4 defects per million opportunities. Developed at Motorola (1980s), popularised by GE's Jack Welch. **DMAIC** is its core framework.\n\n## 1. DMAIC — 5 phases\n\n- **D**efine — problem, scope, customer requirements (CTQ), business case\n- **M**easure — baseline performance with data\n- **A**nalyze — identify **root causes** with data (NOT solutions)\n- **I**mprove — develop, pilot, implement solutions\n- **C**ontrol — monitor with SPC, sustain gains\n\n**vs PDCA**: DMAIC has an explicit Analyze phase separated from Plan; project-based with clear start/end.\n\n## 2. DMAIC — 8 steps (with toll-gates)\n\n1. Define CTQs\n2. Validate measurement procedures (Gage R&R)\n3. Diagnose current process (baseline)\n4. Identify potential influence factors (fishbone)\n5. Verify their effect with data (regression, hypothesis tests)\n6. Design improvement actions\n7. Improve process control (SPC, OCAP, standard work)\n8. Close the project (handoff, document)\n\nBetween each step a **Toll-gate** — Champion reviews evidence and approves progression. Prevents leaping to solutions without diagnosis.\n\n## 3. DMAIC — 4 principles\n\n1. **Translate to measurable quantities** — \"You cannot improve what you cannot measure\" (Kelvin)\n2. **Data-driven diagnosis BEFORE counter-measures** — \"Focus on the Big Fish\" (Pareto)\n3. **Counter-measures based on ESTABLISHED causality** — \"Find the X\" / 5 Whys — Y = f(X)\n4. **Evidence-based** — \"In God we trust; all others must bring data\" (Deming)\n\n### 📖 The Minister Problem (RC7)\n\nA Dutch Tax Office minister responds to a TV exposé: *\"Within one week, I will propose strong measures.\"* This **violates all 4 principles**:\n\n| Principle | Violation |\n|---|---|\n| P1 — Measurable | \"Quality\" / \"efficiency\" vague; no metric |\n| P2 — Diagnosis | Jumps to measures; no Pareto |\n| P3 — Causality | Measures based on assumed causes, not Y=f(X) |\n| P4 — Evidence | One week too short to collect data |\n\nCorrect DMAIC takes **months, not days**.\n\n## 4. 7 improvement tools (Analyze phase)\n\n1. **Pareto Diagram** (80÷20) — sorted bar chart of vital few\n2. **Fishbone / Ishikawa — 5M**: Man, Machine, Material, Method, Measurement\n3. **5 Whys** — drill to root cause (Jefferson Memorial: dirty pillars → cleaning → bird droppings → insects → lights too early)\n4. **Flow Chart / Process Map**\n5. **Scatter Diagram** — 2-variable correlation\n6. **Input-Output Analysis**\n7. **Check Sheet / Histogram**\n\n## 5. Role system (Belt hierarchy)\n\n| Role | Function |\n|---|---|\n| **Champion** | Project sponsor, approves toll-gates |\n| **Master Black Belt** | Trains BBs, methodology owner |\n| **Black Belt** | Full-time project leader (>€100K savings, 2-3 projects/yr) |\n| **Green Belt** | Part-time leader, departmental projects |\n| **Yellow / Orange Belt** | Team member, supports analyses |\n| **Programme Manager** | Oversees deployment |\n\n**Exam trap**: Champion ≠ project leader. Champion **sponsors**; Black Belt **leads**.",
-    defJA: "**Six Sigma** = 欠陥を「百万件あたり3.4件以下（3.4 ppm）」まで減らすデータ主導の品質改善方法論。Motorolaが1980年代に開発、GE のジャック・ウェルチが全社展開して普及。Sigma(σ) = プロセスの標準偏差。6σレベルとは規格上下限が平均から6σ離れている＝極端に少ない欠陥率。\n\n**この単元の構造**：①5段階フレーム →②8ステップ詳細 →③4原則（+大臣問題ケース）→④7改善ツール →⑤役割体系。順番に読めば Six Sigma の全体像が一気に理解できる。\n\n---\n\n# 1️⃣ DMAIC — 5段階フレーム\n\n| 段階 | 何をするか | 何をしないか |\n|---|---|---|\n| **D - Define（定義）** | 問題・スコープ・顧客要件 (CTQ)・ビジネスケース | 解決策の議論 |\n| **M - Measure（測定）** | 現状指標のベースライン取得 | 原因分析（まだしない） |\n| **A - Analyze（分析）** | **データで根本原因を特定** | 解決策のテスト |\n| **I - Improve（改善）** | 対策を考案・実施・効果検証 | 原因分析（もう済んでいる） |\n| **C - Control（維持）** | SPCで監視・標準化・責任者指定 | 次の問題探し |\n\n**試験で頻出**：「Analyze段階で何をする？」→ 「データで原因特定」が正解。誤答に「解決策をテスト」（→Improve）「ベースライン測定」（→Measure）が並ぶ。\n\n---\n\n# 2️⃣ DMAIC — 8ステップ詳細展開\n\n5段階を実装レベルで8ステップに分割。各ステップ間には **Toll-gate（関所）** があり、Champion がエビデンスをレビューして次へ進めるか判断。診断なしの飛躍を防ぐ。\n\n**Define段階**：\n1. **CTQ 定義** — 顧客が求める品質を測定可能な形で定義\n\n**Measure段階**：\n2. **測定手順の検証** — CTQを信頼性高く測定できるか（Gage R&R）\n3. **現状プロセス診断** — ベースライン確立\n\n**Analyze段階**：\n4. **潜在的影響因子の特定** — Y に影響する X 候補をブレスト（魚骨図）\n5. **影響因子の効果検証** — データで「実際にどの X が効くか」（相関・回帰・仮説検定）\n\n**Improve段階**：\n6. **改善策の設計** — 特定された根本原因への対策\n\n**Control段階**：\n7. **プロセス制御の改善** — SPC、OCAP、標準作業\n8. **プロジェクト完了** — プロセスオーナーへ引き継ぎ、学びを文書化\n\n**役割との対応**：Black Belt（リーダー）が実行、Champion が Toll-gate で承認、メンバーが特定分析を支援。\n\n---\n\n# 3️⃣ DMAIC — 4大原則（名言で覚える）\n\nDMAIC の **哲学**。名言で押さえる：\n\n**原則1：測定可能な量へ翻訳**\n> 「測れないものは改善できない」— Lord Kelvin\n\n「品質改善」のような曖昧な目標は、「不良率を5%→1%にする」のような具体的指標にしてから始める。\n\n**原則2：データ駆動の診断が対策より先**\n> 「Big Fish に集中せよ」\n\nParetoの法則：問題の80%は原因の20%から。全部直そうとせず重要少数を見つける。\n\n**原則3：確立された因果関係に基づく対策**\n> 「Xを見つけよ」「5回のWhy」\n\n推測される原因で動くな。データで検証。Y = f(X) フレーム：Y（結果）を動かす X（原因）を特定し、正しい X に手を打つ。\n\n**原則4：エビデンスベース介入**\n> 「神は信じても、他の者はデータを持って来い」— W. Edwards Deming\n\nデータなしに決定なし。意見 ≠ 証拠。Six Sigma を直感経営と分かつ原則。\n\n## 📖 ケース例：The Minister Problem（RC7）\n\nUvA RC7 名物演習。4原則の違反パターンを一つのシナリオで全て見られる。\n\n**シナリオ**：TVニュースがオランダ Tax Office（国税庁）の品質・効率の悪さを批判。担当大臣が放送で「私もショックを受けた。1週間以内に強力な対策を提案する」と回答。\n\n**4原則すべての違反**：\n\n| 原則 | 大臣の発言の違反箇所 |\n|---|---|\n| **P1 — 測定可能目標** | 「品質」「効率」が曖昧。指標・ベースライン・目標値なし |\n| **P2 — 対策前の診断** | いきなり「対策」へ。Pareto分析なし |\n| **P3 — 確立された因果関係** | 提案される対策は推測原因（政治家の勘）— Y=f(X) なし |\n| **P4 — エビデンスベース** | 1週間ではデータ収集・分析不可能。意見駆動の計画になる |\n\n**正しい DMAIC アプローチ**：\n1. **Define** — CTQ指標を合意（例：「電話待ち時間 ≤ 3分、エラー率 ≤ 0.5%」）\n2. **Measure** — 数週間かけてベースラインデータ収集\n3. **Analyze** — Pareto + 根本原因 + Y=f(X) で重要少数の駆動要因を特定\n4. **Improve** — エビデンスに基づく対策をパイロット\n5. **Control** — SPC + 管理計画で持続\n\nこれに **数ヶ月**かかる、数日ではない。\n\n**よくある誤解**：「期限が短すぎる」だけが問題と思う → 実は4原則全違反。対策の中身を批判する → 対策が出る**前のプロセス**が間違っている。\n\n---\n\n# 4️⃣ 7つの改善ツール（Analyze段階で使用）\n\n| # | ツール | 用途 | キーポイント |\n|---|---|---|---|\n| 1 | **Pareto図 (80÷20)** | 「Vital Few」を特定 | 大きい順ソート＋累積比 |\n| 2 | **Fishbone (Ishikawa) — 5M** | 原因を網羅的に洗い出し | Man, Machine, Material, Method, Measurement (+Environment) |\n| 3 | **5 Whys (Why-Why分析)** | 根本原因まで掘り下げ | Jefferson Memorial 例: 柱汚れ→清掃→鳥糞→虫→灯火早すぎ |\n| 4 | **Flow Chart / Process Map** | 現状プロセス可視化 | — |\n| 5 | **Scatter Diagram (散布図)** | 2変数の相関確認 | — |\n| 6 | **Input-Output 分析** | 工程の入力・変換・出力 | — |\n| 7 | **Check Sheet / Histogram** | データ収集の標準化 | — |\n\n**典型ミス**：「ツールを Improve で使う」→ 違う、**Analyze で原因特定** に使う。Pareto を単純棒グラフと混同 → ソート+累積比が特徴。5M を Measurement ではなく Money と覚える → 誤り。\n\n---\n\n# 5️⃣ 役割体系（Belt 階層）\n\n| 役割 | 責任 | 時間配分 |\n|---|---|---|\n| **Champion（スポンサー）** | プロジェクトオーナー、Toll-gate承認、障害除去 | 定期レビューのみ |\n| **Master Black Belt** | BBの指導者、方法論基準 | フルタイム、BB 10人につき1人 |\n| **Black Belt** | フルタイムプロジェクトリーダー、大型(>€100K節約) | フルタイム、年2-3プロジェクト |\n| **Green Belt** | パートタイムリーダー、部門改善主導 | 業務兼任 |\n| **Yellow / Orange Belt** | チームメンバー、特定分析支援 | 都度参加 |\n| **Programme Manager** | 全社展開統括 | フルタイム |\n\n**試験頻出**：「Champion は何をする？」→ プロジェクトオーナー、Toll-gate審査。**リーダーではない**。リーダーは Black Belt。Master Black Belt と Black Belt の混同も注意（Master は BB の上）。\n\n---\n\n## ✅ 試験対策のまとめ\n\n- **5段階の順序**：D→M→A→I→C を間違えない\n- **Analyze の正体**：原因特定（解決策テストは Improve）\n- **8ステップの活動**：特に Step 4 vs 5（候補列挙 vs データ検証）\n- **4原則違反パターン**：大臣型ケースで「どれに違反したか」識別\n- **7ツール**：Analyze段階、Pareto/Fishbone/5Whys が最頻出\n- **役割**：Champion ≠ Leader、Black Belt = フルタイムLeader",
+    defJA: "**Six Sigma** = 欠陥を「百万件あたり3.4件以下（3.4 ppm）」まで減らすデータ主導の品質改善方法論。Motorolaが1980年代に開発、GE のジャック・ウェルチが全社展開して普及。Sigma(σ) = プロセスの標準偏差。6σレベルとは規格上下限が平均から6σ離れている＝極端に少ない欠陥率。\n\n**この単元の構造**：①5段階フレーム →②8ステップ詳細 →③4原則（+大臣問題ケース）→④7改善ツール →⑤役割体系。順番に読めば Six Sigma の全体像が一気に理解できる。\n\n---\n\n# 1️⃣ DMAIC — 5段階フレーム\n\n| 段階 | 何をするか | 何をしないか |\n|---|---|---|\n| **D - Define（定義）** | 問題・スコープ・顧客要件 (CTQ)・ビジネスケース | 解決策の議論 |\n| **M - Measure（測定）** | 現状指標のベースライン取得 | 原因分析（まだしない） |\n| **A - Analyze（分析）** | **データで根本原因を特定** | 解決策のテスト |\n| **I - Improve（改善）** | 対策を考案・実施・効果検証 | 原因分析（もう済んでいる） |\n| **C - Control（維持）** | SPCで監視・標準化・責任者指定 | 次の問題探し |\n\n**試験で頻出**：「Analyze段階で何をする？」→ 「データで原因特定」が正解。誤答に「解決策をテスト」（→Improve）「ベースライン測定」（→Measure）が並ぶ。\n\n---\n\n# 2️⃣ DMAIC — 8ステップ詳細展開\n\n5段階を実装レベルで8ステップに分割。各ステップ間には **Toll-gate（関所）** があり、Champion がエビデンスをレビューして次へ進めるか判断。診断なしの飛躍を防ぐ。\n\n**Define段階**：\n1. **CTQ 定義** — 顧客が求める品質を測定可能な形で定義\n\n**Measure段階**：\n2. **測定手順の検証** — CTQを信頼性高く測定できるか（Gage R&R）\n3. **現状プロセス診断** — ベースライン確立\n\n**Analyze段階**：\n4. **潜在的影響因子の特定** — Y に影響する X 候補をブレスト（魚骨図）\n5. **影響因子の効果検証** — データで「実際にどの X が効くか」（相関・回帰・仮説検定）\n\n**Improve段階**：\n6. **改善策の設計** — 特定された根本原因への対策\n\n**Control段階**：\n7. **プロセス制御の改善** — SPC、OCAP、標準作業\n8. **プロジェクト完了** — プロセスオーナーへ引き継ぎ、学びを文書化\n\n**役割との対応**：Black Belt（リーダー）が実行、Champion が Toll-gate で承認、メンバーが特定分析を支援。\n\n---\n\n# 3️⃣ DMAIC — 4大原則（名言で覚える）\n\nDMAIC の **哲学**。名言で押さえる：\n\n**原則1：測定可能な量へ翻訳**\n> 「測れないものは改善できない」— Lord Kelvin\n\n「品質改善」のような曖昧な目標は、「不良率を5%→1%にする」のような具体的指標にしてから始める。\n\n**原則2：データ駆動の診断が対策より先**\n> 「Big Fish に集中せよ」\n\nParetoの法則：問題の80%は原因の20%から。全部直そうとせず重要少数を見つける。\n\n**原則3：確立された因果関係に基づく対策**\n> 「Xを見つけよ」「5回のWhy」\n\n推測される原因で動くな。データで検証。Y = f(X) フレーム：Y（結果）を動かす X（原因）を特定し、正しい X に手を打つ。\n\n**原則4：エビデンスベース介入**\n> 「神は信じても、他の者はデータを持って来い」— W. Edwards Deming\n\nデータなしに決定なし。意見 ≠ 証拠。Six Sigma を直感経営と分かつ原則。\n\n## 📖 ケース例：The Minister Problem（RC7）\n\nUvA RC7 名物演習。4原則の違反パターンを一つのシナリオで全て見られる。\n\n**シナリオ**：TVニュースがオランダ Tax Office（国税庁）の品質・効率の悪さを批判。担当大臣が放送で「私もショックを受けた。1週間以内に強力な対策を提案する」と回答。\n\n**4原則すべての違反**：\n\n| 原則 | 大臣の発言の違反箇所 |\n|---|---|\n| **P1 — 測定可能目標** | 「品質」「効率」が曖昧。指標・ベースライン・目標値なし |\n| **P2 — 対策前の診断** | いきなり「対策」へ。Pareto分析なし |\n| **P3 — 確立された因果関係** | 提案される対策は推測原因（政治家の勘）— Y=f(X) なし |\n| **P4 — エビデンスベース** | 1週間ではデータ収集・分析不可能。意見駆動の計画になる |\n\n**正しい DMAIC アプローチ**：\n1. **Define** — CTQ指標を合意（例：「電話待ち時間 ≤ 3分、エラー率 ≤ 0.5%」）\n2. **Measure** — 数週間かけてベースラインデータ収集\n3. **Analyze** — Pareto + 根本原因 + Y=f(X) で重要少数の駆動要因を特定\n4. **Improve** — エビデンスに基づく対策をパイロット\n5. **Control** — SPC + 管理計画で持続\n\nこれに **数ヶ月**かかる、数日ではない。\n\n**よくある誤解**：「期限が短すぎる」だけが問題と思う → 実は4原則全違反。対策の中身を批判する → 対策が出る**前のプロセス**が間違っている。\n\n---\n\n# 4️⃣ 7つの改善ツール（Analyze段階で使用）\n\n| # | ツール | 用途 | キーポイント |\n|---|---|---|---|\n| 1 | **Pareto図 (80÷20)** | 「Vital Few」を特定 | 大きい順ソート＋累積比 |\n| 2 | **Fishbone (Ishikawa) — 5M** | 原因を網羅的に洗い出し | Man, Machine, Material, Method, Measurement (+Environment) |\n| 3 | **5 Whys (Why-Why分析)** | 根本原因まで掘り下げ | Jefferson Memorial 例: 柱汚れ→清掃→鳥糞→虫→灯火早すぎ |\n| 4 | **Flow Chart / Process Map** | 現状プロセス可視化 | — |\n| 5 | **Scatter Diagram (散布図)** | 2変数の相関確認 | — |\n| 6 | **Input-Output 分析** | 工程の入力・変換・出力 | — |\n| 7 | **Check Sheet / Histogram** | データ収集の標準化 | — |\n\n**典型ミス**：「ツールを Improve で使う」→ 違う、**Analyze で原因特定** に使う。Pareto を単純棒グラフと混同 → ソート+累積比が特徴。5M を Measurement ではなく Money と覚える → 誤り。\n\n---\n\n# 5️⃣ 役割体系（Belt 階層）\n\n| 役割 | 責任 | 時間配分 |\n|---|---|---|\n| **Champion（スポンサー）** | プロジェクトオーナー、Toll-gate承認、障害除去 | 定期レビューのみ |\n| **Master Black Belt** | BBの指導者、方法論基準 | フルタイム、BB 10人につき1人 |\n| **Black Belt** | フルタイムプロジェクトリーダー、大型(>€100K節約) | フルタイム、年2-3プロジェクト |\n| **Green Belt** | パートタイムリーダー、部門改善主導 | 業務兼任 |\n| **Yellow / Orange Belt** | チームメンバー、特定分析支援 | 都度参加 |\n| **Programme Manager** | 全社展開統括 | フルタイム |\n\n**試験頻出**：「Champion は何をする？」→ プロジェクトオーナー、Toll-gate審査。**リーダーではない**。リーダーは Black Belt。Master Black Belt と Black Belt の混同も注意（Master は BB の上）。\n\n---\n\n## 試験対策のまとめ\n\n- **5段階の順序**：D→M→A→I→C を間違えない\n- **Analyze の正体**：原因特定（解決策テストは Improve）\n- **8ステップの活動**：特に Step 4 vs 5（候補列挙 vs データ検証）\n- **4原則違反パターン**：大臣型ケースで「どれに違反したか」識別\n- **7ツール**：Analyze段階、Pareto/Fishbone/5Whys が最頻出\n- **役割**：Champion ≠ Leader、Black Belt = フルタイムLeader",
     whyNeeded: "Mock final Q7・Q22・Q23・Q24・Q40 はすべて DMAIC または Six Sigma 関連。RC7 全体がこの単元を扱う（L387-L786 minister problem 演習、L636-672 Lean House の前提となる Six Sigma、L714-731 Belt 役割、L763-786 8ステップ、L918-931 4原則）。**Final の 12-15% がこの単元から出る最重要ハブ**。",
     mistakes: [
       "Analyze で解決策を検討する（誤り：解決策は Improve）",
@@ -24669,7 +24669,7 @@ var QUESTIONS_HOMEWORK = [
     opts: [
       "A plan is often based on expectations.",
       "A plan can be considered as a statement of intention.",
-      "A good plan guarantees that control is not necessary.  (これがFalse)",
+      "A good plan guarantees that control is not necessary.",
       "During implementation things do not always happen as expected.",
       "Don't know"
     ],
@@ -24777,7 +24777,7 @@ var QUESTIONS_HOMEWORK = [
       "Don't know"
     ],
     ans: 1,
-    expl: "- **EOQ = √(2 C₀ D / Ch)**\n- 分子: C₀ (発注費), D (需要)\n- 分母: Ch (保管費)\n- EOQ ↑ になる条件:\n  - C₀ ↑ (発注費高い → まとめて発注)\n  - D ↑ (需要高い → 大量発注効率良し)\n  - **Ch ↓** (保管安い → 大量保管OK) ✅\n\n**他選択肢が誤り:**\n- A) Safety stock は EOQ の式に**含まれない**\n- C) D 減 → EOQ ↓\n- D) C₀ 減 → EOQ ↓",
+    expl: "- **EOQ = √(2 C₀ D / Ch)**\n- 分子: C₀ (発注費), D (需要)\n- 分母: Ch (保管費)\n- EOQ ↑ になる条件:\n  - C₀ ↑ (発注費高い → まとめて発注)\n  - D ↑ (需要高い → 大量発注効率良し)\n  - **Ch ↓** (保管安い → 大量保管OK)\n\n**他選択肢が誤り:**\n- A) Safety stock は EOQ の式に**含まれない**\n- C) D 減 → EOQ ↓\n- D) C₀ 減 → EOQ ↓",
     memory: "**EOQは分子↑か分母↓で大きくなる**"
   },
   { id: 8025, ch: 13, week: 6, source: 'Homework',
@@ -24862,7 +24862,7 @@ var QUESTIONS_HOMEWORK = [
     opts: [
       "JIT achieves minimal inventories.",
       "JIT requires low variability.",
-      "JIT can only be applied when making products.  (これがFalse)",
+      "JIT can only be applied when making products.",
       "JIT = right product, right place, right time.",
       "Don't know"
     ],
