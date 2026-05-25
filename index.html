@@ -26,8 +26,7 @@ html{
 }
 .panel{
   max-width:100%;
-  /* Inner content can scroll horizontally via .tbl-scroll, but panel itself never overflows */
-  overflow-x:hidden;
+  overflow:visible;
 }
 a{color:#3b82f6;text-decoration:none;}
 .tab-bar{
@@ -1584,13 +1583,19 @@ header .sub { font-size: 14px; opacity: 0.9; }
 /* Scope roadmap styles to its panel only */
 #tab-roadmap .roadmap { padding-top: 8px; }
 #tab-roadmap header.hero { display: none !important; }
-/* 検索バーをタブナビ(63px)直下に sticky pin（スクロールしても常に同じ位置に固定） */
+/* 検索バー：body/html の overflow-x:hidden で sticky が壊れるので fixed に。
+   タブナビ(64px) の直下に張り付き、スクロールしても常に同じ位置を維持。 */
 #tab-roadmap .controls {
-  position: sticky;
-  top: 63px;
+  position: fixed !important;
+  top: 64px !important;
+  left: 0;
+  right: 0;
   z-index: 40;
   background: #0f1726;
+  border-bottom: 1px solid #243047;
 }
+/* controls が fixed で抜けるので、roadmap 本体を controls 分だけ下にずらす */
+#tab-roadmap .roadmap { padding-top: 80px; }
 </style>
 <div class="panel" id="tab-roadmap" style="padding:0;margin:0;max-width:none;">
 
