@@ -22570,6 +22570,781 @@ var QUESTIONS_CANVAS = [
 ];
 QUESTIONS = QUESTIONS.concat(QUESTIONS_CANVAS);
 
+var QUESTIONS_CANVAS_HISTORY = [
+  { id: 6000, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "On what performance objective is Ryanair primarily focused if they want to offer the cheapest flights in Europe?",
+    opts: [
+      "Quality",
+      "Cost",
+      "Flexibility",
+      "Speed",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6001, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "Concerning the four Vs, why is it that in hospitals all medical personnel wear a white coat?",
+    opts: [
+      "Visibility, because all medical personnel can easily be recognized by patients.",
+      "Variety, because having a single representation reduces the options and therefore the unit costs.",
+      "Variation in demand, because by uniformization medical questions are spread more evenly over the personnel in a hospital.",
+      "Volume, because if all medical personnel wear the same outfit unit costs can be reduced significantly.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6002, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "Comparing the operations of EasyJet versus KLM, what can be said about which is performing better on the cost objective and why?",
+    opts: [
+      "Both perform the same on the cost dimension as they can be similarly classified in terms of the four Vs.",
+      "Both perform the same on the cost objective as they offer essentially the same service.",
+      "KLM more expensive as they outcompete EasyJet on other performance objectives, such as quality and flexibility.",
+      "EasyJet more expensive as they are smaller than KLM, so less advantages from economies of scale.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6003, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "Thinking about the product life cycle, in which stage are cryptocurrencies? The focus is still on developing availability and acceptance.",
+    opts: [
+      "Cryptocurrencies are in the growth phase.",
+      "Cryptocurrencies are in the maturity phase.",
+      "Cryptocurrencies are in the introduction phase.",
+      "Cryptocurrencies are in the decline phase.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6004, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "What would be a typical order qualifying factor when booking an airline ticket by an intermediary, e.g. an online platform?",
+    opts: [
+      "The availability of selected dates and times.",
+      "The seat specifications.",
+      "The price.",
+      "The impact on the environment.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6005, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "Consider the following trade-off diagram, with three companies: A, B and C.\nWhat is true?",
+    opts: [
+      "C is outcompeted by A only.",
+      "Only A and B span the efficient frontier.",
+      "A, B, and C span the efficient frontier.",
+      "C is outcompeted by B only.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6006, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "In a factory, e.g., the Hidden Factory game, it is found that improving the speed of the operations, i.e., optimizing the process to be able to finish goods in less time, also reduces the costs; think of less electricity, smaller shifts, and other efficiency gains due to the speed-up.\nWhat is the name of the theory that explains this interdependency of one performance dimension on another? Here speed on costs.",
+    opts: [
+      "Bottleneck Theory.",
+      "Efficiency Theory.",
+      "Operations Theory.",
+      "Sandcone Theory.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6007, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "Suppose in a process, we have to produce 25 'cards' for our customers. Each card costs 5 euro in terms of raw materials, and needs to be processed 4 times (on average, that includes rework), processing it once costs 2 euro. The operation runs for 300 seconds  (always), where cost accounting has inferred that each second effectively costs 1 euro.\nWhat is the unit cost?",
+    opts: [
+      "625 euro.",
+      "13 euro.",
+      "15 euro.",
+      "25 euro.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6008, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "Consider the Hidden Factory game as in the class, where 25 cards have to be dropped across four stages with the conditions that the next stage can only start if the cards has passed the previous stage. When the goal is to minimize the amount of time required to complete all 25 cards, it is wise to place the bottleneck operator (the slowest card dropper) at...",
+    opts: [
+      "the second stage.",
+      "the fourth stage.",
+      "the third stage.",
+      "the first stage.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6009, ch: 1, week: 1, source: 'Canvas', exam: 'history',
+    q: "If we consider the Hidden Factory game of dropping cards on plates across stages in the shortest amount of time, what is not an operations improvement?\n=====",
+    opts: [
+      "Reconsideration of the placement of resources to ensure a smoother flow of cards through the 'factory.'",
+      "The location of the bottleneck operator/stage in the proces.",
+      "Adjusting the selling price of the cards to increase competitiveness.",
+      "A more consistent dropping technique.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6010, ch: 5, week: 2, source: 'Canvas', exam: 'history',
+    q: "Suppose you have a clinic and you consider letting a specialist laboratory perform some quality tests that you used to do; what kind of decision is this?",
+    opts: [
+      "Coopetition",
+      "Offshoring",
+      "Disintermediation",
+      "Outsourcing",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6011, ch: 5, week: 2, source: 'Canvas', exam: 'history',
+    q: "What are examples of inventories and WIP in many hospital processes?",
+    opts: [
+      "Patients  and staff, medicines and other usables.",
+      "Medicines and other usables only.",
+      "Patients, medicines and other usables.",
+      "Patients and staff only.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6012, ch: 5, week: 2, source: 'Canvas', exam: 'history',
+    q: "Let's say you're faced with a process that's not running as smoothly as it should. To improve it, you need to identify the bottleneck. Which metric would you look at to find it?",
+    opts: [
+      "Efficiency",
+      "Capacity",
+      "Utilization",
+      "Cycle time",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6013, ch: 5, week: 2, source: 'Canvas', exam: 'history',
+    q: "Given that the time it takes to handle your complaint equals five days. Furthermore, a single worker can handle about ten complaints daily. Knowing that six people work there, how many complaints are in the pipeline on average?",
+    opts: [
+      "300",
+      "60",
+      "500",
+      "50",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6014, ch: 5, week: 2, source: 'Canvas', exam: 'history',
+    q: "What is the utilization if\n24 jobs per day arrive (8 hours per day).\nThe operations can handle 4 jobs per hour.",
+    opts: [
+      "133%.",
+      "17%.",
+      "50%.",
+      "75%.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6015, ch: 5, week: 2, source: 'Canvas', exam: 'history',
+    q: "What is the design capacity if you have 3 employees serving two steps in a process organized as a line layout:\nStep A: PT = 5 minutes.\nStep B: PT = 10 minutes.",
+    opts: [
+      "12 jobs/hour.",
+      "18 jobs/hour.",
+      "15 minutes.",
+      "9 jobs/hour.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6016, ch: 5, week: 2, source: 'Canvas', exam: 'history',
+    q: "With regard to hairdressers, e.g., ABS Hairsalon what is typically not a reason, to organize it as a short-fat process (i.e., design it such that all hairdressers do all activities pertaining to the job)?",
+    opts: [
+      "More customer friendly.",
+      "Less monotonous work.",
+      "More robust.",
+      "Lower capital requirements.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6017, ch: 5, week: 2, source: 'Canvas', exam: 'history',
+    q: "Professional services (i) or project processes (ii) are both related to low volume and high variety, what is then the essential difference between (i) and (ii)?\n=====",
+    opts: [
+      "Whether we deal with high or low quality products.",
+      "Whether we deal with customers or not.",
+      "Whether we deal with online or offline customers.",
+      "Whether we deal with a service or a products.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6018, ch: 10, week: 3, source: 'Canvas', exam: 'history',
+    q: "Suppose that on average every 3 minutes a customer queues up at a cashier. Also, it is known that the standard deviation equals 4 minutes, what is coefficient of variation (ca) of the arrival process?",
+    opts: [
+      "4.",
+      "3.",
+      "3/4=0.75.",
+      "4/3=1.33.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6019, ch: 10, week: 3, source: 'Canvas', exam: 'history',
+    q: "Suppose you want to offer a courier service and are thinking of an appropriate capacity management strategy to follow. An idea is to implement surge pricing, which dynamically increases the price when there is increased demand, while the supply of courier drivers is limited. This idea of surge pricing aligns with which strategy?",
+    opts: [
+      "Chase-demand plan.",
+      "Level plan, where base capacity is set relatively low.",
+      "Provide plan.",
+      "Demand management.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6020, ch: 10, week: 3, source: 'Canvas', exam: 'history',
+    q: "At a university, the reception desk gets multiple questions, which take on average 2 minutes to handle. You may assume that ca = cs= 1. What is the average waiting time if the reception is staffed by a single receptionist, given that every 4 minutes a customer enters.",
+    opts: [
+      "4 minutes.",
+      "0.5 minute.",
+      "2 minutes.",
+      "1 minute.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6021, ch: 10, week: 3, source: 'Canvas', exam: 'history',
+    q: "Increasing resource utilization is very important in which setting?",
+    opts: [
+      "If the resource creates lots of inventory.",
+      "If the resource is the bottleneck.",
+      "If the resource is visible, so that customers see the resource at work all the time.",
+      "If the resource under consideration has low fixed costs.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6022, ch: 10, week: 3, source: 'Canvas', exam: 'history',
+    q: "When a first-line call center employee forwards a call to the second line, the customer is put on hold (has to wait) until somebody on the second line simply finds time to pick up the phone. What kind of planning or control system is described between the first and second line?",
+    opts: [
+      "Pull system.",
+      "Make to stock.",
+      "Push system.",
+      "Make to order.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6023, ch: 10, week: 3, source: 'Canvas', exam: 'history',
+    q: "The Dutch Railways offers two type of tickets:\nFirst class, which essentially guarantees a seat when taking the train.\nSecond class, which guarantees a spot (seat or standing) when taking the train, the number of seats equal to (roughly) the average demand.\nWhen determining the capacity for each train in terms of first and second class, what can be said about the strategies?",
+    opts: [
+      "I. Demand management; II. Demand management",
+      "I. Demand management; II. Chase-demand plan",
+      "I. Chase-demand plan; II. Demand management",
+      "I. Provide plan; II. Level plan",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6024, ch: 10, week: 3, source: 'Canvas', exam: 'history',
+    q: "Consider the following, along the horizontal we find the utilization of an important resource and on the vertical the expected waiting time. \nSuppose responsiveness is an order-qualifying factor. Next, we are able to cut out a significant portion of the variation; then, we can reap some benefits, which are visualized by moving from...",
+    opts: [
+      "C to D.",
+      "A to D.",
+      "B to C.",
+      "A to B.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6025, ch: 10, week: 3, source: 'Canvas', exam: 'history',
+    q: "Buying a medicine at a pharmacy is quite a quick errand. What can be said about the P:D ratio relating to medicines that can be bought at pharmacies.",
+    opts: [
+      "P=D (approximately).",
+      "D is (way) larger than the P.",
+      "Nothing, because we need financial information for this.",
+      "P is (way) larger than the D.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6026, ch: 13, week: 6, source: 'Canvas', exam: 'history',
+    q: "How are MPS and MRP related to each other?",
+    opts: [
+      "The MPS and the MRP are two distinct elements in any organization.",
+      "The MRP is part of any MPS system.",
+      "MPS and MRP are synonyms for essentially the same thing.",
+      "The MPS plays a key role in an MRP system.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6027, ch: 13, week: 6, source: 'Canvas', exam: 'history',
+    q: "Complete the following table, i.e., the question marks.",
+    opts: [
+      "18/7/0/15/0/4/3",
+      "13/13/12/11/5/6/8",
+      "0/2/3/8/0/2/4",
+      "18/16/19/11/11/13/17",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6028, ch: 13, week: 6, source: 'Canvas', exam: 'history',
+    q: "What is the main underlying difference between the EOQ and EBQ model (and visible through their formulas)?",
+    opts: [
+      "EOQ assumes instantaneous deliveries, whereas for EBQ the inventory is gradually increasing with a certain production rate.",
+      "EOQ assumes known, constant demand, whereas EBQ does not.",
+      "EOQ assumes fixed holding costs, whereas for EBQ these can be varying.",
+      "EOQ does not include the price, whereas EBQ also takes the price of a product or batch into account.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6029, ch: 13, week: 6, source: 'Canvas', exam: 'history',
+    q: "Compute the EOQ for a product. Given is that the yearly demand is 360 units per year. Co=1000 and Ch=200. So, how often do you order per year?\nFormula",
+    opts: [
+      "EOQ = 60, order about 6 times per year.",
+      "EOQ = 60, order about 3 times per year.",
+      "EOQ = 42, order about 5 times per year.",
+      "EOQ = 42, order about 9 times per year.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6030, ch: 13, week: 6, source: 'Canvas', exam: 'history',
+    q: "What is the reorder level if you want to go out of stock only in 5% of the cases when you reorder? Given are that the average lead-time demand is 40, and corresponding variance is 36.\nSome relevant Z-scores and a formula:\nZ0.90≈1.3, Z0.95≈1.645, Z0.975≈1.96, Z0.995=2.575\nFormula:\nROL   = μ + σ Z(1-α)",
+    opts: [
+      "Reorder level = 48.",
+      "Reorder level = 56.",
+      "Reorder level = 52.",
+      "Reorder level = 50.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6031, ch: 13, week: 6, source: 'Canvas', exam: 'history',
+    q: "Suppose you are selling expensive cameras, which production needs to take place one year before. These produced cameras can only be sold in one year. We cannot make more during the year. So, one wants to make the right decision with regard to the production order; which model can be used to do the calculation?",
+    opts: [
+      "Newsvendor model.",
+      "EBQ model.",
+      "EOQ model.",
+      "ROL model.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6032, ch: 13, week: 6, source: 'Canvas', exam: 'history',
+    q: "Suppose you ordered 90 newspapers and demand turns out to be 100 for that day. What is the profit under this scenario?\nGiven the unit (purchase) cost of 1 euro for each, and having a selling price of 5 euros.",
+    opts: [
+      "350 euros.",
+      "410 euros.",
+      "400 euros.",
+      "360 euros.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6033, ch: 13, week: 6, source: 'Canvas', exam: 'history',
+    q: "The newsvendor model essentially balances two types of costs, the so-called holding (overage) and penalty (underage) costs:\nHolding costs you incur if you have too many newspapers. It is the unit purchase cost c. \nPenalty you incur if you have too few newspapers. It is a lost sale.\nSuppose the selling price of a newspaper is 5 euros, and the cost of the newspaper is 1 euro. What is the penalty cost?\nFor your reference, but use at your own discretion",
+    opts: [
+      "1 euro.",
+      "5 euros.",
+      "4 euros.",
+      "6 euros.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6034, ch: 13, week: 6, source: 'Canvas', exam: 'history',
+    q: "Suppose in the newsvendor model demand follows a normal distribution with mean  and standard devation , and the cost price (c) is half the selling price (p). What is true?\nYou may use:",
+    opts: [
+      "You order .",
+      "You order <img class=\"equation_image\" title=\"\\mu \" src=\"/equation_images/%255Cmu%250A?scale=1\" alt=\"LaTeX: \\mu \" data-equation-content=\"\\mu \" data-ignore-a11y-check=\"\" loading=\"lazy\">.",
+      "You order .",
+      "You order .",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6035, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "What is an example of a correct rendering of a failure mode concerning waking up until leaving your home in the morning to arrive on time and in good shape at university?",
+    opts: [
+      "Failure: Waking up too late. – Cause: Alarm clock didn’t go off – Effect: Forgot to set alarm.",
+      "Failure: Dress up in a conflicting outfit. – Cause: Did not 5S wardrobe closet – Effect: Wasting time.",
+      "Failure: Waking up too late. – Cause: Went to bed too late – Effect: slept through.",
+      "Failure: Dress up in a conflicting outfit. – Cause: Could not find appropriate clothes – Effect: Not feeling comfortable at the university.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6036, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "For statistical process monitoring using a simple control chart, you first need to know some quantities to compute the lower and upper control limits; which statistical quantities do you need to know?",
+    opts: [
+      "Mean and standard deviation.",
+      "Mean, lower standard deviation and upper standard deviation.",
+      "A monitoring scheme.",
+      "Occurrence, severity and detectability of the variable of interest.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6037, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "After the process, parts are checked to see whether they are good, i.e., not undersized or oversized. This goes by this shoot.\nIs this a poka yoke device, considering that it filters out only the good parts?",
+    opts: [
+      "No, it does not give immediate feedback in the process.",
+      "No, this measure is expensive.",
+      "Yes.",
+      "No, it does not provide 100% inspection.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6038, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "What is true regarding a work breakdown structure (WBS)?",
+    opts: [
+      "It provides activities in a Gantt chart which can be used by a manager to better schedule its resources.",
+      "It break downs the project in which activities need to be done and in which order.",
+      "It break downs the project in uncertainty, scale and complexity.",
+      "It provides a schedule in which the jobs should be planned for example by using a Gantt chart.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6039, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "A project manager finds that he has to crash the project; what is crashing a project about?",
+    opts: [
+      "With crashing you agree on the fact that the project is hopeless and you decide to terminate it.",
+      "With crashing you try to reduce the time it takes to complete the project by looking at which activities can be shortened often by incurring extra costs.",
+      "With crashing you reduce quality of your product often so the project can be completed at lower costs or in a short period of time.",
+      "With crashing you have the issue that two activities coincide in the critical path.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6040, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "What is the critical path of this project consisting of the activities (A, B, ... I)? In superscript their durations in weeks are given.",
+    opts: [
+      "13 weeks.",
+      "8 weeks.",
+      "14 weeks.",
+      "31 weeks.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6041, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Is the following process that is monitored over some time in control?",
+    opts: [
+      "Yes.",
+      "No, because it fluctuates between the LCL and UCL.",
+      "No, because it is fluctuating too much.",
+      "We cannot tell as we don't know what is acceptable.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6042, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Suppose the MTBF is 6 weeks, and the time to repair is only 1 week on average. What is the availability?\nHint: Availability=MTBF/(MTBF+MTTR).",
+    opts: [
+      "14%.",
+      "83%.",
+      "86%.",
+      "17%.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6043, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "The three most important components of a medicine encapsulator, each with a note on their individual reliability:\nCapsule Feeding and Separation System: 98%.\nDosage/Filling System: 96%.\nCapsule Closing/Locking Unit 97%.\nWhat is the overall reliability of the encapuslator?",
+    opts: [
+      "97%.",
+      "96%.",
+      "98% or more.",
+      "91%.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6044, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "What does BE not consider as a 'quality' aspect?",
+    opts: [
+      "Responsiveness to customers’ requests (delivery flexibility).",
+      "Use of premium materials.",
+      "Very high yield.",
+      "Wide product range and customizability (product & mix flexibility)",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6045, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "What is quality for SQT?",
+    opts: [
+      "Innovation.",
+      "Use of premium materials.",
+      "Diversification.",
+      "Good conformance quality.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6046, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "What is the correct interpretation of competitive factors for SQT?",
+    opts: [
+      "Low-cost is order winner, and constant quality is order qualifyer.",
+      "Low-cost and constant quality are both order winners.",
+      "Low-cost and constant quality are both order qualifyers.",
+      "Low-cost is order-qualifyer, and constant quality is order winner.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6047, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Consider the following operations that are described in the accompanying text:\nBE premium.\nBE commodity.\nSQT.",
+    opts: [
+      "A-3; B-1; C-2.",
+      "A-3; B-2; C-1.",
+      "A-1; B-2; C-3.",
+      "A-1; B-3; C-2.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6048, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "How is the cost development of both companies over the last decade?",
+    opts: [
+      "BE's cost went up by a small margin, whereas SQT's cost increased significantly.",
+      "BE's cost went down by a small margin, whereas SQT's cost decreased significantly.",
+      "BE's cost went down by a small margin, whereas SQT's cost increased significantly.",
+      "BE's cost went up by a small margin, whereas SQT's cost decreased significantly.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6049, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "What would be a rightful prediction of the costs if SQT would open a factory in East Europe? Hint: use the fact sheet.",
+    opts: [
+      "54.7",
+      "57.0",
+      "87.1",
+      "85.2",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6050, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "So, we see that:\nSQT has lower material & parts costs:\nCheaper materials (“Value engineering”): closely analyze product design for cost reduction opportunities that do not affect functionality.\nHigh yield => less scrap\nLower inventory and WIP levels\nSQT has lower direct labour costs:\nHigh utilization\nHigh yield\nHigh degree of automation\nLittle transportation \nSQT has lower indirect labour (overhead) costs:\nSimple planning & control (due to line layout, strict planning)\nNo inspection of incoming materials & parts\nNo quality inspection of finished goods\nSimple (standardized) packaging and shipping\nSPT has lower utilities & depreciation costs:\nHigh utilization\nLow yield\nBut, is this sufficient to indeed become a threat to BE? In line with this which of the following statements is false.",
+    opts: [
+      "Strategy of BE (flexibility) implies higher costs (but this only holds for the premium / specialty products).",
+      "There are several practices of SQT that BE can copy without compromising its strategy (but that are a matter of efficiency).",
+      "Since the locations of SQT and BE are vert different (China vs Europe), the operations will be different by default.",
+      "For the commodity products, almost all of SQT’s practices can be copied, provided that BE is willing to separate its operations into two parts (commodity vs. specialty).",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6051, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Consider the plans of the executives in the board room, which you can read above.\nWhat is a fundamental issue here with regard to considering BE's operations by top management?",
+    opts: [
+      "None of them mentions quality as quality should be the key focal point to differentiate between them and SQT.",
+      "None of them mentions that the prices of their standardized products are too high.",
+      "None of them focuses on what to do with the 28% specialty products.",
+      "None of them seems to be aware of the 72% commodity products.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6052, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "The views of top management are summarized as:\nDettmann: do nothing (only run a marketing campaign).\nJeker: copy SQT’s operations practices, and count on brand-name and reputation to give a competitive advantage.\nHeine: stay loyal to current strategic focal point (flexibility), but close the efficiency gap (move to efficient frontier).\nSuppose C is the current position of the company, and we assume SQT to be at A, how would you indicate their strategies in this diagram?\n=====\n# CaseStudy2",
+    opts: [
+      "Dettmann (D); Jeker (D); Heine (E).",
+      "Dettmann (C); Jeker (A); Heine (E).",
+      "Dettmann (E); Jeker (D); Heine (D).",
+      "Dettmann (C); Jeker (A); Heine (D).",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6053, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Angela Beuer prescribes two options, these are best described by which pair of the following trade-off diagrams?",
+    opts: [
+      "B1-B2",
+      "A1-A2",
+      "D1-D2",
+      "C1-C2",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6054, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "In fact, this poor performance on the performance dimension \"Cost(-efficiency)\" of BE compared to SQT can be attributed to...",
+    opts: [
+      "being inefficient.",
+      "having a different perations strategy.",
+      "none of these considerations.",
+      "a different operations strategy and being inefficient.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6055, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "The factory of Bayerische Elektrowerkzeuge is organized in areas: all plating machines are in one place, all drilling machines in the next, all printing machines in a third area, all assembly cells in a fourth spot, et cetera. This is practical in view of the large number of different models that the factory produces. Each model requires a different set of processes and treatments, so products of different models follow different routings through the factory. As a consequence, there is a lot of transport of parts and semifinished products across the factory. Before each processing and treatment area, there is a small storage area where jobs wait for their turn to be processed (“WIP buffers”). For some specialty products that are produced in very small volumes, the process is almost entirely custom-made, and involves a lot of manual work. An illustration of the flows in the factory is given by:\nWith regard to their operations what kind of layout is BE using?",
+    opts: [
+      "Product layout.",
+      "Fixed-position layout.",
+      "Functional layout.",
+      "Cell layout.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6056, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "BE has adopted a strategy focused on flexibility. This leads to having to deal with a high number of SKUs in the operations; in that regard, which of the following statements is false?",
+    opts: [
+      "High WIP, much transportation => $$$",
+      "Large materials & parts inventory => $$$",
+      "Complex planning => more staff => $$$",
+      "Long production runs, many SKUs => low yield => $$$",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 6057, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Besides directly affecting cost, also the operations strategy impacts utilization. In that regard, which of the following statements is true?",
+    opts: [
+      "Short production runs  => many change-overs => low utilization",
+      "Rush-orders => fewer disruptions in production schedule => low utilization",
+      "Short production runs => fewer change-overs => high utilization",
+      "Keep “headroom” in production => high utilization",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6058, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Considering the operations, there is a huge backlog. Nevertheless, to avoid backlog, long-standing customers often call the design engineers with a rush order, and ask them to help them get their orders processed through the factory and delivered with high priority. Given the prestige of the Design Engineering department, Operations (the factory) usually complies and changes their production schedule to accommodate such rush orders. \nGiven that the normally, it takes about 9 weeks to have a batch of 10 custom-made power tools produced by BE. It is known that the factory produces 10,000 products in total per week. How many semi-products are there, in total, in the pipeline as WIP?",
+    opts: [
+      "90,000.",
+      "90,",
+      "9,000.",
+      "900,000.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6059, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Currently, due to seasonal variation (Summer holdiays), the work backlog is quite low. Therefore, BE has temporarily shut down part of the Operations department (i.e., for the remaining two months), which reduces the throughput to only 40% of the normal productivity level. Knowing that there are 20,000 units in the process currently, what is the expected throughput time if a new order of size 4000 comes in?",
+    opts: [
+      "4 weeks.",
+      "5 weeks.",
+      "3 weeks.",
+      "6 weeks.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6060, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "For the most common models, SQT has dedicated lines in the factory, which produce only a single model (with a few minor variations). Machines and equipment are dedicated and optimized for a single product model, and they are arranged in a linear route. Jobs flow through the line from one stage to the next without transport and without waiting buffers in between the stages. As a consequence, throughput times are short, and levels of WIP are low. But it is very important that the production flow is stable and constant: a disruption in one stage results in a total standstill for the whole line. Models produced in smaller volumes are manufactured in series (“batches”): one week, a production line will produce a model, then the line is changed-over, and the next week it produces another model. Since the number of different models that the factory produces is limited, the inventory of parts and materials is relatively small. It can be illustrated by:\nSo, what kind of plan does the creation of a product or product family follow?",
+    opts: [
+      "Functional layout.",
+      "Fixed-position layout.",
+      "Line layout.",
+      "Efficient layout.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6061, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "As known, SQT is very focused on flow and WIP. For the design of a new production line, it is foreseen that 100 products should be created each week. For the critical step of assembling, it is known that combining components takes 50 minutes on average. The workday is 8 hours, and the factory operates five days a week. In addition, it is known that this step is the bottleneck in the process. How many workstations are needed (in parallel) minimally to ensure a smooth flow for SQT?",
+    opts: [
+      "4.",
+      "3.",
+      "5.",
+      "2.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6062, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "SQT has a different vision on operations and production flow. Read the accompanying text in detail, to consider which practice of SQT  that BE can copy will likely compromise the operations strategy to some degree.  Recall the BE's operations strategy is primarily focused on product and mix flexibility (premium products).\n=====\n# CaseStudy7",
+    opts: [
+      "Just-in-time delivery by suppliers.",
+      "Value engineering: critically analyze what parts and what models can be done with cheaper materials.",
+      "Better discipline for production schedule: critically decide which rush orders should be permitted and which not.",
+      "Quality control in the factory (visual management, Total Productive Maintenance).",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6063, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "In the MEASURE phase you are trying to connect project objectives to strategic focal points and process metrics (s)he obtains the following CTQ* flowdown. What belongs at positions A, B, and C?\n*) CTQ stands for critical to quality, i.e., are important aspects to measure to get an idea about the size of the problem.",
+    opts: [
+      "A: Processing time; B: Throughput time; C: Reloops.",
+      "A: Efficiency; B: Throughput time;  C: Reloops.",
+      "A: Efficiency; B: Throughput time; C: Mistakes.",
+      "A: Processing time; B: Waiting time; C: Mistakes.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6064, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Based on the detailed information about the processing times in the Excel, one makes the following Pareto chart. \nWhat is the best next step?",
+    opts: [
+      "The Belt should focus on APT-rework, PT-AM, PT-Arch1 and PT-Cred.",
+      "The Belt should first further specify the Other category.",
+      "The Belt should focus on the category APT-rework.",
+      "The Belt should first redefine the activities such that each category has approximately equal contribution.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6065, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Also for the waiting times and reloops Pareto charts are obtained.\nAnd, based on this information, the following Value Stream Map is drawn.\nThis value stream map already shows a quick-fix to reduce throughput time; retrieving a client’s bank account number. Such a field can of course be added to the client form. What form of process inefficiency does this belong to according to the Lean Philosophy?",
+    opts: [
+      "Mudi",
+      "Muda",
+      "Muri",
+      "Mura",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6066, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "How many jobs are in the process on average, given that the throughput (takt rate) equals 15 claims/day and work hours are 8 hours a day?",
+    opts: [
+      "About 240 claims (8 x 2 x 15).",
+      "About 130 claims (33 x 8 / 2).",
+      "About 500 claims (33 x 15).",
+      "About 250 claims (33 x 15 / 2).",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 6067, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "In the IMPROVE phase, you are looking for hints to proceed the project and creates this histogram when studying the waiting time before the account manager. Showing that sometimes it takes exceptionally long time, before the account manager.\nNext, you compare the number of reloops with the credit department (Credit) between various districts and visualizes these in an individual value plot. It shows that some districts perform very well, whereas others are having many reloops.\nLastly, you talk with several staff members including the administrative workers, asking them why it takes so long to handle a claim, which is the main problem (CTQ: throughput time). Here you find an excerpt of their conversation.\nWhich leads to the following summary:\nWhat is the name of this last diagram?",
+    opts: [
+      "A fishbone or Ishikawa diagram.",
+      "A cause-and-effect diagram.",
+      "A process map.",
+      "A root-cause diagram.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 6068, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "After several discussions, and also backed by the data, you that the Account manager is the bottleneck of this process, as being the most utilized resource. Fortunately, this is also the most expensive resource. What is not a correct application of a step of the theory of constraints?",
+    opts: [
+      "Exploit: have no queue of files waiting before the Account manager.",
+      "Subordinate: have a secretary taking over some part of the work of the account manager, for example writing a tentative rejection letter.",
+      "Subordinate: make sure that the pace in which new claims enter the process is in accordance with the rate in which the Account manager finishes claims.",
+      "Exploit: have a queue of files waiting at the account manager so that (s)he has always work to do when in the office.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 6069, ch: 17, week: 8, source: 'Canvas', exam: 'history',
+    q: "Finally, for CONTROL, the process has still a lot of claims to be handled. This high number is of course a large reason that the process has become chaotic and difficult to manage.\n What would be a convenient tool from Lean to make this process more manageable and can act as a control measure?\n=====",
+    opts: [
+      "Implement better push control.",
+      "Work according to a make-to-stock principle.",
+      "Implement a CONWIP (constant WIP).",
+      "Increase utilizations by means of line balancing.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+];
+QUESTIONS = QUESTIONS.concat(QUESTIONS_CANVAS_HISTORY);
+
+
 
 var TOPIC_TIPS = {
   // ===== 戦略・パフォーマンス =====
