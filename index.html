@@ -7682,7 +7682,8 @@ function renderQuizHome() {
     { id: 0, label: '🌐 全範囲', desc: '全ソース' },
     { id: 1, label: '🌱 1周目', desc: '授業問題のみ・軽く' },
     { id: 2, label: '📖 2周目', desc: '授業 + 過去問' },
-    { id: 3, label: '🎓 3周目', desc: '教科書 + オリジナル' }
+    { id: 3, label: '🎓 3周目', desc: '教科書 + オリジナル' },
+    { id: 4, label: '🎨 Canvas', desc: 'Canvas のクイズ' }
   ];
   // 配列化（後方互換）
   if (!Array.isArray(quizState.passModes)) {
@@ -7847,6 +7848,7 @@ function getPassSources(passMode) {
     if (m === 1) ['授業'].forEach(function(s){ src[s]=1; });
     if (m === 2) ['授業','過去問'].forEach(function(s){ src[s]=1; });
     if (m === 3) ['教科書','Mock+Original'].forEach(function(s){ src[s]=1; });
+    if (m === 4) ['Canvas'].forEach(function(s){ src[s]=1; });
   });
   return Object.keys(src);
 }
@@ -7911,7 +7913,7 @@ function startQuiz(n) {
 
 function getSourceBadge(q) {
   var src = q.source || '教科書';
-  var colors = { '授業': '#10b981', '過去問': '#f59e0b', 'オリジナル': '#8b5cf6', '教科書': '#3b82f6' };
+  var colors = { '授業': '#10b981', '過去問': '#f59e0b', 'オリジナル': '#8b5cf6', '教科書': '#3b82f6', 'Canvas': '#ec4899', 'Mock+Original': '#a855f7' };
   var col = colors[src] || '#64748b';
   var examTag = (q.exam === 'midterm') ? ' 中間' : (q.exam === 'final') ? ' 期末' : '';
   return '<span style="background:' + col + '33;color:' + col + ';border:1px solid ' + col + ';padding:3px 10px;border-radius:20px;font-size:15px;font-weight:700;margin-right:8px;">' + src + examTag + '</span>';
@@ -22143,6 +22145,431 @@ var QUESTIONS_MOCK500_EXTRA = [
 
 
 QUESTIONS = QUESTIONS.concat(QUESTIONS_MOCK).concat(QUESTIONS_MOCK_FINAL).concat(QUESTIONS_SEMINAR).concat(QUESTIONS_ORIGINAL).concat(QUESTIONS_STUDENTWIKI_ENDTERM).concat(QUESTIONS_MOCK500).concat(QUESTIONS_GRAPH).concat(QUESTIONS_ORIGINAL_CALC).concat(QUESTIONS_MOCK500_EXTRA);
+
+// ====================================================================
+// QUESTIONS_CANVAS — Canvas Mock final exam 2 (40問のうち修正可能32問)
+// Q19/20/23/32-36 は図/表参照のため除外 (broken)
+// ====================================================================
+var QUESTIONS_CANVAS = [
+  {
+    id: 5000 + 1, ch: 7, week: 6, source: 'Canvas', exam: 'final',
+    q: "The theory of constraint tries to optimize processes by focusing on the constraint. The approach encompasses five steps. Consider the situation in which you adjust non-constraint elements of the process to a level where the constraint can operate at maximum effectiveness. For example in a polyclinic let assistants do the intake with the patient instead, so that a specialist can directly proceed with consultation.\n\nThis is in line with which step of the theory of constraints?",
+    opts: [
+      "Subordinating resources to the constraint.",
+      "Elevating the constraint.",
+      "Applying the drum, buffer and rope principle to the constraint.",
+      "Exploiting the constraint.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "🎯 Subordinate (Step 3): 制約以外の工程を制約に合わせる。TOCの5段階 = Identify→Exploit→Subordinate→Elevate→Repeat。"
+  },
+  {
+    id: 5000 + 2, ch: 7, week: 6, source: 'Canvas', exam: 'final',
+    q: "What is the correct order for 5S when applied in to improve the working environment of employees?",
+    opts: [
+      "Straighten/Set in order, Sort, Shine, Standardize, Sustain.",
+      "Sort, Straighten/Set in order, Shine, Standardize, Sustain.",
+      "Sort, Straighten/Set in order, Standardize, Shine, Sustain.",
+      "Straighten/Set in order, Sort, Shine, Sustain, Standardize.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "5S 順序：① **Sort（整理）** → ② **Straighten/Set in order（整頓）** → ③ **Shine（清掃）** → ④ **Standardize（清潔）** → ⑤ **Sustain（しつけ）**"
+  },
+  {
+    id: 5000 + 3, ch: 3, week: 2, source: 'Canvas', exam: 'final',
+    q: "If Starbucks operates by the following policy: If 5 orders are taken no new orders are accepted anymore and the order taker is assisting the other two employees to finish the work in process as quickly as possible. This is a typical example of which planning and control mechanism?",
+    opts: [
+      "Inventory management by having a reorder level of 5 jobs.",
+      "Make to stock: when five orders are taken they are produced as make to stock.",
+      "Pull control by having a WIP cap (maximum number of work-in-process) of 5 jobs.",
+      "A level plan by controlling that the level of 5 jobs is not surpassed.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "**Pull control with WIP cap**：仕掛り上限を設けて、それを超えたら新規受付停止。Drum-Buffer-Rope の概念。"
+  },
+  {
+    id: 5000 + 4, ch: 6, week: 6, source: 'Canvas', exam: 'final',
+    q: "In determining the optimal order quantity as part of inventory management one has to compute the EOQ, the economic order quantity. In a setting in which an organization produces goods themselves one computes the economic batch quantity (EBQ).\n\n\nHow do these two differ in essence which determines the difference in their formulas?",
+    opts: [
+      "EOQ assumes fixed holding costs, whereas for EBQ these can be varying.",
+      "EOQ assumes instantaneous deliveries of size Q^*, whereas for EBQ the inventory is gradually increasing with a certain production rate (P).",
+      "EOQ does not include the price (P) whereas EBQ does assume also the price of a product or batch.",
+      "EOQ assumes known, constant demand, whereas EBQ does not.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "**EBQ = √(2DC₀ / Cₕ·(1−d/p))**：EOQ は一括納入を仮定（瞬時にQ*が入庫）、EBQ は生産率 P で徐々に増える分の補正 (1−d/p) を加える。"
+  },
+  {
+    id: 5000 + 5, ch: 6, week: 6, source: 'Canvas', exam: 'final',
+    q: "The list of all components and materials required to make a product is called by?",
+    opts: [
+      "Purchase orders.",
+      "Master production schedule.",
+      "The bill of materials.",
+      "Materials requirement planning.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "**BOM (Bill of Materials)**：製品を構成する全ての部品・材料の階層リスト。MRP の入力。"
+  },
+  {
+    id: 5000 + 6, ch: 6, week: 6, source: 'Canvas', exam: 'final',
+    q: "The closed-loop in MRP relates important parts and tools to plan and control production processes. What and how does it connect these?",
+    opts: [
+      "MRP – Parts explosion (MRP netting process) – Work orders – Capacity planning – MRP (check whether the materials are available).",
+      "MPS – capacity planning – capacity management strategy – MRP (check whether the materials are available).",
+      "MRP – Bill of materials – Capacity planning – MPS (check whether the plan is feasible).",
+      "MPS – Parts explosion (MRP netting process) – Work orders – Capacity planning – MPS (check whether the plan is feasible).",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**Closed-loop MRP**：MPS → Parts explosion → Work orders → Capacity planning → MPS check（計画が実行可能か検証）。フィードバックループ。"
+  },
+  {
+    id: 5000 + 7, ch: 2, week: 2, source: 'Canvas', exam: 'final',
+    q: "What kind of layout will typically be applied if you want to renovate and remodel a house, for example one of Amsterdam’s old and monumental canal houses.",
+    opts: [
+      "Product or line layout.",
+      "Cell layout.",
+      "Functional layout.",
+      "Fixed-position layout.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**Fixed-position layout**：製品（建物）が動かず、人・材料・機械が来る。Project 型プロセスと対応。"
+  },
+  {
+    id: 5000 + 8, ch: 6, week: 6, source: 'Canvas', exam: 'final',
+    q: "A local shop has a relatively stable demand for tins of sweetcorn throughout the year, with a monthly demand of 10,000 (ten thousand) tins. The cost of placing an order is estimated at €120 and the annual cost of holding inventory is estimated at 20% of the product's value. The company purchases tins for €1,-.  The lead time equals half a month.\n\nWhat is the optimal policy?",
+    opts: [
+      "Order about 3500 if the number of tins falls below 5000.",
+      "Order about 3500 if the number of tins falls below 10000.",
+      "Order about 12000 if the number of tins falls below 10000.",
+      "Order about 12000 if the number of tins falls below 5000.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**EOQ = √(2DC₀/Cₕ)**：D = 10000×12 = 120,000/年、Co=120、Ch=20% × €1 = €0.20。EOQ = √(2×120000×120/0.2) ≈ **12000**。ROL = D×LT = 10000×0.5 = **5000**。"
+  },
+  {
+    id: 5000 + 9, ch: 6, week: 6, source: 'Canvas', exam: 'final',
+    q: "For another product the lead-time demand follows a normal distribution with mean 32 and variance 36.   \n\nGiven that the policy is followed to reorder when the stock level hits 39 items (below 40), what is the probability to run out-of-stock when placing an order?\n\nGiven are the following Z-values and the ROL formula:",
+    opts: [
+      "About 10%.",
+      "About 2.5%.",
+      "About 0.05%.",
+      "About 5%.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "σ = √36 = 6。Z = (39−32)/6 ≈ 1.17。P(X > 39) = P(Z > 1.17) ≈ 12% → 最も近いのは **10%**。"
+  },
+  {
+    id: 5000 + 10, ch: 3, week: 2, source: 'Canvas', exam: 'final',
+    q: "An MRI facility is operating with a single scanner. Although they achieve a high utilization customers complain that it takes often a long time of waiting before they actually are being scanned. Given the fact that a scan takes on average time 27 minutes with standard deviation of 9 minutes. At the same time patients are scheduled every 30 minutes (inter-arrival time) with a standard deviation of 10 minutes, recall the VUT-formula:\n\n  \n\nNeglecting all other steps in the process, how much time does a patient has to wait when applying the formula?",
+    opts: [
+      "81 minutes.",
+      "27 minutes.",
+      "3 minutes.",
+      "9 minutes.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "**VUT 公式**：V = (Ca²+Cs²)/2 = ((10/30)² + (9/27)²)/2 ≈ 1/9。U = ρ/(1−ρ) = 0.9/0.1 = 9。T = 27分。Wq = 1/9 × 9 × 27 = **27分**。"
+  },
+  {
+    id: 5000 + 11, ch: 3, week: 2, source: 'Canvas', exam: 'final',
+    q: "Having a 'happy hour' in a pub or restaurant is an example of which type of capacity management?",
+    opts: [
+      "A demand management strategy.",
+      "A chase demand strategy.",
+      "A level capacity strategy.",
+      "A yield management strategy.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "**Demand management**：価格で需要側を動かす（閑散期に下げて流入を増やす）。Chase-demand とは別軸。"
+  },
+  {
+    id: 5000 + 12, ch: 7, week: 6, source: 'Canvas', exam: 'final',
+    q: "What is the end goal with eliminating wastes (muda) as part of going lean?",
+    opts: [
+      "To be more flexible in the operation.",
+      "To spend more time on value adding instead of non-value adding activities.",
+      "To improve on quality instead of quantity.",
+      "To make it ready to apply 5S on.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "**価値を生む活動の時間を増やす**。Lean の本質は『Value-added Time / Total Lead Time』を高めること。"
+  },
+  {
+    id: 5000 + 13, ch: 2, week: 2, source: 'Canvas', exam: 'final',
+    q: "In practice you find often that multiple restaurants are located closely together and customers just know that at a particular location they can find a huge variety of food chain, but decide once there where to go to.\n\nThis is an example of…",
+    opts: [
+      "Co-opetition.",
+      "Disintermediation.",
+      "Outsourcing.",
+      "Vertical integration.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "**Co-opetition（協調的競争）**：競合と協力してマーケットを大きくする。最終的に顧客は奪い合うが、まず集客で協力。"
+  },
+  {
+    id: 5000 + 14, ch: 2, week: 2, source: 'Canvas', exam: 'final',
+    q: "Uber is a company that can be used to get from one place to another place by car. But in fact it is not them that are providing this service but that are in fact the drivers who own the cars themselves. Uber can there be seen as providing a complementary service to connect drivers to customers.\n\nAs what kind of relationship can these interactions between the driver, Uber and the customer be described looking from the supply-network perspective?",
+    opts: [
+      "Tactical relationship.",
+      "A complementary relationship.",
+      "Two dyadic relationships.",
+      "Triadic relationship.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**Triadic relationship**：3者の関係。Uber がプラットフォームとして driver と customer を仲介。"
+  },
+  {
+    id: 5000 + 15, ch: 3, week: 2, source: 'Canvas', exam: 'final',
+    q: "An interesting strategy that Uber follows is to increase their fares when there is insufficient capacity in terms of number of drivers on the road to match demand the number of people that want to use Uber to get to their destinations. This strategy stimulates more drivers to go on the road and at the same time discourages more people to use their services by increasing the fares.\n\nWhich two capacity management strategies can be related to this policy that Uber employs?",
+    opts: [
+      "A demand-management and a level plan.",
+      "A chase-demand and a provide plan.",
+      "A chase-demand and a level plan.",
+      "A demand-management and a chase-demand plan.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**Demand-management（需要を下げる）+ Chase-demand（供給を上げる）**の同時適用。価格上昇で需要↓、ドライバー報酬↑で供給↑。"
+  },
+  {
+    id: 5000 + 16, ch: 6, week: 6, source: 'Canvas', exam: 'final',
+    q: "An organization wants to combine the orderings of three products A, B and C in a single truck instead of separate deliveries. So in the old situation they are ordered and shipped separately, as seen in the top row in the following figure, and in the bottom row they are combined. Unlike as they figure may suggest the 3 trucks with only A, B or C are equivalent to 3 trucks that have combined the delivery of goods A, B and C. \n\n  \n\nWhat is true when comparing both ways in view of inventory management?",
+    opts: [
+      "Holding costs decrease by combining deliveries.",
+      "Smaller quantities lead to increased uncertainty in demand.",
+      "The total costs in both situations are the same.",
+      "Order costs increase by combining deliveries.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "**Holding costs decrease**：3 つを 1 トラックにまとめることで Pooling Effect が働き、各品目の安全在庫が √n の法則で減少。"
+  },
+  {
+    id: 5000 + 17, ch: 1, week: 1, source: 'Canvas', exam: 'final',
+    q: "The overall direction and contribution of the operations function within the​ business, and the way in which market requirements and operations capabilities are​ reconciled, relate to which of the​ following?",
+    opts: [
+      "Operations strategy.",
+      "Operations management.",
+      "Business strategy.",
+      "Corporate strategy.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "**Operations Strategy**：市場要件と運用能力を整合させる長期方針。Corporate / Business strategy より下位。"
+  },
+  {
+    id: 5000 + 18, ch: 8, week: 6, source: 'Canvas', exam: 'final',
+    q: "Consider two smartphone manufacturers who are battling for market share. One of the two companies boasts that the flagship model of its rival will need replacing long before its own model because its phone will cope better with future software updates that demand more from the phone's hardware. This would suggest the company focuses on which quality characteristic for its top model of smartphone?",
+    opts: [
+      "Appearance",
+      "Durability",
+      "Recovery",
+      "Functionality",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "**Durability（耐久性）**：時間経過・環境変化に耐える能力。Reliability（再現性）と区別。"
+  },
+  {
+    id: 5000 + 21, ch: 8, week: 6, source: 'Canvas', exam: 'final',
+    q: "Regarding the use of statistical process control (SPC), what course of action should be taken when many, for example nine, consecutive points are at just one side of the mean?",
+    opts: [
+      "Intervene, because this is very unlikely and thus is a signal of a common cause.",
+      "Intervene, because this is very unlikely and thus is a signal of a special cause.",
+      "Do not intervene, because this can be just a coincidence.",
+      "Do not intervene, because you should only intervene when it is above or below 3 times the standard deviation away from the mean.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "**Special cause（特殊原因）**：偶然では極めて低確率（≈ 0.2%）なので異常変動。介入が必要。Common cause は±3σ内のばらつき。"
+  },
+  {
+    id: 5000 + 22, ch: 7, week: 6, source: 'Canvas', exam: 'final',
+    q: "For an airline it is of uttermost importance to have the plane in the air as quickly as possible. From this point of view airports are designed such that passengers are requested to go to gates where passenger board, even after a considerable amount of time walking. Also passengers are requested to check in beforehand and are advised to arrive well before the scheduled boarding and departure times, so that they won’t delay the flight. In addition airport services play a significant role in making sure that the plane can be quickly in the air again, i.e., doing checks and inspections, tanking of fuel and off and loading checked-in luggage as quickly as possible often during the on and off boarding itself. \n\nWhat is in fact the constraint that is optimized here in light of the theory of constraints?",
+    opts: [
+      "The customer (experience).",
+      "The cabin crew that flies the plane and serve customers on board.",
+      "The airport services including passport check and check-in of passenger as well as ground personnel doing the required checks and maintenance.",
+      "The plane itself that gets customers from one place to another.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**The plane itself**：最も希少で高価な資源（数千万ドル）。TOC で制約として扱い、地上時間最小化（Subordinate）で稼働率最大化（Exploit）。"
+  },
+  {
+    id: 5000 + 24, ch: 8, week: 6, source: 'Canvas', exam: 'final',
+    q: "An automated pizza oven at a large pizza chain keeps breaking down. Currently, the mean time between failures of the machine is 32 hours and its mean time to repair is 4 hours.\n\nWhat is the availability?",
+    opts: [
+      "12.5%=4/32.",
+      "88.9%=32/36.",
+      "87.5%=28/32.",
+      "11.1%=4/36.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "**A = MTBF ÷ (MTBF + MTTR) = 32 ÷ 36 ≈ 88.9%**"
+  },
+  {
+    id: 5000 + 25, ch: 8, week: 6, source: 'Canvas', exam: 'final',
+    q: "The specific concerns of total quality management (TQM) include a number of aspects. Which of the following is not normally associated with TQM?",
+    opts: [
+      "Inclusion of every person in the organization.",
+      "Primarily a 'worker' rather than a management activity.",
+      "Meeting the needs and expectations of customers.",
+      "Covering all parts of the organization.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "**TQM は管理層も含む全員参加**。「Primarily a worker activity」は誤り。TQM の特徴：① 全員参加 ② 顧客満足 ③ 全部門カバー。"
+  },
+  {
+    id: 5000 + 26, ch: 8, week: 6, source: 'Canvas', exam: 'final',
+    q: "An automated shirt-making machine in a clothes manufacturing factory has four major steps (executed by machines), following a product or line layout (so they are in series), with individual reliabilities as follows:  \n\nShape cutter   \tReliability: 0.82   \nSeam stitcher   \tReliability: 0.82\nButton applicator\tReliability: 0.89\nWrapper   \tReliability: 0.94\n\nWhat is the reliability of the whole system?",
+    opts: [
+      "82%: the mode.",
+      "56%: multiplication.",
+      "87%: the average.",
+      "94%: the maximum.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "**直列の信頼性 = 各信頼性の積**。0.82 × 0.82 × 0.89 × 0.94 ≈ **0.56 = 56%**。"
+  },
+  {
+    id: 5000 + 27, ch: 6, week: 6, source: 'Canvas', exam: 'final',
+    q: "The blood bank has to test blood for anomalies; this is done by taking a sample. The number of blood samples to be processed is 3600 and time available to process the samples is 3 full days (72 hours), because otherwise they are perished.  Testing a batch of sample takes a particular amount of time depending on the machine they lease.\n\nDetermine which machine (with processing time PT and batch of samples that can be tested simultaneously, i.e., #) can handle the workload given the condition that within 3 days they are tested.\n\nHint: Use Little’s law: TH = Work-in-progress (WIP) x CT.",
+    opts: [
+      "The BB-8 with PT = 12 hours and 100 simultaneously.",
+      "The C3PO with PT = 6 hours and 200 simultaneously.",
+      "The R2D2 with PT = 8 hours and 300 simultaneously.",
+      "The AT-AT with PT = 12 hours and 600 simultaneously.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**Little の法則：TH = WIP ÷ CT**。必要 TH = 3600 ÷ 72 = 50/hr。AT-AT：WIP=600, CT=12 → TH = 600/12 = **50/hr** で達成。"
+  },
+  {
+    id: 5000 + 28, ch: 8, week: 6, source: 'Canvas', exam: 'final',
+    q: "Suppose that in a first stage of a service process some personal information of the client is collected as well as some important characteristics of the client’s house by a call center employee, so that in a next step the client can be contacted by an advisor who can advise in person how to save energy. But this step only works if the information that is collected is complete and accurate.\n\nConsider making an FMEA (failure modes and effects analysis) for this first stage. What is a correct rendering of a failure mode in this step?",
+    opts: [
+      "Failure mode: personal information is incomplete. Cause: distraction. Effect: form is not completely filled.",
+      "Failure mode: call center employee makes a mistake. Cause: poka-yoke not applied. Effect: the work has to be redone.",
+      "Failure mode: client makes mistake. Cause: client in a hurry. Effect: bad advice from advisor.",
+      "Failure mode: information about the house is missing. Cause: protocol not followed. Effect: advice cannot be given.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**FMEA 構成**：Failure Mode（不具合）/Cause（原因）/Effect（影響）の3要素を明確に分離。「情報欠落 → 規約不遵守 → 助言不能」が正しい形。"
+  },
+  {
+    id: 5000 + 29, ch: 1, week: 1, source: 'Canvas', exam: 'final',
+    q: "Tesla among other car manufacturers is producing electric cars. But there are major issues, Tesla for example struggles a lot to have a dependable supply of cars, cost seems still of lesser importance than dependability and quality. Obviously availability is now the order winner in this market.\n\nBased on this information in which stage of the product-life cycle are electric cars currently.",
+    opts: [
+      "Growth phase.",
+      "Decline phase.",
+      "Introduction phase.",
+      "Maturity phase.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "**Growth 段階**：Order winner = Dependability/Availability。Maturity 段階では Cost が主要 order winner になる。"
+  },
+  {
+    id: 5000 + 30, ch: 7, week: 6, source: 'Canvas', exam: 'final',
+    q: "Toyota can be seen as one of the founders of lean management with their celebrated Toyota Production System. It has improved their process flow by applying single-piece flow. Single-piece flow entails doing everything one by one instead of batch production.  When is single-piece flow as part of lean applicable in a process?",
+    opts: [
+      "If the EOQ formula gives a value close to 1 as the optimal order quantity.",
+      "If push control is implemented throughout the entire process.",
+      "If the process steps are decoupled in combination with a functional layout.",
+      "If there is minimal process variability: simple structure and routings.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**最小の工程ばらつき + シンプルな構造・ルーティング**。低 Variability・低 Variety が前提条件。"
+  },
+  {
+    id: 5000 + 31, ch: 1, week: 1, source: 'Canvas', exam: 'final',
+    q: "We consider a bank that handles mortgage requests by customers. A vital issue for this bank is to get the throughput times (TH) down to be more competitive in this market; in other words throughput time is the order winner in this market.\n\nThe operations strategy of the bank should therefore primarily focus on excelling in which performance dimension?",
+    opts: [
+      "Speed.",
+      "Cost.",
+      "Flexibility.",
+      "Utilization.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "**Speed（速さ）**：Order winner が Throughput Time の場合、Speed 軸に集中。Cost や Flexibility ではない。"
+  },
+  {
+    id: 5000 + 37, ch: 7, week: 6, source: 'Canvas', exam: 'final',
+    q: "An improvement specialist is hired make this process quicker by applying a data-driven approach. She should use data to figure out the root causes for the long throughput times, which in a subsequent stage should be addressed by tailor-made improvement actions.\n\nWhich improvement methodology is in line with this approach that starts of by defining the problem first?",
+    opts: [
+      "Six Sigma with the DMAIC approach.",
+      "Kaizens or continuous improvement as advocated by Lean.",
+      "Business process reengineering.",
+      "Total Quality Management.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "**Six Sigma DMAIC**：Define → Measure → Analyze → Improve → Control。データ駆動・問題定義から始まる構造化アプローチ。"
+  },
+  {
+    id: 5000 + 38, ch: 8, week: 6, source: 'Canvas', exam: 'final',
+    q: "The improvement specialist finds that the agents should use more standardized formats that are also ‘poka-yoke’. What is not an aspect of a poka-yoke (device)?",
+    opts: [
+      "Offers 100% inspection.",
+      "Provides direct feedback or direct action at failure.",
+      "Inspection of finished products only.",
+      "Inexpensive.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "**「Inspection of finished products only」は誤り**。Poka-Yoke は **発生源での予防** が本質（事後検査ではない）。"
+  },
+  {
+    id: 5000 + 39, ch: 2, week: 2, source: 'Canvas', exam: 'final',
+    q: "A project such as the one that is being executed by the improvement specialist for the bank that handles mortgages is a process in itself, but with which of the following characteristics?",
+    opts: [
+      "Low volume, low variety.",
+      "High volume, low variety.",
+      "Low volume, high variety.",
+      "High volume, high variety.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "**Low volume, high variety**：Project は1回限り・極めてユニーク。"
+  },
+  {
+    id: 5000 + 40, ch: 8, week: 6, source: 'Canvas', exam: 'final',
+    q: "Which of the following sentences is true when a project progresses from an early stage to a later stage, as for example identified in the MacLeamy curve?",
+    opts: [
+      "The project manager has less ability to change the project as the cost of design changes decreases.",
+      "The project manager has more ability to impact the project as the cost of design changes increases.",
+      "The project manager has more ability to impact the project as the cost of design changes decreases.",
+      "The project manager has less ability to impact the project as the cost of design changes increases.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "**MacLeamy 曲線**：プロジェクト進行に伴い → ① 影響力 **減少** ② 変更コスト **増加**。前ローディング設計の根拠。"
+  },
+];
+QUESTIONS = QUESTIONS.concat(QUESTIONS_CANVAS);
+
 
 var TOPIC_TIPS = {
   // ===== 戦略・パフォーマンス =====
