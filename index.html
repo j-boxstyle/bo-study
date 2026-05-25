@@ -9134,7 +9134,14 @@ function generateSingleQVerifyPrompt(qIdx, chosen, correct) {
   lines.push('</details>');
   lines.push('```');
   lines.push('');
-  lines.push('5問全部終わったら、最後に **「総合判定」** として、各問題への正答率に応じてどのレベルの理解か（基礎理解 / 応用可 / 試験本番OK）を判定してください。');
+  lines.push('5問全部終わったら、最後に **「総合判定」（日本語）** として、各問題への正答率に応じてどのレベルの理解か（基礎理解 / 応用可 / 試験本番OK）を判定してください。');
+  lines.push('');
+  lines.push('## 🌐 言語ルール（厳守）');
+  lines.push('');
+  lines.push('- **問題文（質問本体）**：必ず **英語** で書く（UvA 試験は英語のため）');
+  lines.push('- **選択肢 A〜E**：必ず **英語** で書く');
+  lines.push('- **解説（正解の根拠・各誤答の理由・覚え方）**：必ず **日本語** で書く');
+  lines.push('- **「F) わからない」**：日本語のままで OK');
   lines.push('');
   lines.push('## 品質基準（出力前に自己チェック）');
   lines.push('');
@@ -9143,8 +9150,7 @@ function generateSingleQVerifyPrompt(qIdx, chosen, correct) {
   lines.push('- 各誤答に **「どの公式の取り違え/思い込みか」** を明記。');
   lines.push('- 試験本番レベル（Q5）は **二段階の推論** を要求（例：公式適用 + 別概念との関係）。');
   lines.push('- 出力長は最低 **2000 字以上**（5問×400字目安）。');
-  lines.push('');
-  lines.push('**重要**：解説は日本語で。問題本文は元と同じ言語（英語）で書いて構いません。Sonnet モデルでも Opus と同等品質になるよう、上の手順を必ず踏んでください。');
+  lines.push('- **問題と選択肢は英語、解説は日本語**（言語ルール厳守）。');
   return lines.join('\n');
 }
 
@@ -9222,7 +9228,15 @@ function buildVerifyPromptFromRecords(records, title) {
   lines.push('6. 各問題に解答 + 解説（日本語・各誤答も）を付ける。');
   lines.push('7. 各概念の5問は、難易度が **基礎→応用** の順で上がる。');
   lines.push('');
-  lines.push('最後に **総合判定**：私の元の正答率（' + records.filter(function(r){return r.correct;}).length + '/' + records.length + '）と新問題の結果から、各概念の理解度評価をお願いします。');
+  lines.push('## 🌐 言語ルール（厳守）');
+  lines.push('');
+  lines.push('- **問題文（質問本体）**：必ず **英語** で書く（UvA 試験は英語のため）');
+  lines.push('- **選択肢 A〜E**：必ず **英語** で書く');
+  lines.push('- **解答 (正解の文字)**：英語の文字（A/B/C/D/E）');
+  lines.push('- **解説（なぜ正解か / 各誤答がなぜ違うか / 覚え方）**：必ず **日本語** で書く');
+  lines.push('- **「F) わからない」**：日本語のままで OK');
+  lines.push('');
+  lines.push('最後に **総合判定（日本語）**：私の元の正答率（' + records.filter(function(r){return r.correct;}).length + '/' + records.length + '）と新問題の結果から、各概念の理解度評価をお願いします。');
   return lines.join('\n');
 }
 
