@@ -372,6 +372,55 @@ a{color:#3b82f6;text-decoration:none;}
 .abbr-fab:active{transform:scale(0.95);}
 .abbr-fab.active{background:#dc2626;}
 
+/* ═══ ロードマップ FAB (略語の上に配置) ═══ */
+.roadmap-fab{
+  position:fixed;bottom:152px;right:20px;z-index:90;
+  width:52px;height:52px;border-radius:50%;
+  background:#9a6ad9;border:none;color:white;
+  font-size:24px;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,0.4);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.roadmap-fab:hover{background:#7c4dc4;transform:scale(1.08);}
+.roadmap-fab:active{transform:scale(0.95);}
+
+/* ロードマップ モーダル */
+.roadmap-modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.75);
+  z-index:300;opacity:0;pointer-events:none;
+  transition:opacity .25s;
+}
+.roadmap-modal-overlay.open{opacity:1;pointer-events:auto;}
+.roadmap-modal{
+  position:fixed;top:2vh;left:50%;
+  width:min(1200px, 96vw);height:96vh;
+  background:#0a0e1a;border:1px solid #2d3a55;border-radius:14px;
+  transform:translateX(-50%) scale(.95);opacity:0;pointer-events:none;
+  z-index:310;transition:all .25s;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.roadmap-modal.open{opacity:1;pointer-events:auto;transform:translateX(-50%) scale(1);}
+.roadmap-modal-header{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 18px;background:#131b2d;border-bottom:1px solid #243047;
+}
+.roadmap-modal-title{font-size:18px;font-weight:700;color:#e8eef7;}
+.roadmap-modal-close{
+  margin-left:auto;background:#2d3a55;border:none;color:#fff;
+  width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:20px;
+}
+.roadmap-modal-body{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  background:#0a0e1a;
+}
+@media (max-width: 600px) {
+  .roadmap-fab { width: 48px; height: 48px; font-size: 22px; bottom: 140px; right: 14px; }
+  .roadmap-modal { top: 1vh; height: 98vh; width: 98vw; border-radius: 10px; }
+  .roadmap-modal-header { padding: 8px 12px; }
+  .roadmap-modal-title { font-size: 15px; }
+}
+
 /* ═══ 略語モーダル (popup overlay) ═══ */
 .abbr-modal-overlay{
   position:fixed;inset:0;background:rgba(0,0,0,0.65);
@@ -848,6 +897,57 @@ body{
 
 <!-- 略語フローティングボタン (always visible, opens modal) -->
 <button class="abbr-fab" id="abbr-fab" onclick="toggleAbbrModal()" aria-label="略語早見表">🔤</button>
+
+<!-- ロードマップ フローティングボタン (どのタブにいても呼び出せる) -->
+<button class="roadmap-fab" id="roadmap-fab" onclick="toggleRoadmapModal()" aria-label="ロードマップを開く">🏠</button>
+
+<!-- ロードマップ モーダル -->
+<div class="roadmap-modal-overlay" id="roadmap-modal-overlay" onclick="toggleRoadmapModal()"></div>
+<div class="roadmap-modal" id="roadmap-modal" aria-hidden="true">
+  <div class="roadmap-modal-header">
+    <span class="roadmap-modal-title">🏠 ロードマップ — 概念を確認</span>
+    <button class="roadmap-modal-close" onclick="toggleRoadmapModal()" aria-label="閉じる">×</button>
+  </div>
+  <div class="roadmap-modal-body" id="roadmap-modal-body"></div>
+</div>
+
+<script>
+// ロードマップを別パネルから呼び出して全画面モーダル表示
+(function(){
+  var opened = false;
+  window.toggleRoadmapModal = function() {
+    var modal = document.getElementById('roadmap-modal');
+    var overlay = document.getElementById('roadmap-modal-overlay');
+    var body = document.getElementById('roadmap-modal-body');
+    var fab = document.getElementById('roadmap-fab');
+    opened = !modal.classList.contains('open');
+    if (opened) {
+      // tab-roadmap 内の中身を1回だけクローン（onclick属性は保持される）
+      if (!body.dataset.loaded) {
+        var src = document.getElementById('tab-roadmap');
+        if (src) {
+          body.innerHTML = src.innerHTML;
+          body.dataset.loaded = '1';
+        }
+      }
+      modal.classList.add('open');
+      overlay.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      fab.textContent = '×';
+      document.body.style.overflow = 'hidden';
+    } else {
+      modal.classList.remove('open');
+      overlay.classList.remove('open');
+      modal.setAttribute('aria-hidden','true');
+      fab.textContent = '🏠';
+      document.body.style.overflow = '';
+    }
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && opened) window.toggleRoadmapModal();
+  });
+})();
+</script>
 
 <!-- 略語モーダル (popup overlay, doesn't disrupt scroll position) -->
 <div class="abbr-modal-overlay" id="abbr-modal-overlay" onclick="toggleAbbrModal()"></div>
