@@ -3083,7 +3083,7 @@ function openModal(c) {
   if (!c) return;
   const wColor = WEEK_COLORS[c.w] || '#4a7dd9';
   const loc = findLocation(c.id);
-  const breadcrumb = loc ? `${loc.domain.icon} ${loc.domain.title.split('（')[0]} › ${loc.sub.icon} ${loc.sub.title}${loc.subsub?' › '+loc.subsub.title:''}` : '';
+  const breadcrumb = loc ? `${loc.domain.icon} ${loc.domain.title.split('（')[0]} › ${loc.sub.title}${loc.subsub?' › '+loc.subsub.title:''}` : '';
   let html = `
     <div class="modal-header">
       <div>
