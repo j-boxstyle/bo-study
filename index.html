@@ -6309,6 +6309,82 @@ function renderQuestionVisual(v) {
   var h = '<div class="visual-block">';
   if (v.title) h += '<div class="visual-title">' + renderMd(v.title) + '</div>';
 
+  if (v.type === 'process_map') {
+    // ノード（box/oval）+ エッジ（矢印 + ラベル） を SVG で描画
+    var W = v.width || 760, H = v.height || 380;
+    h += '<div style="overflow-x:auto;width:100%;">';
+    h += '<svg viewBox="0 0 ' + W + ' ' + H + '" style="min-width:760px;width:100%;height:auto;background:#0a1220;border:1px solid #1e3a5f;border-radius:10px;">';
+    h += '<defs><marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#94a3b8"/></marker></defs>';
+    var nodes = v.nodes || [], edges = v.edges || [];
+    var nodeMap = {};
+    nodes.forEach(function(n){ nodeMap[n.id] = n; });
+    var palette = {
+      agent:'#3b82f6', rate:'#10b981', under:'#f59e0b',
+      io:'#a855f7', input:'#a855f7', output:'#a855f7',
+      decision:'#ef4444', default:'#64748b'
+    };
+    // Draw edges first
+    edges.forEach(function(e){
+      var a = nodeMap[e.from], b = nodeMap[e.to];
+      if (!a || !b) return;
+      var x1 = a.x + (a.w||140)/2, y1 = a.y + (a.h||56);
+      var x2 = b.x + (b.w||140)/2, y2 = b.y;
+      // route: horizontal if same y, else angled
+      if (Math.abs(a.y - b.y) < 30) {
+        // horizontal
+        x1 = a.x + (a.w||140); y1 = a.y + (a.h||56)/2;
+        x2 = b.x; y2 = b.y + (b.h||56)/2;
+        h += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + (x2-8) + '" y2="' + y2 + '" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>';
+        if (e.label) {
+          var mx = (x1+x2)/2, my = y1 - 8;
+          h += '<text x="' + mx + '" y="' + my + '" text-anchor="middle" fill="#fbbf24" font-size="14" font-weight="700">' + e.label + '</text>';
+        }
+      } else {
+        // bent path (right then down or down then right)
+        var midX = (x1+x2)/2;
+        h += '<polyline points="' + x1 + ',' + y1 + ' ' + x1 + ',' + ((y1+y2)/2) + ' ' + x2 + ',' + ((y1+y2)/2) + ' ' + x2 + ',' + (y2-8) + '" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>';
+        if (e.label) {
+          h += '<text x="' + ((x1+x2)/2) + '" y="' + ((y1+y2)/2 - 6) + '" text-anchor="middle" fill="#fbbf24" font-size="14" font-weight="700">' + e.label + '</text>';
+        }
+      }
+    });
+    // Draw nodes
+    nodes.forEach(function(n){
+      var w = n.w || 140, hN = n.h || 56;
+      var color = palette[n.color] || palette.default;
+      if (n.shape === 'oval') {
+        h += '<ellipse cx="' + (n.x + w/2) + '" cy="' + (n.y + hN/2) + '" rx="' + (w/2) + '" ry="' + (hN/2) + '" fill="rgba(168,85,247,0.15)" stroke="' + color + '" stroke-width="2"/>';
+      } else if (n.shape === 'diamond') {
+        var cx = n.x + w/2, cy = n.y + hN/2;
+        h += '<polygon points="' + cx + ',' + n.y + ' ' + (n.x+w) + ',' + cy + ' ' + cx + ',' + (n.y+hN) + ' ' + n.x + ',' + cy + '" fill="rgba(239,68,68,0.15)" stroke="' + color + '" stroke-width="2"/>';
+      } else {
+        h += '<rect x="' + n.x + '" y="' + n.y + '" width="' + w + '" height="' + hN + '" rx="6" ry="6" fill="' + color + '22" stroke="' + color + '" stroke-width="2"/>';
+      }
+      // Label (multi-line)
+      var label = n.label || '';
+      var lines = label.split('\n');
+      var startY = n.y + hN/2 - (lines.length-1) * 8;
+      lines.forEach(function(line, i){
+        var fw = (i === 0) ? '700' : '400';
+        var fs = (i === 0) ? 13 : 11;
+        var fill = (i === 0) ? '#e2e8f0' : '#94a3b8';
+        h += '<text x="' + (n.x + w/2) + '" y="' + (startY + i*15) + '" text-anchor="middle" dominant-baseline="middle" fill="' + fill + '" font-size="' + fs + '" font-weight="' + fw + '">' + line + '</text>';
+      });
+    });
+    h += '</svg></div>';
+    if (v.info) h += '<div style="font-size:14px;color:#cbd5e1;margin-top:10px;padding:10px 14px;background:#1a2940;border-radius:8px;border-left:3px solid #3b82f6;">' + renderMd(v.info) + '</div>';
+    if (v.legend) {
+      h += '<div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;font-size:13px;color:#cbd5e1;">';
+      v.legend.forEach(function(l){
+        var c = palette[l.color] || palette.default;
+        h += '<div style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;background:' + c + '33;border:2px solid ' + c + ';border-radius:3px;"></span>' + l.label + '</div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+    return h;
+  }
+
   if (v.type === 'polar') {
     // v.axes: [{label, scoreA, scoreB?, maxScore: 5}]   v.legend: [{label, color}]
     var axes = v.axes || [];
@@ -25499,6 +25575,146 @@ function detectTopics(q){
   }
   return matched;
 }
+
+
+// ===== QUESTIONS_PROCESS_MAP — 図表問題セット =====
+var QUESTIONS_PROCESS_MAP = [
+  {
+    id: 9001, ch: 6, week: 2, source: 'Canvas', exam: 'mortgage',
+    visual: {
+      type: 'process_map',
+      title: '🏦 Mortgage Process Map（住宅ローン処理プロセス）',
+      width: 760, height: 360,
+      nodes: [
+        { id: 'workload', x: 20, y: 20, w: 130, h: 56, shape: 'oval', color: 'io', label: 'Client mortgage\nWorkload: 30/day' },
+        { id: 'doc', x: 20, y: 120, w: 130, h: 50, shape: 'box', color: 'default', label: 'Documentation' },
+        { id: 'preproc', x: 20, y: 220, w: 130, h: 70, shape: 'box', color: 'agent', label: 'Pre-processing\nAgent(s)\nPT: 30 min/cust' },
+        { id: 'handle', x: 190, y: 220, w: 130, h: 70, shape: 'box', color: 'rate', label: 'Handling\n2 rate officers\nPT: 20 min/cust' },
+        { id: 'risk', x: 360, y: 220, w: 130, h: 70, shape: 'box', color: 'under', label: 'Risk analysis\nUnderwriter\nPT: 60 min/cust' },
+        { id: 'reject', x: 530, y: 120, w: 130, h: 70, shape: 'box', color: 'agent', label: 'Rejection letter\nAgent(s)\nPT: 30 min/cust' },
+        { id: 'offer', x: 530, y: 290, w: 130, h: 70, shape: 'box', color: 'agent', label: 'Write offer\nAgent(s)\nPT: 10 min/cust' },
+        { id: 'client_out', x: 690, y: 220, w: 60, h: 56, shape: 'oval', color: 'io', label: 'Client' }
+      ],
+      edges: [
+        { from: 'workload', to: 'doc' },
+        { from: 'doc', to: 'preproc' },
+        { from: 'preproc', to: 'handle' },
+        { from: 'handle', to: 'risk', label: '80%' },
+        { from: 'risk', to: 'reject', label: '75%' },
+        { from: 'risk', to: 'offer', label: '25%' },
+        { from: 'reject', to: 'client_out' },
+        { from: 'offer', to: 'client_out' }
+      ],
+      info: '**Working hours**: 7.5 hours/day = **450 min/day per employee**　／　**Employees**: 2 rate officers, 1 underwriter, **? agents** ／　PT = processing time per customer',
+      legend: [
+        { label: 'Agent (3工程)', color: 'agent' },
+        { label: 'Rate officer', color: 'rate' },
+        { label: 'Underwriter', color: 'under' }
+      ]
+    },
+    q: '上のプロセスマップを使って、ワークロード（30件/日）をこなすために **最低限必要な agent の人数** を求めなさい。',
+    opts: [
+      '3 agents',
+      '4 agents',
+      '5 agents',
+      '6 agents',
+      "Don't know"
+    ],
+    ans: 1,
+    expl: '**Agent の総作業量を全部足す**：(1) Pre-processing 30件 × 30 min = 900 min ／ (2) Rejection letter 30×80%×75% = 18件 × 30 min = 540 min ／ (3) Write offer 30×80%×25% = 6件 × 10 min = 60 min ／ 合計 = **1500 min/day**。1人あたり 450 min/day なので **1500 ÷ 450 = 3.33 → 切り上げて 4 agents**。',
+    memory: '**Agent 工程は3つ**（Pre-processing / Rejection letter / Write offer）。それぞれの**顧客通過率** × **PT** で必要工数を計算 → 1人の**勤務時間で割って切り上げ**。これがプロセスマップ問題の鉄則。',
+    we: [
+      '計算ミス。3 agents だと 3×450 = 1350 min/day で 1500 min に届かない。',
+      '',
+      '余剰 — 4 agents で十分（4×450=1800 min）。最低人数は4。',
+      '余剰すぎる。',
+      ''
+    ]
+  },
+  {
+    id: 9002, ch: 6, week: 2, source: 'Canvas', exam: 'mortgage',
+    visual: {
+      type: 'process_map',
+      title: '🏦 Mortgage Process Map（同じ図）',
+      width: 760, height: 360,
+      nodes: [
+        { id: 'workload', x: 20, y: 20, w: 130, h: 56, shape: 'oval', color: 'io', label: 'Client mortgage\nWorkload: 30/day' },
+        { id: 'preproc', x: 20, y: 220, w: 130, h: 70, shape: 'box', color: 'agent', label: 'Pre-processing\nPT: 30 min' },
+        { id: 'handle', x: 190, y: 220, w: 130, h: 70, shape: 'box', color: 'rate', label: 'Handling\n2 officers\nPT: 20 min' },
+        { id: 'risk', x: 360, y: 220, w: 130, h: 70, shape: 'box', color: 'under', label: 'Risk analysis\n1 underwriter\nPT: 60 min' },
+        { id: 'reject', x: 530, y: 120, w: 130, h: 70, shape: 'box', color: 'agent', label: 'Rejection\nPT: 30 min' },
+        { id: 'offer', x: 530, y: 290, w: 130, h: 70, shape: 'box', color: 'agent', label: 'Write offer\nPT: 10 min' }
+      ],
+      edges: [
+        { from: 'workload', to: 'preproc' },
+        { from: 'preproc', to: 'handle' },
+        { from: 'handle', to: 'risk', label: '80%' },
+        { from: 'risk', to: 'reject', label: '75%' },
+        { from: 'risk', to: 'offer', label: '25%' }
+      ],
+      info: '**Workload**: 30/day　／　**勤務時間**: 7.5 h/day = 450 min/day'
+    },
+    q: '上のプロセスマップで **ボトルネック** となる工程はどれ？',
+    opts: [
+      'Pre-processing（agent）',
+      'Handling（2 rate officers）',
+      'Risk analysis（1 underwriter）',
+      'Write offer（agent）',
+      "Don't know"
+    ],
+    ans: 2,
+    expl: '**各工程の必要処理時間（min/day）と能力比較**：(1) Pre-processing: 30件 × 30 min = 900 min（agents で分担可）／ (2) Handling: 30件 × 20 min = 600 min ÷ 2人 = 300 min/人（450以下なのでOK）／ (3) **Risk analysis**: 30件 × 80% × 60 min = **1440 min**、1人の underwriter で 450 min しかないので **3.2倍不足 → ボトルネック** ／ (4) Write offer: 6件 × 10 min = 60 min（余裕）。',
+    memory: '**ボトルネック判定 = 必要工数 ÷ 配置人数 が 450 min（=1日キャパ）を超える工程を探す**。Underwriter は1人なので最も詰まりやすい。',
+    we: [
+      'Agent は人数を増やせる前提なので構造的ボトルネックではない。',
+      'Handling は 2人で 600 min を分担 → 300 min/人で余裕。',
+      '',
+      'Write offer は 6件 × 10 min = 60 min で最も軽い。',
+      ''
+    ]
+  },
+  {
+    id: 9003, ch: 6, week: 2, source: 'Canvas', exam: 'mortgage',
+    visual: {
+      type: 'process_map',
+      title: '🏦 Mortgage Process Map（同じ図）',
+      width: 760, height: 360,
+      nodes: [
+        { id: 'preproc', x: 20, y: 150, w: 130, h: 70, shape: 'box', color: 'agent', label: 'Pre-processing\nAgent\nPT: 30 min' },
+        { id: 'handle', x: 190, y: 150, w: 130, h: 70, shape: 'box', color: 'rate', label: 'Handling\n2 rate officers\nPT: 20 min' },
+        { id: 'risk', x: 360, y: 150, w: 130, h: 70, shape: 'box', color: 'under', label: 'Risk analysis\n1 underwriter\nPT: 60 min' },
+        { id: 'reject', x: 530, y: 50, w: 130, h: 70, shape: 'box', color: 'agent', label: 'Rejection\nPT: 30 min' },
+        { id: 'offer', x: 530, y: 220, w: 130, h: 70, shape: 'box', color: 'agent', label: 'Write offer\nPT: 10 min' }
+      ],
+      edges: [
+        { from: 'preproc', to: 'handle' },
+        { from: 'handle', to: 'risk', label: '80%' },
+        { from: 'risk', to: 'reject', label: '75%' },
+        { from: 'risk', to: 'offer', label: '25%' }
+      ],
+      info: '**Workload**: 30件/day　／　**勤務時間**: 450 min/day'
+    },
+    q: '上のプロセスで **2 rate officers の Utilization（稼働率）** はいくらか？',
+    opts: [
+      '67% = 600 ÷ 900',
+      'U = (30 × 20) ÷ (2 × 450) = 600 ÷ 900',
+      '67% = 30 × 20 ÷ 900',
+      '133% = 30 × 20 ÷ 450',
+      "Don't know"
+    ],
+    ans: 1,
+    expl: '**Utilization = 必要工数 ÷ 利用可能工数** ／ 必要工数 = 30件 × 20 min = 600 min ／ 利用可能工数 = 2人 × 450 min = 900 min ／ **U = 600 ÷ 900 ≈ 67%**。B が「式と数値の両方」を最も明確に示しているため正解。',
+    memory: '**U = 必要工数 ÷ (人数 × 勤務時間)**。分母に **人数を掛け忘れる** と 133% など 100% 超えになる → 物理的にあり得ない数値が出たら式を疑え。',
+    we: [
+      '値は正しいが式が省略されている。',
+      '',
+      '値は正しいが分母が 1人分（900の代わりに 450 と書くべき）。',
+      '人数を掛け忘れた誤答。100%超えは物理的にあり得ない。',
+      ''
+    ]
+  },
+];
+QUESTIONS = QUESTIONS.concat(QUESTIONS_PROCESS_MAP);
 
 // ===== Auto-tag calculation vs non-calculation questions =====
 (function autoTagCalc(){
