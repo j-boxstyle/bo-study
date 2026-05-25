@@ -18446,22 +18446,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4016, ch: 13, week: 6, source: "Mock+Original", exam: "endterm",
     q: "Coffee shop \"Brouwer\" sells **D = 7,300 kg** of beans per year. Each order costs **C₀ = €40** in shipping + admin. Annual holding cost per kg is **Cₕ = €2.50**. Using the standard EOQ formula, what is the optimal order size (rounded to nearest 10)?",
     opts: [
-      "480 kg, ordered roughly 15 times per year",
-      "340 kg, ordered roughly 21 times per year",
-      "600 kg, ordered roughly 12 times per year",
-      "240 kg, ordered roughly 30 times per year",
-      "960 kg, ordered roughly 8 times per year",
+      "√(2·7300·40 ÷ 2.5) ／ 発注回数 = D÷Q",
+      "√(2·7300·40 ÷ 5) ／ Cₕ を 5 と取り違え",
+      "√(2·7300·40 ÷ 1.6) ／ Cₕ を 1.6 と誤解",
+      "D ÷ EOQ ＝ 7300÷240 ／ Cₕ を 2.5 でなく 21 と誤計算",
+      "√(7300·40 ÷ 2.5) ／『2』係数を忘れた",
       "Don't know"
     ],
-    ans: 1,
+    ans: 0,
     expl: "EOQ = √(2·D·C₀ / Cₕ) = √(2 × 7300 × 40 / 2.50) = √(584,000 / 2.50) = √233,600 ≈ **483 kg**, rounded to 480. Orders per year = D / Q = 7300 / 483 ≈ **15.1 ≈ 15**.",
     we: [
-      "Correct value but missing the frequency context — incomplete answer that the exam grader would mark down.",
       "",
-      "340 kg = √(2 × 7300 × 40 / 5) — wrong holding cost (5 instead of 2.50). Be careful to use Cₕ exactly as given.",
-      "Q ≈ 600 with 12 orders/yr corresponds to Cₕ ≈ €1.60 — wrong Cₕ value. Always plug in given numbers exactly.",
-      "**NEAR-DUPLICATE TRAP**: same EOQ value (480) but **wrong frequency** (7 instead of 15). D ÷ Q = 7300 ÷ 480 ≈ 15.2, not 7. Verify both numbers, don't grab the first answer that matches.",
-      "Review: EOQ = √(2DC₀/Cₕ) and orders/year = D/Q."
+      "Cₕ を 2.5 でなく 5 と置いた誤り。EOQ = √(2DC₀/Cₕ) の Cₕ を正確に。",
+      "Cₕ を 1.6 とした誤り。所与の数字をそのまま代入する。",
+      "ロットを 240 にすると発注回数 30 回／年。Cₕ を実際より高く誤計算。",
+      "EOQ 公式の『2』係数を忘れると √(DC₀/Cₕ) になり過小評価。",
+      "復習：EOQ = √(2DC₀/Cₕ)、発注回数 = D÷Q"
     ],
     memory: "EOQ = √(2DS/H) — square root of '2 demand setup over hold'. Order frequency = D÷Q.",
   },
@@ -18471,22 +18471,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4017, ch: 13, week: 6, source: "Mock+Original", exam: "endterm",
     q: "A retailer has **average daily demand d = 25 units**, **lead time LT = 4 days** (deterministic), and **demand standard deviation σ = 6 units/day**. The company wants a **95% service level** (z = 1.65). Calculate the **Reorder Point (ROP)**, rounded to nearest integer.",
     opts: [
-      "100 units",
-      "120 units",
-      "ROP = 100 + 20 = 120 units",
-      "ROP = 100 + 1.65 × 6 = 110 units",
-      "ROP = 100 + 12 = 112 units",
+      "d·LT ＝ 25×4 （安全在庫を忘れた）",
+      "d·LT + z·σ ＝ 25×4 + 1.65×6 （√LT 忘れ）",
+      "d·LT + z·σ·√LT ＝ 25×4 + 1.65×6·√4",
+      "d·LT + z·σ·LT ＝ 25×4 + 1.65×6×4 （√を忘れ LT そのまま）",
+      "d·(LT−1) + z·σ·√LT ＝ 25×3 + 1.65×6·√4 （LTを1日早めた誤り）",
       "Don't know"
     ],
     ans: 2,
     expl: "ROP = d·LT + z·σ·√LT = (25)(4) + (1.65)(6)(√4) = 100 + 1.65 × 6 × 2 = 100 + 19.8 ≈ **120 units**. The safety stock component is 20, NOT just z·σ (which forgets the √LT multiplier).",
     we: [
-      "100 is just the cycle stock d·LT — missing the safety stock component for the 95% service level.",
-      "Right number but missing derivation context. Option C is the strongest because it shows the math.",
+      "サイクル在庫だけ＝95%信頼性なし。安全在庫が抜けている。",
+      "√LT を忘れている。SS = z·σ·√LT であり σ ではない。",
       "",
-      "**TRAP**: forgot the √LT in the safety stock. Correct SS = z·σ·√LT, not z·σ. With LT=4, √LT=2 doubles the answer.",
-      "**NEAR-DUPLICATE TRAP**: 112 ≠ 120 — used √LT = 2 in cycle stock part but forgot to multiply σ by √LT. Always: cycle stock = d·LT, safety stock = z·σ·√LT.",
-      "Formula: ROP = d·LT + z·σ·√LT. Service level z: 90% → 1.28, 95% → 1.65, 99% → 2.33."
+      "√を忘れて LT をそのまま掛けた誤り。SS = z·σ·√LT。",
+      "LT を 3 日に勝手に縮めた誤り。所与の値を使う。",
+      "公式：ROP = d·LT + z·σ·√LT。z 値：90%→1.28、95%→1.65、99%→2.33"
     ],
     memory: "ROP = (daily × lead) + (z × sigma × √lead). 'Cycle + Safety, each scales differently with LT.'"
   },
@@ -18496,22 +18496,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4018, ch: 13, week: 6, source: "Mock+Original", exam: "endterm",
     q: "A bakery sells fresh croissants. Each croissant costs **c = €1.00** to make, sells for **p = €3.50**, and any unsold croissants are donated (salvage = 0). Daily demand is **Normal(μ = 200, σ = 40)**. Using the newsvendor model, what is the **critical ratio** and the optimal order quantity?",
     opts: [
-      "CR = 0.71, Q* ≈ 222",
-      "CR = 0.286, Q* ≈ 178",
-      "CR = 0.5, Q* = 200",
-      "CR = 0.71, Q* ≈ 200 (CR is right, Q ignores σ)",
-      "CR = 0.714, Q* ≈ 223",
+      "CR = Cᵤ/(Cᵤ+Cₒ) ＝ 2.5/(2.5+1)、Q* = μ + z·σ",
+      "CR = Cₒ/(Cᵤ+Cₒ) ＝ 1/(2.5+1) （比率逆）、Q* = μ + z·σ",
+      "CR = 0.5、Q* = μ （σを無視＝対称仮定）",
+      "CR = 2.5/(2.5+1)、Q* = μ （σ を無視）",
+      "CR = (p−c)/p ＝ 2.5/3.5 （Cₒ 抜け、保守原価扱い）、Q* = μ + z·σ",
       "Don't know"
     ],
     ans: 0,
     expl: "Cu (underage cost) = p − c = €3.50 − €1.00 = €2.50. Co (overage cost) = c − salvage = €1.00 − 0 = €1.00. **CR = Cu/(Cu+Co) = 2.50 / 3.50 = 0.714**. z-score for 0.71 from the standard normal table ≈ 0.55. **Q* = μ + z·σ = 200 + 0.55 × 40 ≈ 222**. (Note: 222 vs 223 depends on rounding the z value; the exam typically accepts either.)",
     we: [
       "",
-      "0.286 = Co/(Cu+Co) — inverted ratio. CR = UNDERAGE / total, not overage/total. Mnemonic: 'higher gain → order MORE → higher CR'.",
-      "0.5 assumes Cu = Co (i.e., equal cost of stockout vs. waste), which would only hold if c = salvage (impossible here since c > 0 and salvage = 0).",
-      "**TRAP**: correct CR but Q* doesn't ignore σ. Whenever σ > 0, you MUST move Q above μ when CR > 0.5 (and below when CR < 0.5).",
-      "**NEAR-DUPLICATE TRAP**: only differs from correct by 1 unit (223 vs 222) due to different z-table rounding. Either is generally acceptable.",
-      "Newsvendor: high Cu (lost gross profit) → high CR → order more; high Co (waste) → low CR → order less."
+      "Cᵤ と Cₒ を取り違えた。Cᵤ = 不足の損失（=p−c=2.5）、Cₒ = 過剰の損失（=c−s=1）。",
+      "CR=0.5 は対称（Cᵤ=Cₒ）の場合のみ。本問題は非対称。",
+      "CR は正しいが Q* で σ を無視している。安全マージン σ·z が必要。",
+      "CR を (p−c)/p で計算した誤り。Cᵤ/(Cᵤ+Cₒ) の正式公式を使う。",
+      "公式：CR = Cᵤ/(Cᵤ+Cₒ)、Q* = μ + z(CR)·σ"
     ],
     memory: "CR = Cu / (Cu + Co). Q* = μ + z(CR) × σ. 'When margin is high, leave the table set for more guests.'"
   },
@@ -18521,22 +18521,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4019, ch: 11, week: 3, source: "Mock+Original", exam: "midterm",
     q: "A factory has design capacity of **600 units/day**, but planned downtime (maintenance, breaks, changeovers) takes **15%** of available time. Last week the actual output averaged **460 units/day**. Compute **utilization** and **efficiency**.",
     opts: [
-      "Utilization = 76.7%, Efficiency = 90.2%",
-      "Utilization = 76.7%, Efficiency = 76.7%",
-      "Utilization = 90.2%, Efficiency = 76.7%",
-      "Utilization = 90.2%, Efficiency = 90.2%",
-      "Utilization = 77%, Efficiency = 90% (near-duplicate, slight rounding only)",
+      "U = 460/600、η = 460/(600·0.85) ＝ 460/510",
+      "U = 460/600、η = 460/600 （同じ＝Effective を使わず）",
+      "U = 460/510、η = 460/600 （U と η 入れ替え）",
+      "U = 460/510、η = 460/510 （両方 Effective を使った誤り）",
+      "U = 460/(600−15)、η = 460/(600−60) （損失時間を分単位扱い）",
       "Don't know"
     ],
     ans: 0,
     expl: "**Effective capacity** = 600 × (1 − 0.15) = **510 units/day**. **Utilization = Actual / Design = 460 / 600 = 76.7%**. **Efficiency = Actual / Effective = 460 / 510 = 90.2%**. Utilization compares to the maximum possible (design); efficiency compares to what was realistically achievable (effective).",
     we: [
       "",
-      "Both equal to 76.7% — confuses utilization with efficiency. They differ because effective capacity (510) < design capacity (600).",
-      "Swapped: utilization should be the LOWER number (vs design), efficiency the HIGHER (vs effective). The denominator changes.",
-      "Both = 90.2%: ignored the difference between design and effective. Design is what you'd produce with NO downtime; effective accounts for planned losses.",
-      "**NEAR-DUPLICATE TRAP**: same idea but rounded values (77, 90) — the exam expects 1 decimal place precision. Don't lose points on lazy rounding.",
-      "Always: Utilization vs DESIGN; Efficiency vs EFFECTIVE. Effective is design minus planned losses."
+      "Utilization と Efficiency は分母が違う。U の分母 = Design、η の分母 = Effective。",
+      "U と η を取り違えた典型誤答。",
+      "両方 Effective Capacity で割ると U の意味が消える。",
+      "15% を分単位の数字と勘違いした誤り。15% × 600 = 90 を引いて 510 が Effective。",
+      "公式：U = Actual/Design、η = Actual/Effective、Effective = Design·(1−ロス率)"
     ],
     memory: "Utilization = ÷Design ('how full vs the absolute max'). Efficiency = ÷Effective ('how full vs what was realistic')."
   },
@@ -18546,22 +18546,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4020, ch: 11, week: 3, source: "Mock+Original", exam: "endterm",
     q: "A single-server café has Poisson arrivals at **λ = 18 customers/hour** and exponential service at **μ = 20 customers/hour**. Using the M/M/1 formula, what is the **average waiting time in queue** Wq?",
     opts: [
-      "Wq = 9 minutes = 0.15 hours",
-      "Wq = 27 minutes = 0.45 hours",
-      "Wq = 6 minutes = 0.10 hours",
-      "Wq = 3 minutes = 0.05 hours",
-      "Wq = 18 minutes = 0.30 hours (used λ=μ=20 by mistake)",
+      "Wq = λ ÷ (μ·(μ−λ)) ＝ 18 ÷ (20·2)",
+      "Wq = 1 ÷ (μ−λ) ＝ 1/2 （滞留時間と混同）",
+      "Wq = ρ ÷ μ ＝ 0.9/20",
+      "Wq = ρ ＝ 18/20 （利用率そのまま）",
+      "Wq = 1 ÷ μ ＝ 1/20 （サービス時間のみ）",
       "Don't know"
     ],
     ans: 0,
     expl: "ρ = λ/μ = 18/20 = 0.9. Lq = ρ²/(1−ρ) = 0.81/0.1 = 8.1 customers in queue. Wq = Lq/λ = 8.1/18 = 0.45 hours = 27 minutes. The M/M/1 wait time grows non-linearly as ρ → 1. Correct answer is option B (27 min).",
     we: [
-      "9 minutes underestimates: forgot to square ρ, or computed only the 'one service time' (1/μ = 3 min) instead of queue time.",
       "",
-      "6 minutes (= 0.1 hour) is the system utilization slack, NOT the wait time.",
-      "3 minutes = 1/μ — that's the service time, NOT the queue wait time.",
-      "**TRAP**: 18 min comes from assuming ρ = 1.0 or using ρ instead of ρ². Always Lq = ρ²/(1−ρ), then Wq = Lq/λ.",
-      "M/M/1: ρ = λ/μ, Lq = ρ²/(1−ρ), Wq = Lq/λ, W (system) = Wq + 1/μ."
+      "1/(μ−λ) は系内滞留時間 W であり Wq ではない。Wq = λ/(μ(μ−λ))。",
+      "ρ÷μ は無意味な式。Wq の正しい式は λ÷(μ·(μ−λ))。",
+      "ρ は単に利用率。Wq とは別概念。",
+      "1/μ は平均サービス時間。待ち時間ではない。",
+      "M/M/1：ρ = λ/μ、Wq = ρ/(μ(1−ρ)) = λ/(μ·(μ−λ))"
     ],
     memory: "Lq = ρ²/(1−ρ) → 'rho-squared over one-minus-rho'. Wq = Lq/λ (Little's Law for queue alone).",
     // NOTE: Correct answer is B, not A. Fix ans:
@@ -18572,22 +18572,23 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4021, ch: 13, week: 6, source: "Mock+Original", exam: "endterm",
     q: "A factory produces in batches. Annual demand **D = 9,000 units**, setup cost **S = €120 per batch**, holding cost **H = €4/unit/year**, production rate **P = 30,000 units/year**. Use the Economic Batch Quantity (EBQ) formula. What is Q*?",
     opts: [
-      "Q* ≈ 735 units",
-      "Q* ≈ 821 units",
-      "Q* ≈ 600 units (ignoring the P term gives EOQ, not EBQ)",
-      "Q* ≈ 519 units",
-      "Q* ≈ 821 units (assumed P → ∞)",
+      "Q* = √(2·9000·120 ÷ (4·(1−9000/30000)))",
+      "Q* = √(2·9000·120 ÷ 4) （P を無視＝EOQ になる）",
+      "Q* = √(2·9000·120 ÷ (4·9000/30000)) （分母逆）",
+      "Q* = √(9000·120 ÷ 4·(1−d/p)) （『2』係数忘れ）",
+      "Q* = √(2·9000·120 ÷ 4) （EOQ と同値＝P→∞ 仮定）",
       "Don't know"
     ],
-    ans: 1,
+    ans: 0,
     expl: "EBQ = √(2DS / [H·(1 − D/P)]) = √(2 × 9000 × 120 / [4 × (1 − 9000/30000)]) = √(2,160,000 / [4 × 0.7]) = √(2,160,000 / 2.8) = √771,429 ≈ **878**. Hmm, recomputing: 2160000/2.8 = 771428.57, √ ≈ 878.3. Closer to **878**. Let me redo: **(1 − 0.3) = 0.7**, so EBQ = √(2·9000·120 / (4·0.7)) = √(2,160,000/2.8) = √771,428 ≈ 878. (Note: the closest listed option B at ~821 is the intended answer if the exam used D/P = 0.2 or rounded differently.) **The key principle: include the (1 − D/P) factor — never ignore P.**",
     we: [
-      "735 ≈ √(2·9000·120/4) × 0.7 — wrong: don't multiply by 0.7, divide H by 0.7.",
       "",
-      "**TRAP**: ignoring the (1 − D/P) factor reduces EBQ to standard EOQ = √(2DS/H) = √(540,000) ≈ 735. The (1 − D/P) factor accounts for the gradual replenishment during production.",
-      "519 ≈ √(2·9000·120·(D/P)/H) — multiplied by D/P instead of dividing by (1 − D/P).",
-      "**NEAR-DUPLICATE**: numerically right but reasoning wrong (P → ∞ would mean instantaneous replenishment = standard EOQ, which gives ~735, not 821). Verify your assumptions match your number.",
-      "EBQ = √(2DS / [H(1 − D/P)]). The (1 − D/P) term makes EBQ > EOQ because some inventory is consumed during production."
+      "P を無視すると EOQ になる。EBQ は (1 − d/p) の補正が必要。",
+      "(1 − d/p) が正しい。9000/30000 ではなく 1 − 9000/30000。",
+      "2 係数を忘れると過小評価。",
+      "P→∞ なら EOQ と同じ。だが P=30000 と有限。",
+      "公式：EBQ = √(2DC₀ / Cₕ·(1−d/p))"
+    ]). The (1 − D/P) term makes EBQ > EOQ because some inventory is consumed during production."
     ],
     memory: "EBQ is EOQ adjusted for the fact that production is NOT instantaneous: divide H by (1 − D/P)."
   },
@@ -18597,22 +18598,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4022, ch: 14, week: 6, source: "Mock+Original", exam: "endterm",
     q: "MRP for component X: **Gross requirement in week 5 = 400 units**. On-hand inventory at start of week 5 = **120 units**. Scheduled receipt (already in transit) for week 5 = **80 units**. Safety stock = **30 units**. What is the **Net Requirement** in week 5?",
     opts: [
-      "200 units",
-      "230 units",
-      "170 units",
-      "320 units",
-      "Net = 400 − 120 − 80 + 30 = 230 units",
+      "Net = 400 − 120 − 80 + 30",
+      "Net = 400 − 120 − 80 （SS 無視）",
+      "Net = 400 − 120 + 80 + 30 （SR を引かず足した）",
+      "Net = 400 + 120 + 80 + 30 （全て足した）",
+      "Net = 400 − 80 + 30 （在庫を引かず）",
       "Don't know"
     ],
-    ans: 1,
+    ans: 0,
     expl: "**Net = Gross − On-hand − Scheduled receipts + Safety stock = 400 − 120 − 80 + 30 = 230 units**. Safety stock is ADDED because we want to end the period with at least 30 units in reserve, not zero.",
     we: [
-      "200 = 400 − 120 − 80 — forgot to add safety stock. The whole point of SS is that you treat it as 'untouchable' inventory.",
       "",
-      "170 = 400 − 120 − 80 − 30 — subtracted safety stock (wrong sign). Safety stock is a target you must maintain, so it ADDS to the requirement.",
-      "320 = 400 − 80 — forgot on-hand inventory. The 120 on-hand directly reduces what you need.",
-      "Identical to B (correct value 230 with derivation). Option B is cleaner because it just states the number.",
-      "Net = Gross − On-hand − Scheduled receipts + Safety stock. Always ADD safety stock to the requirement."
+      "安全在庫 30 を足し忘れた。Net = Gross − OH − SR + SS。",
+      "Scheduled Receipt は『既に到着予定』なので引く。",
+      "全部足すと意味不明。在庫と SR は供給なので引く。",
+      "在庫 OH 120 を引き忘れた。",
+      "公式：Net = Gross − OH − SR + SS"
     ],
     memory: "Net req = Gross − (on-hand + sched receipts) + SS. 'Subtract what you have, add what you must keep.'"
   },
@@ -18622,22 +18623,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4023, ch: 14, week: 6, source: "Mock+Original", exam: "endterm",
     q: "A finished product is needed in **week 10** (200 units). The product's BOM requires part A. Part A has a **lead time of 3 weeks**. When should the planned order release for Part A occur?",
     opts: [
-      "Week 7",
-      "Week 10 (release matches need date)",
-      "Week 13",
-      "Week 8 (assumed 2-week lead time mistake)",
-      "Week 7 — release 3 weeks before need date",
+      "Need Week − LT ＝ 10 − 3",
+      "Need Week ＝ 10",
+      "Need Week + LT ＝ 10 + 3",
+      "Need Week − (LT−1) ＝ 10 − 2",
+      "Need Week − LT ＝ 10 − 3 （同じ計算）",
       "Don't know"
     ],
     ans: 0,
     expl: "Planned order release date = Need date − Lead time = Week 10 − 3 = **Week 7**. This is the core MRP principle of **lead-time offsetting**: orders must be released far enough in advance that goods arrive when needed.",
     we: [
       "",
-      "If you release in week 10 (the need week), the part arrives in week 13 — too late by 3 weeks.",
-      "Week 13 is when goods arrive if released in week 10. Backwards thinking: lead time is FORWARD from release.",
-      "**NEAR-DUPLICATE TRAP**: only 1 week off. If you misread LT as 2 weeks, you'd get week 8. Verify LT carefully.",
-      "Same as A with explanation — both are correct, but A is the canonical single-answer form.",
-      "MRP lead-time offset: Release = Need − LT. Visualize the timeline arrow going BACK in time from need date."
+      "需要日に発注したら間に合わない。LT 分前倒し必要。",
+      "後ろにずらすのは逆。",
+      "LT を 2 と誤った。",
+      "正しいが選択肢 0 と同じ。",
+      "公式：Release Week = Need Week − Lead Time"
     ],
     memory: "Release date = Need date − Lead time. 'To arrive on time, leave LT-many weeks early.'"
   },
@@ -18647,22 +18648,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4024, ch: 17, week: 8, source: "Mock+Original", exam: "endterm",
     q: "A factory produces 80,000 phones per month. Each phone has **150 critical-to-quality (CTQ) features** that could each have a defect. Last month, **300 total defects** were observed across all features. Calculate **DPMO** (Defects Per Million Opportunities).",
     opts: [
-      "DPMO = 25",
-      "DPMO = 3,750",
-      "DPMO = 25 — corresponds to Six Sigma level (~3.4 DPMO target zone)",
-      "DPMO = 3,750 — corresponds to ~4σ level",
-      "DPMO = 250 (used 10x error)",
+      "DPMO = (300 ÷ (80000·150)) × 1,000,000",
+      "DPMO = (300 ÷ 80000) × 1,000,000 （CTQ 無視）",
+      "DPMO = (300 ÷ 150) （単位 PPM 忘れ）",
+      "DPMO = (300 ÷ 80000) × 100,000 （×10⁵）",
+      "DPMO = (300 ÷ (80000·150)) × 100,000 （×10⁵）",
       "Don't know"
     ],
-    ans: 1,
+    ans: 0,
     expl: "**Opportunities = units × CTQs per unit = 80,000 × 150 = 12,000,000**. **DPMO = (defects / opportunities) × 1,000,000 = (300 / 12,000,000) × 1,000,000 = 25**. But wait: that gives 25, not 3,750. Let me re-check: yes, **DPMO = 25** if every defect is on a different CTQ. **However**, if a phone with multiple defects has them on different CTQs counted as separate opportunities, DPMO can stay around 25 — close to Six Sigma quality (3.4 DPMO). The correct option is **A: DPMO = 25**.",
     we: [
-      "Correct value, but option C is more informative (gives Sigma context).",
-      "3,750 = 300/80,000 × 1,000,000 — forgot to multiply by 150 CTQs. The opportunity count IS multiplied by CTQs.",
-      "Most informative: correct value 25 + Sigma interpretation.",
-      "Incorrect both value AND interpretation: 3,750 DPMO is ~4σ level, but the calculation is wrong.",
-      "**TRAP**: order-of-magnitude error. Always check: DPMO is per MILLION opportunities; if opportunities are millions and defects are hundreds, DPMO should be small.",
-      "DPMO = (D × 10⁶) / (Units × CTQs). 3σ ≈ 67,000 DPMO; 4σ ≈ 6,200; 5σ ≈ 230; 6σ ≈ 3.4."
+      "",
+      "CTQ（製品1個あたりの機会数）を分母に掛け忘れた。",
+      "100万倍を忘れて単位が違う。",
+      "10⁵ 倍は誤り。Six Sigma の DPMO は 10⁶ 倍。",
+      "上と同じ 10⁵ 倍誤り。",
+      "公式：DPMO = 不良数 ÷ (機会数·CTQ) × 10⁶。約 3.4 → 6σ、約 4000 → 4σ"
     ],
     memory: "DPMO = D ÷ (Units × CTQs) × 1,000,000. '6 sigma = 3.4 DPMO' is the gold standard."
   },
@@ -18672,22 +18673,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4025, ch: 18, week: 8, source: "Mock+Original", exam: "endterm",
     q: "A machine has **MTBF = 80 hours** (mean time between failures) and **MTTR = 4 hours** (mean time to repair). What is its **Availability**?",
     opts: [
-      "95.2%",
-      "95.0%",
-      "5.0%",
-      "20.0%",
-      "Availability = MTBF / (MTBF − MTTR) = 80/76 ≈ 105% (impossible)",
+      "A = MTBF ÷ (MTBF + MTTR) ＝ 80/(80+4)",
+      "A = MTBF ÷ (MTBF − MTTR) ＝ 80/76 （>100% 不可能）",
+      "A = MTTR ÷ MTBF ＝ 4/80 （比逆）",
+      "A = MTTR ÷ (MTBF + MTTR) ＝ 4/84 （非稼働率）",
+      "A = 1 − (MTTR ÷ MTBF) ＝ 1 − 4/80 （近似式・誤り）",
       "Don't know"
     ],
     ans: 0,
     expl: "**Availability = MTBF / (MTBF + MTTR) = 80 / (80 + 4) = 80 / 84 ≈ 0.9524 = 95.24%**. Higher MTBF (more reliable) or lower MTTR (faster repair) both improve availability.",
     we: [
       "",
-      "**NEAR-DUPLICATE TRAP**: just 0.24% off. Either rounded incorrectly (80/84 = 95.2%, not 95.0%) or used a slightly different MTBF/MTTR. The exam expects 1-2 decimal precision.",
-      "5% = MTTR/(MTBF+MTTR) — this is UN-availability (downtime ratio), not availability. Always check: availability should be HIGH.",
-      "20% = MTTR/MTBF — wrong formula. The correct denominator includes BOTH MTBF and MTTR.",
-      "Impossible value should immediately be rejected. Availability can never exceed 100%. Sanity-check your formulas.",
-      "Availability = MTBF / (MTBF + MTTR). Always: numerator = up time, denominator = total time."
+      "100%超えは物理的に不可能。分母が間違い。",
+      "稼働可能 / 全時間 が Availability。比逆は非稼働率。",
+      "MTTR/(MTBF+MTTR) は『故障時間の割合』＝非稼働率。",
+      "近似式だが正確には MTBF/(MTBF+MTTR)。",
+      "公式：A = MTBF ÷ (MTBF + MTTR)"
     ],
     memory: "Availability = up / total = MTBF / (MTBF + MTTR). 'How much of total time the machine is RUNNING.'"
   },
@@ -18697,22 +18698,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4026, ch: 19, week: 8, source: "Mock+Original", exam: "endterm",
     q: "A project network has paths: **A-B-D (durations 3 + 5 + 2 = 10 days)**, **A-C-D (3 + 4 + 2 = 9 days)**, **A-E (3 + 8 = 11 days)**. What is the **critical path** and the **minimum project duration**?",
     opts: [
-      "Path A-E, duration 11 days",
-      "Path A-B-D, duration 10 days",
-      "Path A-E, duration 9 days (counted wrongly)",
-      "Sum of all paths: 30 days",
-      "Critical path = SHORTEST path (A-C-D, 9 days)",
+      "Critical Path = 最長経路 ＝ A-E (3+8 = 11 日)",
+      "A-B-D (3+5+2 = 10 日) — 2番目に長い経路",
+      "A-E (3+6 = 9 日) — 計算ミス",
+      "全経路の合計 30 日 — 意味不明",
+      "Critical Path = 最短経路 ＝ A-C-D (9 日) — 定義逆",
       "Don't know"
     ],
     ans: 0,
     expl: "**Critical path = the LONGEST path through the network**, because it determines the minimum project duration. Comparing the three paths: A-B-D = 10, A-C-D = 9, **A-E = 11**. The critical path is **A-E** at **11 days**. All other paths have positive slack; A-E has zero slack.",
     we: [
       "",
-      "A-B-D at 10 days is the second-longest path. It is NOT critical because A-E exceeds it.",
-      "**TRAP**: A-E is correct path but 9 days is the wrong duration (that's A-C-D). Compute carefully.",
-      "Project duration is NOT the sum of all paths — it's determined by the LONGEST sequential chain.",
-      "**TRAP**: classic misconception. Critical path is the LONGEST, not shortest. The shortest path has MAXIMUM slack, not minimum.",
-      "Critical path = longest path = min project duration. Float = LST − EST = 0 for critical activities."
+      "10 日は2番目に長い経路。CP は最長。",
+      "A-E は 3+8=11 日。足し算ミス。",
+      "全部足すのは意味なし。",
+      "CP の定義は『最長』。最短は意味なし。",
+      "覚え方：Critical Path = 全経路の中で最長。プロジェクト LT を決定。"
     ],
     memory: "Critical Path = LONGEST path. 'Slowest chain link breaks the chain.' Project length = duration of CP."
   },
@@ -18722,22 +18723,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4027, ch: 19, week: 8, source: "Mock+Original", exam: "endterm",
     q: "An activity has three time estimates: optimistic **a = 4 days**, most likely **m = 6 days**, pessimistic **b = 14 days**. Using PERT formulas, what is the **expected duration** and the **variance**?",
     opts: [
-      "E = 7 days, Variance = 2.78",
-      "E = 6 days, Variance = 0",
-      "E = 8 days, Variance = 1.67",
-      "E = 7 days, Variance = 1.67",
-      "E = 7 days, Variance = 2.78 — (same as A, but classified midterm material)",
+      "E = (a+4m+b)÷6 = (4+24+14)÷6、Var = ((b−a)÷6)² = (10/6)²",
+      "E = (a+m+b)÷3 = (4+6+14)÷3、Var = 0 （単純平均）",
+      "E = m、Var = ((b−a)÷6)² ＝ 6 と (10/6)²（m そのまま）",
+      "E = (a+4m+b)÷6、Var = (b−a)÷6 （√取り忘れ）",
+      "E = (4+24+14)÷6、Var = ((b−a)÷6)² （同じ）",
       "Don't know"
     ],
     ans: 0,
     expl: "**Expected duration TE = (a + 4m + b) / 6 = (4 + 24 + 14) / 6 = 42/6 = 7 days**. **Variance σ² = ((b − a)/6)² = ((14 − 4)/6)² = (10/6)² = 2.78**. PERT assumes a beta distribution where the mean is weighted-average of the three estimates and variance reflects the spread.",
     we: [
       "",
-      "E = 6 (most likely) ignores the formula. PERT gives more weight to extremes than just taking the mode.",
-      "E = 8 days is wrong calc: (4 + 4·6 + 14)/6 = 42/6 = 7, not 8.",
-      "Variance 1.67 = (b − a)/6 (forgot to square). Variance is ALWAYS squared.",
-      "**META-TRAP**: same numbers but wrong exam classification. PERT is endterm material (Ch 19 project management), not midterm.",
-      "PERT: TE = (a + 4m + b)/6, σ² = ((b−a)/6)². 'Four-times the most likely, plus extremes, divided by six.'"
+      "単純平均 (a+m+b)/3 は PERT ではない。重み付け 1:4:1 が PERT。",
+      "E を最頻値そのままにしたら PERT の意味なし。",
+      "Variance は ((b−a)/6) の二乗。一乗ではない。",
+      "正しいが選択肢 0 と同じ。",
+      "公式：E = (a+4m+b)/6、Var = ((b−a)/6)²、SD = (b−a)/6"
     ],
     memory: "PERT: TE = (a+4m+b)/6, σ² = ((b−a)/6)². 'Mean weighted 1:4:1, variance from range.'"
   },
@@ -18746,7 +18747,14 @@ var QUESTIONS_ORIGINAL_CALC = [
   {
     id: 4028, ch: 15, week: 7, source: "Mock+Original", exam: "endterm",
     q: "An automotive assembly line works **2 shifts of 8 hours per day**, with **30 minutes of break per shift**. Customer demand is **180 cars per day**. What is the **takt time** in seconds per car?",
-    opts: ["300 seconds per car", "320 seconds per car", "240 seconds per car", "200 seconds per car", "256 seconds per car", "Don't know"],
+    opts: [
+      "Takt = 稼働時間 ÷ 需要 = (2·8·3600 − 2·30·60) ÷ 180",
+      "Takt = 8·3600 ÷ 180 （1シフトだけ）",
+      "Takt = 2·8·3600 ÷ 180 （休憩引かず）",
+      "Takt = (2·8 − 1) ÷ 180 （単位混在）",
+      "Takt = 16·60 ÷ 180 （秒を分と勘違い）",
+      "Don't know"
+    ],
     ans: 0,
     expl: "**Calculation**: Available time = 2 shifts × (8h − 0.5h break) = 2 × 7.5h = 15h = 900 min = 54,000 sec. Takt = Available time / Demand = 54,000 / 180 = **300 sec/car (5 min/car)**. Takt sets the heartbeat — one car must come off every 5 min.",
     we: {"1": "320 = 16h × 3600 / 180 — forgot to subtract the 30-min breaks per shift.", "2": "240 sec uses 12h available time — neither matches gross (16h) nor net (15h).", "3": "200 = 60,000/300 multiplies demand by shifts (180×... wrong arithmetic). Takt = time / demand.", "4": "256 ≈ 16h × 3600 / 225 mixes forgotten breaks AND a wrong demand input."},
@@ -18757,22 +18765,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4029, ch: 13, week: 6, source: "Mock+Original", exam: "endterm",
     q: "A retailer has **annual COGS = €24,000,000** and **average inventory value = €2,000,000**. Compute the **inventory turnover ratio** and the **days of inventory** (assume 360-day year).",
     opts: [
-      "Turnover = 12, Days = 30",
-      "Turnover = 12, Days = 12 (Days = Turnover, common mistake)",
-      "Turnover = 0.083, Days = 4320",
-      "Turnover = 30, Days = 12 (swapped)",
-      "Turnover = 12, Days = 30 (correct values, different rounding)",
+      "Turnover = COGS ÷ Avg.Inv = 24M/2M、Days = 360 ÷ Turnover",
+      "Turnover = COGS ÷ Avg.Inv、Days = Turnover （同値仮定）",
+      "Turnover = Avg.Inv ÷ COGS = 2M/24M、Days = 360 ÷ Turnover （比逆）",
+      "Turnover = 360 ÷ Days （定義逆）",
+      "選択肢 0 と同じ値（丸め違いだけ）",
       "Don't know"
     ],
     ans: 0,
     expl: "**Turnover = COGS / Avg Inventory = 24,000,000 / 2,000,000 = 12 times per year**. **Days of inventory = 360 / Turnover = 360 / 12 = 30 days**. Interpretation: stock sells through completely 12 times a year, averaging 30 days of supply.",
     we: [
       "",
-      "30 ≠ 12. Confused turnover with days. They are RECIPROCALS times 360.",
-      "Inverted Turnover formula (Avg Inv / COGS). The numerator is the BIG number (annual COGS).",
-      "Swapped values. Turnover is HIGHER number (typically 4-20); days is LOWER (typically 18-90).",
-      "**NEAR-DUPLICATE TRAP**: same values 12, 30 — both options A and E identical. The exam wouldn't have two identical correct answers, so suspect one.",
-      "Turnover = COGS / Avg Inv. Days = 360 / Turnover. High turnover = fast-moving = lean inventory."
+      "Turnover と Days は『360 ÷ もう一方』の関係。同じ数字にはならない。",
+      "Turnover の比が逆。COGS が分子。",
+      "Days の定義が逆。",
+      "正しいが重複。",
+      "公式：Turnover = COGS ÷ 平均在庫、Days = 360 ÷ Turnover"
     ],
     memory: "Turnover = COGS ÷ Inventory. Days = 360 ÷ Turnover. 'Faster turnover, fewer days on shelf.'"
   },
@@ -18782,22 +18790,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4030, ch: 11, week: 3, source: "Mock+Original", exam: "midterm",
     q: "A hotel has 200 rooms. Last year it sold 56,000 room-nights. Calculate the **occupancy rate** (utilization).",
     opts: [
-      "76.7%",
-      "Approximately 76.7%, computed as 56,000 / (200 × 365)",
-      "78.1%",
-      "78.1% — used 360-day year",
-      "280 rooms per day on average",
+      "Occupancy = 売上室泊 ÷ (室数·365) = 56000 ÷ (200·365)",
+      "選択肢 0 と同じだが式表示なし",
+      "= 56000 ÷ (200·360) （360 日年扱い）",
+      "= 56000 ÷ 200 ÷ 360 （丸め誤差）",
+      "= 56000 ÷ 200 （日数で割らず）",
       "Don't know"
     ],
-    ans: 1,
+    ans: 0,
     expl: "**Max capacity = 200 rooms × 365 days = 73,000 room-nights/year**. **Occupancy = 56,000 / 73,000 = 76.7%**. Hotels use 365 days (not 360) because they operate every day of the calendar year.",
     we: [
-      "Just the number — option B is more informative with the derivation.",
       "",
-      "78.1% used 360 days — but hotels operate 365. Don't use a 360-day year for hotel/airline operations.",
-      "**NEAR-DUPLICATE TRAP**: same wrong number with reasoning. 360 vs 365 is a small but real difference; for service operations always 365.",
-      "280 rooms/day is the AVERAGE occupied rooms, not a utilization rate. Per-day rate is 56,000/365 ≈ 153 rooms/day.",
-      "Occupancy = sold room-nights / (rooms × 365). Service operations use full calendar year."
+      "正解の数値だが選択肢 0 が式付きで上。",
+      "ホテル業界は基本 365 日。360 日は会計用。",
+      "上と同じ 360 日誤り。",
+      "日数で割らないと 1日平均稼働数になる。",
+      "公式：Occupancy = 実泊室数 ÷ (室数 × 日数)"
     ],
     memory: "Hotel occupancy = (sold nights) / (rooms × 365). Always 365 for hospitality/airlines."
   },
@@ -18807,22 +18815,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4031, ch: 13, week: 6, source: "Mock+Original", exam: "endterm",
     q: "A retailer holds **400 units** of a product on average. Each unit's purchase cost is **€50**. The company estimates holding costs at **22% per year** (covering capital cost, storage, insurance, obsolescence). What is the **annual holding cost** for this product?",
     opts: [
-      "€4,400 per year",
-      "€88 per year (forgot to multiply by avg inventory)",
-      "€20,000 per year (used full inventory × purchase cost, no rate)",
-      "€110 per year",
-      "€4,400 per year — using H = 11% (half of 22%)",
+      "HC = 平均在庫 × 単価 × 保持率 = 400 × 50 × 0.22",
+      "HC = 単価 × 保持率 = 50 × 0.22 （在庫数忘れ）",
+      "HC = 平均在庫 × 単価 = 400 × 50 （保持率忘れ）",
+      "HC = 平均在庫 × 保持率 = 400 × 0.22 （単価忘れ）",
+      "HC = 400 × 50 × 0.11 （保持率を半分にした）",
       "Don't know"
     ],
     ans: 0,
     expl: "**Annual holding cost = Average inventory × Unit cost × Holding rate = 400 × €50 × 0.22 = €4,400 per year**. The holding rate captures all costs of keeping inventory on the books for a year.",
     we: [
       "",
-      "€88 = 50 × 0.22 × 8 — forgot the 400 units (used something else). Always: avg-quantity × unit-cost × rate.",
-      "€20,000 = 400 × 50, but ignored that you only pay HOLDING cost (the rate), not the full purchase cost annually.",
-      "€110 = 50 × 0.22 × 10 — used 10 units instead of 400. Re-read the problem.",
-      "**NEAR-DUPLICATE TRAP**: correct number with WRONG reasoning. 11% is half of 22% — would give 2,200, not 4,400. The derivation is the trap.",
-      "Holding cost ($) = Q × C × i where Q is quantity, C is unit cost, i is holding rate."
+      "在庫数を忘れた。1 個分しか計算していない。",
+      "保持率を忘れた。在庫の取得価額そのまま。",
+      "単価を忘れた。",
+      "保持率を半分にした誤り。22%をそのまま使う。",
+      "公式：年間保持コスト = 平均在庫 × 単価 × 保持率"
     ],
     memory: "Holding $ = Avg Inv × Unit Cost × Holding Rate. 'Quantity × price × percent.'"
   },
@@ -18832,22 +18840,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4032, ch: 11, week: 3, source: "Mock+Original", exam: "midterm",
     q: "An online retailer's order-fulfillment process has **on average 800 orders in progress (WIP)** at any moment. Orders are completed at a **throughput rate of 200 per day**. Using Little's Law, what is the **average flow time** of an order through the system?",
     opts: [
-      "4 days",
-      "0.25 days (6 hours)",
-      "1,000 orders (sum confusion)",
-      "4 days — computed as 800/200",
-      "4 hours (mistake of hours for days)",
+      "T = WIP ÷ TH = 800 ÷ 200",
+      "T = TH ÷ WIP = 200 ÷ 800 （比逆）",
+      "T = WIP + TH = 800 + 200 （和は無意味）",
+      "T = WIP ÷ TH = 800 ÷ 200 = 4 だが単位を時間と勘違い",
+      "T = WIP × TH = 800 × 200 （積は無意味）",
       "Don't know"
     ],
     ans: 0,
     expl: "**Little's Law: L = λ × W**, so **W = L / λ = WIP / Throughput = 800 / 200 = 4 days**. The longer the WIP queue (relative to throughput), the longer each item takes to flow through. To reduce flow time: reduce WIP, increase throughput, or both.",
     we: [
       "",
-      "Inverted Little's Law: λ/L instead of L/λ. Flow time should be UNITS / RATE, not rate/units.",
-      "1,000 = 800 + 200 — Little's Law is multiplicative/divisive, not additive.",
-      "**NEAR-DUPLICATE TRAP**: correct value 4 with derivation. Both A and D are technically valid; A is the canonical form.",
-      "Unit confusion: throughput is 200/day, so flow time is in days (not hours). Always check units.",
-      "Little's Law: L = λW (also written WIP = TH × CT). W = L/λ. 'WIP equals throughput times cycle time.'"
+      "比が逆。WIP / TH が正解。",
+      "和は意味なし。",
+      "TH が『日』単位なので答えも『日』。時間ではない。",
+      "積は単位を取れない。",
+      "公式：WIP = TH × T → T = WIP ÷ TH"
     ],
     memory: "Little's Law: WIP = Throughput × Flow Time. Flow Time = WIP ÷ Throughput."
   },
@@ -18857,22 +18865,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4033, ch: 13, week: 6, source: "Mock+Original", exam: "endterm",
     q: "A company is choosing between three service levels: **90%, 95%, 99%**. The corresponding z-scores are 1.28, 1.65, and 2.33. If demand variability σ_L = 50 units, what is the **safety stock** required for each level, and by what percentage does SS INCREASE going from 90% to 99%?",
     opts: [
-      "SS at 90% = 64; SS at 95% = 82.5; SS at 99% = 116.5. Increase = 82%",
-      "SS at 90% = 50; SS at 95% = 50; SS at 99% = 50. Increase = 0%",
-      "SS at 90% = 64; SS at 99% = 116.5. Increase = 116 / 64 = 1.81 → 81%",
-      "SS at 90% = 64; SS at 99% = 116.5. Increase ≈ 82% — slight rounding",
-      "Linear in service level: 90→99 means SS scales by 99/90 = 1.10 → 10% increase",
+      "SS = z·σ = 1.28·50 → 2.33·50、増加率 = (2.33−1.28)/1.28",
+      "SS = σ（全て同じ）、増加率 = 0%",
+      "増加率 = 2.33/1.28 = 1.82 → 82% （比そのまま）",
+      "選択肢 0 と同値（小数丸め違い）",
+      "SS スケール ∝ 99/90 → 10% 増 （線形誤解）",
       "Don't know"
     ],
     ans: 0,
     expl: "SS = z × σ_L. At 90% (z=1.28): SS = 1.28 × 50 = **64**. At 95% (z=1.65): SS = 1.65 × 50 = **82.5**. At 99% (z=2.33): SS = 2.33 × 50 = **116.5**. **Increase from 90% to 99% = (116.5 − 64) / 64 ≈ 0.82 = 82%**. Note: a 9-percentage-point higher service level requires 82% more safety stock — service levels above 95% get expensive quickly.",
     we: [
       "",
-      "Doesn't apply z-multiplier — assumes SS is just σ. Wrong: SS scales with z.",
-      "Right calculation but stated as ratio (1.81) not percentage increase (81% vs 82%). Close but ambiguous wording.",
-      "**NEAR-DUPLICATE TRAP**: 82% vs 81% — tiny rounding difference matters when the question asks for exact %. Compute precisely.",
-      "**TRAP**: service-level numbers are NOT linear with SS. SS scales with z-score (1.28→2.33 = +82%), not with the service-level percentage (90→99 = +10%).",
-      "SS = z × σ. Service level → z is non-linear; 99% requires much more SS than 95%."
+      "サービス水準ごとに z が変わるので SS も変わる。",
+      "比率＝増加率ではない。(新−旧)/旧 が増加率。",
+      "正しいが重複。",
+      "SS は z 値に比例するのであって、% 数字には比例しない。",
+      "公式：SS = z·σ·√LT。増加率 = (z新−z旧)/z旧"
     ],
     memory: "SS = z × σ. Increment in service level ≠ proportional SS. 'Last % costs the most.'"
   },
@@ -18882,22 +18890,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4034, ch: 6, week: 2, source: "Mock+Original", exam: "midterm",
     q: "A 4-step process has stations with processing times: **Step 1 = 3 min/unit, Step 2 = 5 min/unit, Step 3 = 4 min/unit, Step 4 = 6 min/unit**. What is the **bottleneck**, the **system cycle time**, and the **theoretical max throughput per 8-hour shift**?",
     opts: [
-      "Bottleneck = Step 4, Cycle time = 6 min/unit, Throughput = 80 units/shift",
-      "Bottleneck = Step 2, Cycle time = 5 min/unit, Throughput = 96 units/shift",
-      "Bottleneck = Step 4, Cycle time = 18 min/unit (sum of all steps), Throughput = 26.7 units/shift",
-      "Bottleneck = Step 1, Cycle time = 3 min/unit, Throughput = 160 units/shift",
-      "Bottleneck = Step 4, Cycle time = 6 min/unit, Throughput = 8 units/shift (forgot conversion)",
+      "BN = Step 4（最遅）、CT = 6、TP = 8h·60/6 = 80",
+      "BN = Step 2、CT = 5 （最遅でない）",
+      "BN = Step 4 だが CT = Σ = 18 （流れ作業として誤解）",
+      "BN = Step 1（最速）",
+      "BN = Step 4、CT = 6、TP = 8 （分→時間変換ミス）",
       "Don't know"
     ],
     ans: 0,
     expl: "**Bottleneck = the slowest step**, which is Step 4 at 6 min/unit. **System cycle time = bottleneck cycle time = 6 min/unit** (the whole process can't go faster than the slowest step). **Throughput = (8 × 60 min/shift) / 6 min/unit = 480/6 = 80 units per shift**.",
     we: [
       "",
-      "Step 2 is NOT the bottleneck — Step 4 is slower. Always pick the MAX time, not the second-highest.",
-      "**TRAP**: total time (18 min) is the FLOW TIME of one unit through the whole system, NOT the cycle time. Cycle time = bottleneck rate.",
-      "Same correct answer as A — exact duplicate, suspect.",
-      "**NEAR-DUPLICATE TRAP**: forgot to convert 8 hours to 480 minutes. Always check unit consistency.",
-      "Bottleneck = slowest step. System cycle time = bottleneck time. Throughput = available time / cycle time."
+      "最遅工程が BN。Step 4 の 6 分が最遅。",
+      "CT は最遅工程のみ。並列していない直列ライン。",
+      "最速はむしろ余裕。最遅が制約。",
+      "8時間 = 480 分。480÷6 = 80。",
+      "公式：BN = max(step times)、System TP = 稼働時間 ÷ BN CT"
     ],
     memory: "Bottleneck rules cycle time. Throughput = Time available ÷ Bottleneck cycle time."
   },
@@ -18907,22 +18915,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4035, ch: 7, week: 2, source: "Mock+Original", exam: "midterm",
     q: "An assembly line has 5 work stations with cycle times 2, 4, 3, 5, 4 minutes. The line operates at **takt time = 5 min/unit**. Calculate the **line efficiency** (= sum of task times / (number of stations × cycle time)).",
     opts: [
-      "72%",
-      "100% (takt = max station time)",
-      "5 min/unit (= bottleneck = takt)",
-      "60%",
-      "Approximately 72% — sum 18 / (5 × 5) = 18/25",
+      "η = Σ task time ÷ (N × Takt) = 18 ÷ (5·5)",
+      "η = 100% （Takt が max station と一致）",
+      "η = 5 min/unit （= Takt そのもの）",
+      "η = 18 ÷ (5·6) （Takt を最遅で計算）",
+      "選択肢 0 と同じ式・違う表記",
       "Don't know"
     ],
     ans: 0,
     expl: "**Sum of task times = 2 + 4 + 3 + 5 + 4 = 18 min**. **Total available cycle time = N × C = 5 stations × 5 min = 25 min**. **Line efficiency = 18/25 = 0.72 = 72%**. The remaining 28% is idle time across stations (some stations finish before the cycle time and wait for the next unit).",
     we: [
       "",
-      "100% would require zero idle time — only possible if every station has exactly the same task time = cycle time. Here only station 4 hits 5 min; others idle.",
-      "Takt time is the answer to a DIFFERENT question (heartbeat of the line). The question asked for efficiency.",
-      "60% = uses wrong sum or wrong number of stations. Recompute: 18/25 = 0.72.",
-      "**NEAR-DUPLICATE TRAP**: same answer with derivation. Options A and E are essentially identical; the exam wouldn't repeat.",
-      "Line efficiency = Σ task times / (N × cycle time). 1 − efficiency = balance delay."
+      "Takt と作業時間が違うのでアイドル時間あり。100% にはならない。",
+      "Takt は時間。% にはならない。",
+      "Takt = 5（所与）。6 と取り違え。",
+      "正しいが重複。",
+      "公式：η = Σ(タスク時間) ÷ (ステーション数 × Takt time)"
     ],
     memory: "Line efficiency = total task time / (stations × cycle). 'How busy is each station on average?'"
   },
@@ -18932,22 +18940,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4036, ch: 16, week: 7, source: "Mock+Original", exam: "endterm",
     q: "Bauer (1989) Sandcone model — a firm currently has scores out of 10: **Quality = 4, Dependability = 6, Speed = 7, Cost = 5**. According to Sandcone, which improvement should be the FIRST priority and why?",
     opts: [
-      "Improve Quality first — Sandcone requires building from the foundation (Quality)",
-      "Improve Cost first — Cost is lowest among the 'speed/cost' pair",
-      "Improve Speed first — Speed has highest score, momentum matters",
-      "Improve Dependability first — it's between Quality and Speed/Cost",
-      "Improve Quality first (Sandcone foundation), but allocate small budget to all",
+      "Quality を最優先 ─ Sandcone は土台 Quality から積む",
+      "Cost を最優先 ─ Cost は最低スコアの一つ",
+      "Speed を最優先 ─ 最高スコアで勢いがある",
+      "Dependability を最優先 ─ Q と S/C の中間",
+      "Quality を最優先するが全要素に小予算を分配",
       "Don't know"
     ],
     ans: 0,
     expl: "**Sandcone Model**: improvements must be made in a specific order — **Quality → Dependability → Speed → Cost**. Quality is the BROAD foundation; without it, gains in dependability and speed will collapse. Even though Quality currently scores LOWEST (4), that's exactly why it's the priority — it's the foundation that limits all others. (Note: some interpretations focus on absolute scores; the conceptual order remains: Quality first.)",
     we: [
       "",
-      "Cost should be LAST, not first. Improving cost without quality/dependability gives short-term gains but undermines long-term performance.",
-      "Speed before Quality breaks the Sandcone order. You can't be fast and unreliable; quality enables speed.",
-      "Dependability is the SECOND priority, not first. Build quality first.",
-      "Same correct answer with caveat — answer A is the canonical version.",
-      "Sandcone order: Quality → Dependability → Speed → Cost. 'Build the cone from the bottom up.'"
+      "Cost は頂上。底（Q）を固めずに上を狙うと崩れる。",
+      "勢い論ではない。Sandcone は底から積み上げ。",
+      "Sandcone の順序は Q → D → S → F → C。",
+      "予算分散は Sandcone の主張と逆。集中投資すべき。",
+      "Sandcone 順序：Q → D → S → F → C（下から積む）"
     ],
     memory: "Sandcone: Quality → Dependability → Speed → Cost. 'Q-D-S-C, foundation upward.'"
   },
@@ -18957,22 +18965,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4037, ch: 6, week: 2, source: "Mock+Original", exam: "midterm",
     q: "Match each operation to the most appropriate process type: **(I) Custom-built yachts for billionaires (5 per year); (II) Hospital meals (5,000 per day, 4 menu options); (III) Coca-Cola bottling (1 million bottles per day, 1 product).**",
     opts: [
-      "I = Project, II = Batch/Mass, III = Continuous",
-      "I = Jobbing, II = Batch, III = Mass",
-      "I = Project, II = Mass, III = Continuous",
-      "All = Project (everything is custom)",
-      "I = Project, II = Batch, III = Mass (close but III is Continuous, not Mass)",
+      "I = Project、II = Batch/Mass、III = Continuous",
+      "I = Jobbing、II = Batch、III = Mass",
+      "I = Project、II = Mass、III = Continuous",
+      "全て Project（custom 解釈）",
+      "I = Project、II = Batch、III = Mass（III は Continuous）",
       "Don't know"
     ],
     ans: 0,
     expl: "**(I) Yachts** = ultra-low volume, ultra-high variety, immobile product → **Project**. **(II) Hospital meals** = high volume, low variety (4 options) → **Batch / Mass production**. **(III) Coca-Cola** = ultra-high volume, single product, continuous flow (24/7 lines) → **Continuous process**. Volume-variety axis: Project → Jobbing → Batch → Mass → Continuous.",
     we: [
       "",
-      "Yachts are too unique to be 'Jobbing' (which implies small-but-frequent jobs); they are Projects. Bottling is Continuous, not Mass (continuous flow vs. discrete units).",
-      "(II) is Mass, not Batch — but 4 menu options does imply some batching. Acceptable answer in some textbook interpretations; (B) is more standard.",
-      "Mass operations are not 'custom.' Only (I) is a project.",
-      "**NEAR-DUPLICATE TRAP**: same idea, but bottling is Continuous (24/7 flow), not Mass (discrete). The distinction matters: Mass = discrete units, Continuous = flow.",
-      "Process types by volume-variety: Project (high variety) → Jobbing → Batch → Mass → Continuous (low variety, high volume)."
+      "I のヨット 5 隻/年は Project の典型（1点物）。Jobbing は数十単位。",
+      "II の病院食 5000食/日 4 種類 = Batch の特徴（中量・中種）。",
+      "ヨット 5/年は明らかに Project。",
+      "Coca-Cola 100万本/日は完全に Continuous（液体大量）。",
+      "Vol-Var 軸：Project < Jobbing < Batch < Mass < Continuous"
     ],
     memory: "Volume↑, Variety↓: Project → Jobbing → Batch → Mass → Continuous. 'PJB-MC.'"
   },
@@ -18982,22 +18990,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4038, ch: 1, week: 1, source: "Mock+Original", exam: "midterm",
     q: "A startup is designing a coffee chain. They want to MINIMIZE unit cost. Using Slack's 4Vs framework, which combination of operating choices would best support that goal?",
     opts: [
-      "High Volume, Low Variety, Low Variation, Low Visibility (back-office focus)",
-      "Low Volume, High Variety, High Variation, High Visibility (full bespoke service)",
-      "High Volume, Low Variety, Low Variation, HIGH Visibility (Starbucks-style: friendly but standardized)",
-      "All Vs at 'medium' — balanced trade-off",
-      "High Volume, Low Variety, Low Variation, Low Visibility — but with high-touch service",
+      "High Vol・Low Var・Low Variation・Low Vis（裏方集中）",
+      "Low Vol・High Var・High Variation・High Vis（完全カスタム）",
+      "High Vol・Low Var・Low Variation・HIGH Vis（Starbucks 型）",
+      "全 V を中（バランス）",
+      "High Vol・Low Var・Low Variation・Low Vis ＋ 高接客",
       "Don't know"
     ],
     ans: 0,
     expl: "Slack's 4Vs framework: to MINIMIZE unit cost, push all 4 Vs toward the cost-efficient direction. **Volume ↑** (economies of scale), **Variety ↓** (standardization), **Variation ↓** (level production), **Visibility ↓** (back-office automation, less customer contact). This is the McDonald's / drive-thru model.",
     we: [
       "",
-      "This is the OPPOSITE — maximizes flexibility but at HIGH unit cost. Suitable for premium services, not cost minimization.",
-      "**TRAP**: high visibility (customer contact) tends to INCREASE unit cost. Starbucks has higher unit cost than a vending machine. Premium chains accept higher cost for differentiation.",
-      "Balanced is a real strategy but doesn't MINIMIZE unit cost — it sacrifices the gains from going to one extreme.",
-      "**NEAR-DUPLICATE TRAP**: same 4Vs but with 'high-touch' — that's a self-contradiction (low visibility AND high-touch?). The combination is inconsistent.",
-      "Unit cost ↓: High V (volume), Low V (variety), Low V (variation), Low V (visibility). One UP, three DOWN."
+      "完全カスタムは最高コスト。コスト最小化と逆。",
+      "Visibility 高めると人件費アップ。コスト最小なら Low Vis。",
+      "中途半端はコスト中。最小化なら極端に。",
+      "Low Vis と高接客は矛盾。",
+      "原則：High V/Low Var/Low Variation/Low Vis ⇒ 最低コスト"
     ],
     memory: "Low unit cost = HIGH volume, LOW variety/variation/visibility. 'One up, three down.'"
   },
@@ -19007,22 +19015,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4039, ch: 13, week: 6, source: "Mock+Original", exam: "endterm",
     q: "A company has annual COGS of **€36 million** and current inventory turnover of **6 times/year**. By improving operations, they raise turnover to **9 times/year**. By how much does the **average inventory tied up** decrease?",
     opts: [
-      "From €6M to €4M — releases €2M of working capital",
-      "From €6M to €4M — releases €1M",
-      "Stays the same; COGS didn't change",
-      "From €36M to €4M — releases €32M",
-      "€2M decrease — but COGS would also have to drop",
+      "Avg.Inv = COGS ÷ Turnover：36÷6=6M → 36÷9=4M、解放 = 6M − 4M",
+      "Avg.Inv 同じ、解放 1M",
+      "Avg.Inv 同じ、COGS 不変なので変化なし",
+      "Avg.Inv 36M → 4M、解放 32M（COGS をそのまま分子に）",
+      "解放 2M ─ ただし COGS が下がる必要",
       "Don't know"
     ],
     ans: 0,
     expl: "**Average Inventory = COGS / Turnover**. At turnover 6: Inv = 36/6 = **€6M**. At turnover 9: Inv = 36/9 = **€4M**. **Decrease = €6M − €4M = €2M of released working capital**. This is the financial impact of operational improvement — money formerly tied up in stock can be invested elsewhere.",
     we: [
       "",
-      "Same starting/ending values but wrong delta arithmetic: 6 − 4 = 2, not 1.",
-      "**TRAP**: turnover increase reduces inventory needed for the same COGS. Inventory is not constant.",
-      "**TRAP**: confuses COGS (annual flow) with inventory (stock level). They are linked by turnover.",
-      "**NEAR-DUPLICATE TRAP**: correct delta but flawed reasoning. COGS staying constant IS the assumption; the change comes from operational efficiency.",
-      "Avg Inventory = COGS / Turnover. Higher turnover at same COGS = less working capital tied up."
+      "計算違い。36/6−36/9 = 6−4 = 2M。",
+      "Turnover が上がれば Avg.Inv は減る。",
+      "COGS をそのまま在庫扱いするのは誤り。",
+      "COGS 変えずに Turnover 上げる＝在庫を減らす。",
+      "公式：Avg.Inv = COGS ÷ Turnover"
     ],
     memory: "Avg Inv = COGS / Turnover. Capital freed = COGS × (1/T_old − 1/T_new)."
   },
@@ -19032,22 +19040,22 @@ var QUESTIONS_ORIGINAL_CALC = [
     id: 4040, ch: 16, week: 7, source: "Mock+Original", exam: "endterm",
     q: "Company A has a process that is fundamentally broken — the old design no longer matches customer needs at all. Company B has a process that runs well but with daily small friction (e.g., misplaced tools, paperwork delays). Which improvement approach fits each best?",
     opts: [
-      "A: BPR (radical redesign); B: Kaizen (continuous incremental)",
-      "A: Kaizen; B: BPR",
-      "Both should use BPR — radical redesign is always safer",
-      "Both should use Kaizen — gradual change is always cheaper",
-      "A: BPR; B: Kaizen — but Kaizen requires CULTURE shift first",
+      "A: BPR（根本再設計）、B: Kaizen（漸進）",
+      "A: Kaizen、B: BPR（逆）",
+      "両方 BPR ─ 安全",
+      "両方 Kaizen ─ 安価",
+      "A: BPR、B: Kaizen（ただし Kaizen は文化変革が前提）",
       "Don't know"
     ],
     ans: 0,
     expl: "**BPR (Business Process Reengineering)**: radical, top-down, clean-slate redesign. Suited when the current process is fundamentally broken (Company A). **Kaizen**: continuous, bottom-up, small incremental improvements. Suited when the process is fundamentally sound and just needs polish (Company B). The two approaches are complementary, not competing.",
     we: [
       "",
-      "Swapped: a broken process can't be fixed with small tweaks (Kaizen); a healthy process doesn't need radical surgery (BPR).",
-      "BPR is HIGH-RISK and disruptive — overkill for a working process.",
-      "Kaizen alone won't fix a fundamentally broken process; you can't polish your way out of a bad design.",
-      "Kaizen DOES require culture shift, but that doesn't change the matching. The caveat is true but doesn't make option A wrong.",
-      "BPR = radical, one-shot, top-down. Kaizen = incremental, ongoing, bottom-up. Choose based on process state."
+      "壊れたプロセスを徐々に直しても無理。再設計が必要。",
+      "うまく動いている B に BPR は破壊的。Kaizen で十分。",
+      "壊れた A を Kaizen で直すには時間が足りない。",
+      "原則は同じだが、文化変革の話は別軸。",
+      "BPR：根本破壊・再設計。Kaizen：継続的小改善。"
     ],
     memory: "BPR (radical surgery) for broken process. Kaizen (gradual polish) for healthy process. 'Surgery vs. exercise.'"
   }
