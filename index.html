@@ -645,6 +645,20 @@ a{color:#3b82f6;text-decoration:none;}
 .q-opt.dimmed{opacity:0.4;}
 .q-exp{margin:16px 0;padding:16px;background:rgba(59,130,246,0.08);border-left:4px solid #3b82f6;border-radius:8px;}
 .q-we{margin:8px 0;padding:12px;background:rgba(239,68,68,0.06);border-left:3px solid #ef4444;border-radius:6px;font-size:26px;color:#f87171;}
+/* 選択肢の下に直接表示する解説（クリック不要） */
+.opt-inline{margin:-2px 0 12px 28px;padding:10px 14px;border-radius:8px;font-size:15px;line-height:1.6;}
+.opt-correct{background:rgba(16,185,129,0.10);border-left:3px solid #10b981;color:#a7f3d0;}
+.opt-correct strong{color:#10b981;}
+.opt-wrong-exp{background:rgba(248,113,113,0.08);border-left:3px solid #f87171;color:#fca5a5;}
+.opt-wrong-exp strong{color:#f87171;}
+/* 公式・覚えるべきこと欄 */
+.q-memory{margin:10px 0;padding:14px 16px;background:rgba(245,158,11,0.08);border-left:4px solid #f59e0b;border-radius:8px;font-size:16px;color:#fde68a;}
+.q-memory strong{color:#f59e0b;font-size:16px;display:block;margin-bottom:4px;}
+@media (max-width: 600px) {
+  .opt-inline{font-size:13px;padding:8px 11px;margin-left:18px;}
+  .q-memory{font-size:14px;padding:10px 12px;}
+  .q-memory strong{font-size:14px;}
+}
 
 .quiz-footer{
   position:fixed;bottom:0;left:0;right:0;z-index:100;
@@ -7820,51 +7834,40 @@ function selectOption(chosen) {
   var opts = document.querySelectorAll('#q-opts .q-opt');
   for (var i = 0; i < opts.length; i++) {
     var oi = parseInt(opts[i].getAttribute('data-idx'));
+    var origIdx = quizState.currentShuffle[oi];
     if (oi === shuffledCorrect) opts[i].classList.add('correct');
     else if (oi === chosen && !correct) opts[i].classList.add('wrong');
     else opts[i].classList.add('dimmed');
+    // ── INLINE explanation under each option (no click needed) ──
+    var origOptTxt = q.opts[origIdx] || '';
+    var isDontKnow = origOptTxt.toLowerCase().trim() === "don't know" || origOptTxt === 'わからない';
+    if (!isDontKnow) {
+      var inlineExp = '';
+      if (oi === shuffledCorrect) {
+        inlineExp = '<div class="opt-inline opt-correct"><strong>✓ 正解の根拠</strong>：' + renderMd(q.expl || q.exp || '正解です。') + '</div>';
+      } else if (q.we && q.we[origIdx] !== undefined && q.we[origIdx] !== '') {
+        inlineExp = '<div class="opt-inline opt-wrong-exp"><strong>✗ なぜ違うか</strong>：' + renderMd(q.we[origIdx]) + '</div>';
+      }
+      if (inlineExp) {
+        opts[i].insertAdjacentHTML('afterend', inlineExp);
+      }
+    }
   }
 
-  // 元の選択肢インデックスを取得してwrong explanationに使う
+  // 元の選択肢インデックスを取得（正答インデックスを expl 表示にも使う）
   var chosenOrigIdx = quizState.currentShuffle[chosen];
-  var explanation = q.expl || q.exp || '';
-  var fb = '<div class="q-exp"><strong>' + (correct ? '&#10004; Correct!' : '&#10008; Incorrect') + '</strong><br>' + renderMd(explanation) + '</div>';
-  if (!correct) {
-    // ユーザーが選んだ誤答の解説
-    var chosenLetter = String.fromCharCode(65 + chosen);
-    if (q.we && q.we[chosenOrigIdx] !== undefined) {
-      fb += '<div class="q-we"><strong>あなたの選択 (' + chosenLetter + ') が間違いの理由:</strong><br>' + renderMd(q.we[chosenOrigIdx]) + '</div>';
-    } else {
-      var origOptText = q.opts[chosenOrigIdx] || '';
-      if (origOptText.toLowerCase().trim() === "don't know" || origOptText === 'わからない') {
-        fb += '<div class="q-we" style="background:#1a2940;border-color:#64748b;"><strong>「わからない」を選択しました</strong><br>解説を読んで、正しい答えを覚えましょう。次回は自信を持って回答できるはずです。</div>';
-      } else {
-        fb += '<div class="q-we"><strong>あなたの選択 (' + chosenLetter + ') が間違いの理由:</strong><br>この選択肢は問題の核心とずれています。上の解説（正答の根拠）を見直して、なぜ正答が選ばれるのかを理解してください。</div>';
-      }
-    }
+  // フィードバック：判定 + 公式/覚えるべきこと（memory）
+  var verdict = correct ? '<span style="color:#10b981;">⭕ 正解</span>' : '<span style="color:#ef4444;">❌ 不正解</span>';
+  var fb = '<div class="q-exp"><strong style="font-size:22px;">' + verdict + '</strong></div>';
+  // 公式 / 覚えるべきこと (memory) があれば表示
+  if (q.memory) {
+    fb += '<div class="q-memory"><strong>📐 覚えるべき公式・概念</strong><br>' + renderMd(q.memory) + '</div>';
   }
-  // 全選択肢の徹底解説 (誤答時のみ展開可能なアコーディオン)
-  if (!correct && q.we) {
-    var allExpl = '';
-    for (var k = 0; k < q.opts.length; k++) {
-      var lt = String.fromCharCode(65 + quizState.currentShuffle.indexOf(k));
-      var optTxt = q.opts[k] || '';
-      var isAns = (k === q.ans);
-      if (isAns) continue; // skip correct (already shown above)
-      if (optTxt.toLowerCase().trim() === "don't know" || optTxt === 'わからない') continue;
-      if (k === chosenOrigIdx) continue; // already shown
-      if (q.we[k] !== undefined) {
-        allExpl += '<div style="margin:8px 0;padding:8px 12px;background:#0f1c2e;border-left:3px solid #64748b;border-radius:6px;">';
-        allExpl += '<strong style="color:#94a3b8;">' + lt + ') ' + renderMd(optTxt.substring(0, 50)) + (optTxt.length > 50 ? '…' : '') + '</strong><br>';
-        allExpl += '<span style="color:#cbd5e1;font-size:0.95em;">' + renderMd(q.we[k]) + '</span>';
-        allExpl += '</div>';
-      }
-    }
-    if (allExpl) {
-      fb += '<details style="margin-top:12px;background:#1a2940;border-radius:8px;padding:8px 12px;">';
-      fb += '<summary style="cursor:pointer;color:#f97316;font-weight:700;font-size:18px;">📖 他の誤答もすべて解説を見る</summary>';
-      fb += '<div style="margin-top:8px;">' + allExpl + '</div>';
-      fb += '</details>';
+  // 「わからない」を選んだ場合のみ追加メッセージ
+  if (!correct) {
+    var origOptText = q.opts[chosenOrigIdx] || '';
+    if (origOptText.toLowerCase().trim() === "don't know" || origOptText === 'わからない') {
+      fb += '<div class="q-we" style="background:#1a2940;border-color:#64748b;"><strong>「わからない」を選択しました</strong><br>各選択肢の下に解説を表示しました。次回は自信を持って回答できるよう、正解の根拠と誤答パターンを覚えましょう。</div>';
     }
   }
   // ── 1問ごとAI解説プロンプト生成ボタン (タップで即コピー) ──
@@ -21652,12 +21655,12 @@ var QUESTIONS_MOCK500_EXTRA = [
 QUESTIONS = QUESTIONS.concat(QUESTIONS_MOCK).concat(QUESTIONS_MOCK_FINAL).concat(QUESTIONS_SEMINAR).concat(QUESTIONS_ORIGINAL).concat(QUESTIONS_STUDENTWIKI_ENDTERM).concat(QUESTIONS_MOCK500).concat(QUESTIONS_GRAPH).concat(QUESTIONS_ORIGINAL_CALC).concat(QUESTIONS_MOCK500_EXTRA);
 // ===== Auto-tag calculation vs non-calculation questions =====
 (function autoTagCalc(){
-  var calcKeywords = ['calculate','Calculate','計算','compute','Compute','EOQ','reorder','ROP',
-    'safety stock','cycle stock','throughput','utilization','utilisation','efficiency',
-    'newsvendor','critical ratio','MTBF','MTTR','availability','reliability','failure rate',
-    'break-even','BEP','productivity','critical path','crash','cycle time','takt time',
-    'lead time','WIP','Little','pipeline','capacity','standard deviation','service level',
-    'OEE','Cpk','RPN','σ','√','×','÷','²','³'];
+  // Strong calc signals (formula symbols, explicit math operations in expl)
+  var strongSignals = ['√','×','÷','²','³','σ','σ_','µ','μ','Σ',
+    'EOQ','EBQ','ROP','MTBF','MTTR','Wq','DPMO','Cpk','RPN'];
+  // Words that suggest calc but need numeric support
+  var calcSupport = ['calculate','Calculate','compute','Compute','計算しなさい','求めなさい',
+    'how many','How many','what is the','What is the'];
   for(var i=0;i<QUESTIONS.length;i++){
     var q=QUESTIONS[i];
     if(q.isCalc!==undefined) continue;
@@ -21667,21 +21670,31 @@ QUESTIONS = QUESTIONS.concat(QUESTIONS_MOCK).concat(QUESTIONS_MOCK_FINAL).concat
     var optsText=Array.isArray(q.opts)?q.opts.join(' '):'';
     var combined=qtext+' '+optsText+' '+expl;
     var isCalc=false;
-    if(src.indexOf('Calc')>=0) isCalc=true;
-    if(!isCalc){
-      for(var k=0;k<calcKeywords.length;k++){
-        if(combined.indexOf(calcKeywords[k])>=0){ isCalc=true; break; }
-      }
+    // Strong signal: formula symbols
+    for(var k=0;k<strongSignals.length;k++){
+      if(combined.indexOf(strongSignals[k])>=0){ isCalc=true; break; }
     }
+    // Numeric formula in expl (=数字+/-/×/数字)
+    if(!isCalc && /=\s*[-+]?\d+(\.\d+)?\s*[\+\-×*÷\/]\s*\d/.test(expl)) isCalc=true;
+    // Question contains "what is the X" with numeric data in markdown bold (e.g., **D = 7300**)
+    if(!isCalc && /\*\*[A-Za-zα-ωΑ-Ω]+[\s_]*=\s*\d/.test(qtext)) isCalc=true;
+    // Calc support words AND numerical data in qtext
     if(!isCalc){
-      if(/=\s*\d+\s*[\+\-×*]/.test(expl)) isCalc=true;
+      var hasSupport=false;
+      for(var k=0;k<calcSupport.length;k++){
+        if(qtext.indexOf(calcSupport[k])>=0){ hasSupport=true; break; }
+      }
+      if(hasSupport && /\d[\d,]*\s*(units|kg|hours|days|minutes|seconds|%|€|\$|orders|customers)/.test(qtext)) isCalc=true;
     }
     q.isCalc=isCalc;
   }
   // Mark known broken questions (figure/process map referenced but no visual field)
   var brokenIds = [3030, 3051];
+  // Conceptual questions wrongly placed in CALC array — force noncalc
+  var conceptualInCalc = [4036, 4037, 4038, 4040];
   for(var i=0;i<QUESTIONS.length;i++){
     if(brokenIds.indexOf(QUESTIONS[i].id)>=0) QUESTIONS[i].broken=true;
+    if(conceptualInCalc.indexOf(QUESTIONS[i].id)>=0) QUESTIONS[i].isCalc=false;
   }
 })();
 
