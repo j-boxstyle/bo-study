@@ -655,6 +655,46 @@ a{color:#3b82f6;text-decoration:none;}
 }
 .verdict-banner .verdict-icon{font-size:64px;line-height:1;}
 .verdict-banner .verdict-text{letter-spacing:0.05em;}
+
+/* 不正解時：バナー直下の AI プロンプトコピーカード */
+.verdict-quick-copy{
+  margin:0 0 16px;padding:16px 20px;
+  background:linear-gradient(135deg,rgba(59,130,246,0.15) 0%,rgba(59,130,246,0.05) 100%);
+  border:2px solid #3b82f6;border-radius:12px;
+  animation: vqcSlideIn 0.5s ease-out;
+}
+.verdict-quick-copy .vqc-title{
+  font-size:18px;font-weight:800;color:#60a5fa;margin-bottom:10px;
+}
+.verdict-quick-copy .vqc-actions{
+  display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;
+}
+.vqc-btn-primary{
+  background:#3b82f6;color:#fff;border:none;padding:12px 22px;border-radius:10px;
+  font-size:16px;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 12px rgba(59,130,246,0.4);
+  flex:1;min-width:200px;
+}
+.vqc-btn-primary:hover{background:#2563eb;}
+.vqc-btn-secondary{
+  background:#1a2940;color:#60a5fa;border:1px solid #3b82f6;
+  padding:12px 18px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;
+}
+.verdict-quick-copy .vqc-hint{
+  color:#94a3b8;font-size:13px;
+}
+@keyframes vqcSlideIn {
+  0%{transform:translateY(-10px);opacity:0;}
+  100%{transform:translateY(0);opacity:1;}
+}
+@media (max-width: 600px) {
+  .verdict-quick-copy{padding:12px 14px;}
+  .verdict-quick-copy .vqc-title{font-size:15px;}
+  .vqc-btn-primary{padding:10px 16px;font-size:14px;min-width:0;width:100%;}
+  .vqc-btn-secondary{padding:10px 14px;font-size:13px;}
+  .verdict-quick-copy .vqc-hint{font-size:11px;}
+}
+
 .verdict-correct{
   background:linear-gradient(135deg,rgba(16,185,129,0.3) 0%,rgba(16,185,129,0.1) 100%);
   border-color:#10b981;color:#34d399;
@@ -8169,7 +8209,22 @@ function selectOption(chosen) {
   // 既存のバナーがあれば削除
   var oldBanner = quizActive.querySelector('.verdict-banner');
   if (oldBanner) oldBanner.remove();
+  var oldQuickCopy = quizActive.querySelector('.verdict-quick-copy');
+  if (oldQuickCopy) oldQuickCopy.remove();
   quizActive.insertBefore(topBanner, quizActive.firstChild);
+  // 不正解時はバナーのすぐ下にコピー用ボタンを差し込む
+  if (!correct) {
+    var quickCopy = document.createElement('div');
+    quickCopy.className = 'verdict-quick-copy';
+    quickCopy.innerHTML =
+      '<div class="vqc-title">🤖 この問題を AI に解説してもらう</div>' +
+      '<div class="vqc-actions">' +
+        '<button class="vqc-btn-primary" onclick="copySingleQPromptInline(' + idx + ', ' + chosen + ', false, this)">📋 プロンプトを即コピー</button>' +
+        '<button class="vqc-btn-secondary" onclick="showSingleQAIPrompt(' + idx + ', ' + chosen + ', false)">👁 プレビュー</button>' +
+      '</div>' +
+      '<div class="vqc-hint">タップ → クリップボードにコピー → Claude / ChatGPT に貼り付けて徹底解説を取得</div>';
+    topBanner.parentNode.insertBefore(quickCopy, topBanner.nextSibling);
+  }
   // バナーまでスクロール（画面上部）してフェードイン
   setTimeout(function(){ window.scrollTo({top:0, behavior:'smooth'}); }, 50);
 
