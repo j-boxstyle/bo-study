@@ -654,6 +654,23 @@ a{color:#3b82f6;text-decoration:none;}
 /* 公式・覚えるべきこと欄 */
 .q-memory{margin:10px 0;padding:14px 16px;background:rgba(245,158,11,0.08);border-left:4px solid #f59e0b;border-radius:8px;font-size:16px;color:#fde68a;}
 .q-memory strong{color:#f59e0b;font-size:16px;display:block;margin-bottom:4px;}
+/* トピック別の自動解説カード */
+.q-topic{margin:10px 0;padding:14px 16px;background:rgba(99,102,241,0.08);border-left:4px solid #6366f1;border-radius:8px;}
+.q-topic-title{font-size:16px;font-weight:700;color:#a5b4fc;margin-bottom:6px;}
+.q-topic-formula{font-size:15px;color:#cbd5e1;background:#0a1220;padding:8px 10px;border-radius:6px;margin:6px 0;font-family:'Courier New',monospace;}
+.q-topic-tips{font-size:14px;color:#cbd5e1;margin:6px 0;line-height:1.6;}
+.q-topic-mnemonic{font-size:14px;color:#fbbf24;margin:6px 0;}
+.q-topic-table{margin:8px 0;border-collapse:collapse;width:100%;font-size:13px;}
+.q-topic-table th{background:#1a2940;color:#a5b4fc;padding:6px 8px;border:1px solid #2d3a55;}
+.q-topic-table td{padding:6px 8px;border:1px solid #2d3a55;color:#cbd5e1;}
+.q-topic-related{font-size:13px;color:#94a3b8;margin-top:6px;}
+@media (max-width: 600px) {
+  .q-topic{padding:10px 12px;}
+  .q-topic-title{font-size:14px;}
+  .q-topic-formula{font-size:13px;}
+  .q-topic-tips,.q-topic-mnemonic{font-size:12px;}
+  .q-topic-table{font-size:11px;}
+}
 @media (max-width: 600px) {
   .opt-inline{font-size:13px;padding:8px 11px;margin-left:18px;}
   .q-memory{font-size:14px;padding:10px 12px;}
@@ -7862,6 +7879,30 @@ function selectOption(chosen) {
   // 公式 / 覚えるべきこと (memory) があれば表示
   if (q.memory) {
     fb += '<div class="q-memory"><strong>📐 覚えるべき公式・概念</strong><br>' + renderMd(q.memory) + '</div>';
+  }
+  // ── トピック別の自動解説（公式・覚え方・比較表）──
+  var topics = (typeof detectTopics === 'function') ? detectTopics(q) : [];
+  for (var t = 0; t < topics.length; t++) {
+    var tp = topics[t];
+    fb += '<div class="q-topic">';
+    fb += '<div class="q-topic-title">🎯 ' + tp.title + '</div>';
+    if (tp.formula) fb += '<div class="q-topic-formula"><strong>公式：</strong>' + tp.formula + '</div>';
+    if (tp.tips) fb += '<div class="q-topic-tips">' + renderMd(tp.tips) + '</div>';
+    if (tp.mnemonic) fb += '<div class="q-topic-mnemonic"><strong>🧠 覚え方：</strong>' + tp.mnemonic + '</div>';
+    if (tp.compare) {
+      fb += '<table class="q-topic-table"><tbody>';
+      for (var r = 0; r < tp.compare.length; r++) {
+        fb += (r === 0) ? '<tr>' : '<tr>';
+        var rowTag = (r === 0) ? 'th' : 'td';
+        for (var ci = 0; ci < tp.compare[r].length; ci++) {
+          fb += '<' + rowTag + '>' + tp.compare[r][ci] + '</' + rowTag + '>';
+        }
+        fb += '</tr>';
+      }
+      fb += '</tbody></table>';
+    }
+    if (tp.related) fb += '<div class="q-topic-related"><strong>関連：</strong>' + tp.related + '</div>';
+    fb += '</div>';
   }
   // 「わからない」を選んだ場合のみ追加メッセージ
   if (!correct) {
@@ -21653,6 +21694,527 @@ var QUESTIONS_MOCK500_EXTRA = [
 
 
 QUESTIONS = QUESTIONS.concat(QUESTIONS_MOCK).concat(QUESTIONS_MOCK_FINAL).concat(QUESTIONS_SEMINAR).concat(QUESTIONS_ORIGINAL).concat(QUESTIONS_STUDENTWIKI_ENDTERM).concat(QUESTIONS_MOCK500).concat(QUESTIONS_GRAPH).concat(QUESTIONS_ORIGINAL_CALC).concat(QUESTIONS_MOCK500_EXTRA);
+
+var TOPIC_TIPS = {
+  // ===== 戦略・パフォーマンス =====
+  '4vs': {
+    keywords:['four vs','4 vs','4vs','volume','variety','variation','visibility'],
+    title:'4Vs（Slack）',
+    formula:null,
+    tips:'4つの次元で各オペレーションを特徴づける枠組み。High Vol+Low Var+Low Variation+Low Vis → 低コスト型。逆 → 高品質・高単価サービス型。',
+    mnemonic:'V-V-V-V：Volume（量）・Variety（種類）・Variation（変動）・Visibility（可視性）',
+    compare:[['軸','High','Low'],['Volume','低コスト・標準化','柔軟・高コスト'],['Variety','種類多・柔軟','標準・効率'],['Variation','需要不安定','安定生産'],['Visibility','顧客接触・サービス','裏方・効率']],
+    related:'Process Types / Layout / Cost vs Quality'
+  },
+  'qsdfc': {
+    keywords:['quality','speed','dependability','flexibility','performance objective','5 performance'],
+    title:'5パフォーマンス目標 Q-S-D-F-C',
+    formula:null,
+    tips:'全オペレーションを測る共通のものさし。短期はトレードオフあり、長期は Lean 等で全て改善可能（Efficient Frontier の外側へ）。',
+    mnemonic:'Q-S-D-F-C：Quality・Speed・Dependability・Flexibility・Cost。「クス・ディ・フ・コ」',
+    compare:[['目標','外部効果','内部効果'],['Quality','顧客満足','不良削減・低コスト'],['Speed','短LT・即応','在庫削減'],['Dependability','信頼','計画安定'],['Flexibility','カスタマイズ','変化対応'],['Cost','低価格','利益拡大']],
+    related:'Trade-offs / Polar Diagram / Order-winning / Sandcone'
+  },
+  'ito': {
+    keywords:['input-transformation','ito model','transformed resource','transforming resource'],
+    title:'ITO モデル',
+    formula:null,
+    tips:'すべてのオペレーションは Input→Transformation→Output の構造。Inputには『変換される側（Materials/Information/Customers）』と『変換する側（Facilities/Staff）』の2種。',
+    mnemonic:'In→Trans→Out。変換される=MIC、変換する=FS',
+    compare:[['Transformed（変換される）','Transforming（変換する）'],['Materials（材料）','Facilities（設備）'],['Information（情報）','Staff（人材）'],['Customers（顧客）','—']],
+    related:'4Vs / Process Hierarchy / Front-Back office'
+  },
+  'order_winner': {
+    keywords:['order-winning','order winning','qualifier','qualifying','order-winner'],
+    title:'Order-winning / Qualifying',
+    formula:null,
+    tips:'Qualifier=最低条件（無いと土俵に乗れない）、Order-winner=勝つ決め手。閾値を超えた後はリニアに勝てる。市場セグメントごとに異なる。',
+    mnemonic:'Q=資格・OW=勝因。Q は閾値（pass/fail）、OW は比例（more=better）',
+    compare:[['要因','効果','例（プレミアム食品）'],['Qualifier','閾値満たすだけ','清潔・衛生'],['Order-winner','満たすほど勝つ','味・ブランド'],['Less-important','影響小','梱包スタイル']],
+    related:'Life Cycle / Market vs Resources / 5 Perf Objectives'
+  },
+  'hayes_wheelwright': {
+    keywords:['hayes','wheelwright','four stages','stage 1','stage 2','stage 3','stage 4'],
+    title:'Hayes & Wheelwright 4 Stages',
+    formula:null,
+    tips:'OMの戦略的成熟度を4段階で評価。Stage 4 = Externally Supportive = OM自体が競争優位の源泉。',
+    mnemonic:'1=Internal Neutrality、2=External Neutrality、3=Internally Supportive、4=Externally Supportive',
+    compare:[['Stage','意味'],['1','足を引っ張らない'],['2','業界平均'],['3','社内で良い評価'],['4','業界をリード']],
+    related:'I-S-D Strategy / Strategy Formulation'
+  },
+  'lifecycle': {
+    keywords:['life cycle','introduction','growth','maturity','decline','product life'],
+    title:'Product/Service Life Cycle',
+    formula:null,
+    tips:'導入→成長→成熟→衰退の4段階。各段階で Order-winner が変化する。',
+    mnemonic:'I-G-M-D：Intro=Flex、Growth=Quality/Speed、Maturity=Cost、Decline=Cost/Flex',
+    compare:[['段階','Order-winner','Process'],['Introduction','Flex/Quality','Job/Batch'],['Growth','Quality/Speed','Batch/Mass'],['Maturity','Cost','Mass'],['Decline','Cost/Flex','Mass/Job']],
+    related:'Process types / 4Vs / Order-winning'
+  },
+  'sandcone': {
+    keywords:['sandcone','ferdows','de meyer'],
+    title:'Sandcone Theory',
+    formula:null,
+    tips:'パフォーマンス改善には順序がある：Q→D→S→F→C。下を固めずに上を狙うと崩れる（砂山）。Cost は直接狙わず結果として下がる。',
+    mnemonic:'下から積む：Q(品質)→D(信頼)→S(速)→F(柔)→C(コスト)',
+    compare:null,
+    related:'Trade-offs / Efficient Frontier / Lean Continuous Improvement'
+  },
+  // ===== サプライ網・キャパシティ =====
+  'vertical': {
+    keywords:['vertical integration','upstream','downstream','outsourcing','offshoring'],
+    title:'垂直統合 / 外注',
+    formula:null,
+    tips:'Upstream（原料側）= Backward Integration、Downstream（顧客側）= Forward Integration。コア・コンピタンスは内製、それ以外は外注。',
+    mnemonic:'Up=後ろ(Backward)=原料、Down=前(Forward)=顧客',
+    compare:[['軸','In-house','Outsource'],['コスト','規模で安','変動費化'],['柔軟性','低','高'],['知識','蓄積','外部依存'],['Coreか','Yes','No']],
+    related:'Make or Buy / Supply Network / Pros and Cons'
+  },
+  'cap_timing': {
+    keywords:['capacity timing','lead capacity','lag capacity','smoothing'],
+    title:'Capacity Timing',
+    formula:null,
+    tips:'需要拡大に対するキャパ追加のタイミング3戦略。',
+    mnemonic:'Lead=先取り（過剰投資リスク）、Lag=後追い（機会損失）、Smoothing=在庫で吸収（中間）',
+    compare:[['戦略','タイミング','リスク'],['Lead','需要前','過剰投資'],['Lag','需要後','機会損失'],['Smoothing','在庫吸収','在庫コスト']],
+    related:'Capacity Planning / Break-even'
+  },
+  'break_even': {
+    keywords:['break-even','breakeven','bep'],
+    title:'Break-even Analysis',
+    formula:'BEP = FC ÷ (P − VC)',
+    tips:'固定費を回収できる最低販売量。多製品なら加重平均で計算。',
+    mnemonic:'FC を 単位貢献利益（P−VC） で割る',
+    compare:null,
+    related:'Capacity timing / EoS / Pricing'
+  },
+  'economies_scale': {
+    keywords:['economies of scale','diseconomies','eos'],
+    title:'Economies / Diseconomies of Scale',
+    formula:null,
+    tips:'規模拡大で単位コスト低下（EoS）→ ある点を超えると複雑性・物流・士気で逆増加（DoS）。U字カーブ。',
+    mnemonic:'規模 → 単位コスト は U字。EoS（前半）、DoS（後半）',
+    compare:[['原因','EoS（小→中）','DoS（中→大）'],['固定費分散','◎',''],['購買力','◎',''],['複雑性','','◎'],['通信遅延','','◎'],['士気低下','','◎']],
+    related:'Capacity Strategy / Vertical Integration'
+  },
+  // ===== プロセス =====
+  'process_types_m': {
+    keywords:['project','jobbing','batch','mass production','continuous','process types'],
+    title:'Manufacturing Process Types',
+    formula:null,
+    tips:'Vol↑ Var↓ の順に並ぶ5型。製品の Volume-Variety 位置でプロセス型が決まる（Product-Process Matrix）。',
+    mnemonic:'P-J-B-M-C：Project（極小Vol極大Var）→ Jobbing → Batch → Mass → Continuous（極大Vol極小Var）',
+    compare:[['型','Vol','Var','例'],['Project','極小','極大','特注ヨット'],['Jobbing','小','大','個別注文'],['Batch','中','中','季節限定'],['Mass','大','小','流れ作業'],['Continuous','極大','極小','液体大量生産']],
+    related:'Layout / Product-Process Matrix / 4Vs'
+  },
+  'layout': {
+    keywords:['layout','fixed-position','functional','cell','product layout'],
+    title:'Layout Types',
+    formula:null,
+    tips:'4つの基本型（+ Mixed）。Process Types と1対1対応。Vol-Var で選択。',
+    mnemonic:'F-F-C-P：Fixed（極小Vol）→ Functional → Cell → Product line（大Vol）',
+    compare:[['Layout','向き','例'],['Fixed','極小Vol極大Var','建設・造船'],['Functional','小Vol大Var','Job shop'],['Cell','中Vol中Var','セル生産（U字）'],['Product','大Vol小Var','流れ作業']],
+    related:'Process Types / Vol-Var Mapping'
+  },
+  'throughput': {
+    keywords:["little's law","little law","wip","throughput time","cycle time","throughput rate"],
+    title:'Throughput（Little の法則）',
+    formula:'WIP = TH × T ／ T = WIP ÷ TH ／ CT = 1 ÷ TH',
+    tips:'恒等式。どれか2つで残り1つが決まる。Lean は WIP↓ で T↓（Speed↑）を狙う。',
+    mnemonic:'WIP は『流れの量』、TH は『流速』、T は『通過時間』',
+    compare:null,
+    related:'Bottleneck / TOC / Lean WIP / Queuing'
+  },
+  'bottleneck': {
+    keywords:['bottleneck','toc','theory of constraints','critical resource'],
+    title:'Bottleneck / TOC',
+    formula:'System TP = 稼働時間 ÷ BN Cycle Time',
+    tips:'最遅工程＝制約。システムスループット = BN の処理能力。BN 以外の改善は意味なし（Goldratt の主張）。',
+    mnemonic:'1秒の BN短縮 = 1秒の全体短縮、1秒の他工程短縮 = 0',
+    compare:null,
+    related:'DBR / 5 Focusing Steps / Process Types'
+  },
+  'long_thin': {
+    keywords:['long-thin','short-fat','line balance'],
+    title:'Long-thin vs Short-fat',
+    formula:null,
+    tips:'ライン構成の2選択肢。Long=効率特化、Short=柔軟性特化。Lean は Short-fat 寄り（多能工＋セル）。',
+    mnemonic:'長く細く=分業効率、短く太く=柔軟並列',
+    compare:[['軸','Long-thin','Short-fat'],['効率','◎','中'],['柔軟性','低','◎'],['故障','全停止','部分停止'],['スキル','低','高']],
+    related:'Layout / Process Types / Lean'
+  },
+  // ===== Planning & Control =====
+  'push_pull': {
+    keywords:['push','pull','kanban','mrp'],
+    title:'Push vs Pull',
+    formula:null,
+    tips:'Push=計画駆動（MRPの代表）、Pull=後工程の引取り（Kanbanの代表）。Lean は Pull。',
+    mnemonic:'Push=押す（前から）、Pull=引く（後ろから）',
+    compare:[['軸','Push','Pull'],['起点','中央計画','下流要求'],['在庫','多','少'],['変動耐性','弱','強'],['代表','MRP','JIT/Kanban']],
+    related:'DBR / JIT / MTS-MTO'
+  },
+  'mts_mto': {
+    keywords:['make-to-stock','make-to-order','assemble-to-order','engineer-to-order','mts','mto','ato','eto'],
+    title:'MTS / ATO / MTO / ETO',
+    formula:null,
+    tips:'在庫を持つ位置（Decoupling Point）で決まる4戦略。MTS=完成品在庫、ATO=部品在庫、MTO=原料在庫、ETO=設計から。',
+    mnemonic:'下流ほど在庫多LT短（MTS最短）／上流ほど在庫少LT長（ETO最長）',
+    compare:[['戦略','在庫位置','LT','例'],['MTS','完成品','最短','通常品'],['ATO','部品','中','ギフトセット'],['MTO','原料','長','季節限定'],['ETO','なし','最長','特注']],
+    related:'Decoupling Point / P:D Ratio / Push-Pull'
+  },
+  'dbr': {
+    keywords:['drum-buffer-rope','drum buffer rope','dbr'],
+    title:'Drum-Buffer-Rope（DBR）',
+    formula:null,
+    tips:'TOC の運用手法。Drum=BNがリズム設定、Buffer=BN前の在庫、Rope=投入をBNに同期。',
+    mnemonic:'D=制約のリズム、B=制約前の予備、R=制約と投入の同期',
+    compare:null,
+    related:'Bottleneck / TOC / 5 Focusing Steps'
+  },
+  'capacity_3': {
+    keywords:['design capacity','effective capacity','actual capacity','utilization','utilisation','efficiency'],
+    title:'Capacity 3層（Design / Effective / Actual）',
+    formula:'U = Actual ÷ Design ／ η = Actual ÷ Effective ／ OEE = A × P × Q',
+    tips:'3レベルの容量。Design=理論最大、Effective=計画ロス引いた現実、Actual=実績。',
+    mnemonic:'Design ≥ Effective ≥ Actual。U と η は分母が違う',
+    compare:[['指標','分母','意味'],['Utilization','Design','理論最大に対する活用率'],['Efficiency','Effective','計画に対する達成率']],
+    related:'OEE / Process Variability / TPM'
+  },
+  'queuing': {
+    keywords:['queuing','queue','kingman','wq','m/m/1','utilization'],
+    title:'待ち行列（Queuing / Kingman）',
+    formula:'M/M/1: Wq = ρ ÷ (μ(1−ρ)) = λ ÷ (μ(μ−λ))<br>Kingman: Wq ≈ (Ca²+Cs²)/2 × ρ/(1−ρ) × Ts',
+    tips:'稼働率ρ→1で待ち時間が指数的に発散。変動（Ca²,Cs²）が高いと更に悪化。Lean はρを下げて Speed↑。',
+    mnemonic:'ρ・C²・Ts の3要素。ρ → 1 で「壁」',
+    compare:null,
+    related:'Lean & WIP / Capacity / Variability'
+  },
+  'sequencing': {
+    keywords:['fifo','lifo','sot','spt','edd','sequencing','priority'],
+    title:'Sequencing Rules',
+    formula:null,
+    tips:'FIFO=公平、SOT(SPT)=平均待ち最小、EDD=納期遵守最大、Priority=売上重視。目的で使い分け。',
+    mnemonic:'F=公平、S=平均最小、E=納期、P=売上',
+    compare:[['Rule','強み','例'],['FIFO','公平','オンライン注文'],['SOT/SPT','平均待ち最小','空港チェックイン'],['EDD','納期遵守','契約納品'],['Priority','売上守る','VIP対応']],
+    related:'Loading / Scheduling / Gantt'
+  },
+  'level_chase': {
+    keywords:['level capacity','chase demand','demand management','yield management'],
+    title:'Capacity Plans（Level/Chase/DM）',
+    formula:null,
+    tips:'需給ミスマッチへの3戦略。Level=生産一定（在庫変動）、Chase=生産変動（在庫低）、DM=需要を動かす（価格）。',
+    mnemonic:'L=供給安定・在庫変、C=供給変・在庫低、DM=需要を動かす',
+    compare:[['戦略','生産','在庫','向き'],['Level','安定','変動（積上）','保管可'],['Chase','変動','低','サービス'],['DM','安定','安定','価格弾力性高']],
+    related:'Yield Management / Demand Forecasting / Sandcone'
+  },
+  // ===== 在庫 =====
+  'eoq': {
+    keywords:['eoq','economic order quantity','optimal order'],
+    title:'EOQ（経済的発注量）',
+    formula:'EOQ = √(2DC₀ ÷ Cₕ)',
+    tips:'保管コストと発注コストのトレードオフ最小点。Lean では SMED で Co を下げて EOQ を小さくする。',
+    mnemonic:'『2 × 需要 × 発注費 ÷ 保管費 を √』。発注回数 = D ÷ Q',
+    compare:null,
+    related:'EBQ（生産時）/ Safety Stock / Holding vs Ordering'
+  },
+  'ebq': {
+    keywords:['ebq','economic batch','batch quantity','production rate'],
+    title:'EBQ（経済的バッチ量）',
+    formula:'EBQ = √(2DC₀ ÷ Cₕ·(1−d/p))',
+    tips:'生産中も在庫が消費されるので EOQ に (1−d/p) の補正。P→∞ なら EOQ と一致。',
+    mnemonic:'EOQ × √(1/(1−d/p)) → EBQ は EOQ より大きい',
+    compare:null,
+    related:'EOQ / Capacity'
+  },
+  'safety_stock': {
+    keywords:['safety stock','reorder point','reorder level','rop','rol','service level'],
+    title:'Safety Stock & Reorder Level',
+    formula:'SS = z·σ·√LT ／ ROL = d̄·LT + SS',
+    tips:'需要変動を吸収する予備。z値（Service Level）：90%→1.28、95%→1.65、99%→2.33。',
+    mnemonic:'SS = z × σ × √LT。√LT を忘れない',
+    compare:[['Service Level','z 値'],['90%','1.28'],['95%','1.65'],['99%','2.33']],
+    related:'EOQ / Pooling Effect / Demand Forecasting'
+  },
+  'newsvendor': {
+    keywords:['newsvendor','critical ratio','single-period','perishable'],
+    title:'Newsvendor Model',
+    formula:'CR = Cᵤ ÷ (Cᵤ + Cₒ) ／ Q* = μ + z(CR)·σ',
+    tips:'単一期間在庫（鮮魚・新聞・季節品）。Cᵤ=不足損(=p−c)、Cₒ=過剰損(=c−salvage)。',
+    mnemonic:'Cu/(Cu+Co) → Service Level → Q*。Cu>Co なら強気発注',
+    compare:null,
+    related:'Safety Stock / Service Level / Demand Forecast'
+  },
+  'inv_types': {
+    keywords:['inventory types','buffer stock','cycle stock','anticipation','pipeline'],
+    title:'Inventory Types',
+    formula:null,
+    tips:'4種：Buffer/Safety（変動吸収）、Cycle（バッチ生産）、Anticipation（季節予測）、Pipeline（輸送中）。',
+    mnemonic:'B-C-A-P：Buffer・Cycle・Anticipation・Pipeline',
+    compare:[['種類','目的','例'],['Buffer','変動吸収','予備在庫'],['Cycle','バッチ間','次焼成までの分'],['Anticipation','季節先取り','クリスマス前'],['Pipeline','輸送中','船積み中']],
+    related:'Holding Cost / Decoupling Point'
+  },
+  'abc': {
+    keywords:['abc classification','pareto','80/20'],
+    title:'ABC Classification（Pareto）',
+    formula:null,
+    tips:'品目金額の20%が在庫価値の80%を占める。A=厳密管理、C=ざっくり管理。',
+    mnemonic:'A=20%品目×80%価値、B=30%×15%、C=50%×5%',
+    compare:[['Class','% items','% value','管理'],['A','20%','80%','厳密'],['B','30%','15%','中'],['C','50%','5%','簡易']],
+    related:'Inventory Types / XYZ / MRP'
+  },
+  'mrp': {
+    keywords:['mrp','material requirements','bom','gross requirement','net requirement'],
+    title:'MRP（Material Requirements Planning）',
+    formula:'Net = Gross − OH − SR + SS ／ Release = Need − LT',
+    tips:'BOM × MPS で従属需要を計算。Push 型の代表。Independent demand には使えない。',
+    mnemonic:'NET = Gross − 在庫(OH) − 入荷予定(SR) + 安全在庫(SS)',
+    compare:null,
+    related:'Push vs Pull / BOM / Decoupling Point'
+  },
+  'pooling': {
+    keywords:['pooling effect','two-bin','three-bin','consolidation'],
+    title:'Pooling Effect',
+    formula:'統合後σ ≈ √(σ₁² + σ₂² + ...) < Σσᵢ',
+    tips:'在庫を集約すると分散の二乗和の√で減るので、必要安全在庫が減る（√N の法則）。',
+    mnemonic:'N倉庫を1つに統合 → σ は 1/√N に',
+    compare:null,
+    related:'Safety Stock / Demand Variability'
+  },
+  // ===== Lean =====
+  'wastes': {
+    keywords:['7 wastes','seven wastes','timwood','muda','non-value','non value'],
+    title:'7 Wastes（TIMWOOD / Muda）',
+    formula:null,
+    tips:'価値を生まない7種のムダ。最悪は Over-production（他のムダを連鎖的に生む）。',
+    mnemonic:'T-I-M-W-O-O-D：Transport / Inventory / Motion / Waiting / Over-production / Over-processing / Defects',
+    compare:[['記号','ムダ','例'],['T','Transport','倉庫往復'],['I','Inventory','過剰在庫'],['M','Motion','道具探し'],['W','Waiting','工程待ち'],['O','Over-production','売れない分（最悪）'],['O','Over-processing','過剰加工'],['D','Defects','焦げ・手直し']],
+    related:'3M（Mura/Muri）/ Lean House / VSM'
+  },
+  '3m': {
+    keywords:['muda','mura','muri','3m'],
+    title:'3M（Muda・Mura・Muri）',
+    formula:null,
+    tips:'Toyota の『排除すべき3つの M』。Mura（ばらつき）と Muri（過負荷）が Muda（無駄）を生む根本原因。Heijunka（平準化）で Mura・Muri を抑える。',
+    mnemonic:'M-M-M：Muda（無駄）・Mura（斑）・Muri（無理）',
+    compare:[['M','意味','対策'],['Muda','価値を生まない作業','7 wastes 除去'],['Mura','仕事量のばらつき','Heijunka（平準化）'],['Muri','人・設備過負荷','標準作業・容量管理']],
+    related:'7 Wastes / Heijunka / Lean House'
+  },
+  '5s': {
+    keywords:['5s','seiri','seiton','seiso','seiketsu','shitsuke','sort','set in order'],
+    title:'5S（職場の基礎）',
+    formula:null,
+    tips:'職場を整理・効率化する5段階。Lean House の土台。Sustain（習慣化）が最難関で、Lean 失敗の8割がここでつまずく。',
+    mnemonic:'S-S-S-S-S：Sort / Set in Order / Shine / Standardize / Sustain（整理・整頓・清掃・清潔・しつけ）',
+    compare:[['S','日本語','内容'],['Sort','整理','不要を捨てる（Red Tag）'],['Set in Order','整頓','配置・形跡管理'],['Shine','清掃','清潔保持＋点検'],['Standardize','清潔','3Sの標準化'],['Sustain','しつけ','習慣化']],
+    related:'Lean House / Visual Management / Kaizen'
+  },
+  'jit_kanban': {
+    keywords:['jit','just-in-time','kanban','jidoka','andon','heijunka'],
+    title:'JIT / Kanban',
+    formula:null,
+    tips:'必要な物を必要な時に必要なだけ。Kanban は Pull 信号。前提：低変動・小ロット・短LT・高品質（揃わないと崩壊）。',
+    mnemonic:'JIT の前提＝5S＋SMED＋Heijunka＋Jidoka。これら無しの JIT は危険',
+    compare:null,
+    related:'Pull / Lean House / SMED / Heijunka'
+  },
+  'smed': {
+    keywords:['smed','single-minute','setup time','changeover'],
+    title:'SMED（段取り短縮）',
+    formula:null,
+    tips:'段取り時間を10分未満に。Co低下→ EOQ小→小ロット可能→ Lean 実現。4手法：内/外分離→内→外変換→並列化→機構改善。',
+    mnemonic:'内/外分離 → 内→外 → 並列 → 機構改善',
+    compare:null,
+    related:'EOQ / JIT / Batch vs Continuous Flow'
+  },
+  'vsm': {
+    keywords:['value stream','vsm','value-added time'],
+    title:'VSM（Value Stream Mapping）',
+    formula:'η = Value-added Time ÷ Total Lead Time',
+    tips:'製品の全工程を1枚に図示。Value-added と Non-value-added を区別。多くの工場で VA = 1〜5% しかない（残りは全部ムダ）。',
+    mnemonic:'Current State → Future State の2枚で改善ターゲット',
+    compare:null,
+    related:'7 Wastes / Lean / Process Mapping'
+  },
+  'lean_house': {
+    keywords:['lean house','tps','toyota production'],
+    title:'Lean House（TPS構造）',
+    formula:null,
+    tips:'屋根=Q↑/C↓/LT↓、柱=JIT＋Jidoka、土台=Heijunka・Std Work・Kaizen・5S。全部揃って初めて機能。',
+    mnemonic:'屋根（目標）→ 柱（流れ＋自働化）→ 土台（基礎活動）',
+    compare:null,
+    related:'JIT / Jidoka / 5S / Kaizen / Heijunka'
+  },
+  'pdca': {
+    keywords:['pdca','deming','plan-do-check','plan do check act'],
+    title:'PDCA（Deming Cycle）',
+    formula:null,
+    tips:'Plan→Do→Check→Act の継続改善サイクル。Kaizen の原型。Check が省略されがちだが最重要。',
+    mnemonic:'P-D-C-A。螺旋的に上昇',
+    compare:null,
+    related:'Kaizen / Six Sigma DMAIC / SDCA'
+  },
+  'six_sigma': {
+    keywords:['six sigma','dmaic','dpmo','3.4 ppm'],
+    title:'Six Sigma & DMAIC',
+    formula:'DPMO = (不良数 ÷ 機会総数) × 10⁶',
+    tips:'統計的にばらつきを徹底削減。6σ=3.4PPM。DMAIC で進める。Lean とは別軸（Lean=流れ、SS=ばらつき）。',
+    mnemonic:'D-M-A-I-C：Define / Measure / Analyze / Improve / Control',
+    compare:[['σレベル','DPMO'],['3σ','66,810'],['4σ','6,210'],['5σ','233'],['6σ','3.4']],
+    related:'SPC / Six Sigma DMAIC / Lean Six Sigma'
+  },
+  'toc_5steps': {
+    keywords:['theory of constraints','5 focusing steps','goldratt','the goal'],
+    title:'TOC（Theory of Constraints）',
+    formula:null,
+    tips:'制約に集中投資すべき。5 Focusing Steps：①特定→②活用→③従属→④拡張→⑤次の制約。',
+    mnemonic:'Identify → Exploit → Subordinate → Elevate → Repeat',
+    compare:null,
+    related:'Bottleneck / DBR / Lean'
+  },
+  'kaizen_bpr': {
+    keywords:['kaizen','breakthrough','bpr','reengineering','continuous improvement'],
+    title:'Breakthrough vs Kaizen',
+    formula:null,
+    tips:'改善2タイプ。BPR=破壊的・大投資・低頻度／Kaizen=漸進・小投資・高頻度。両方必要。',
+    mnemonic:'BPR=Hammer の破壊、Kaizen=Toyota の継続',
+    compare:[['軸','BPR','Kaizen'],['性質','革新','漸進'],['頻度','数年','毎日'],['主導','経営層','現場'],['コスト','高','低']],
+    related:'PDCA / Red Queen / Lean'
+  },
+  'tpm_oee': {
+    keywords:['tpm','oee','overall equipment','maintenance'],
+    title:'TPM / OEE',
+    formula:'OEE = Availability × Performance × Quality',
+    tips:'設備総合効率。Lossの6種を全員参加で削減。自主保全＋計画保全＋Kaizen の3本柱。',
+    mnemonic:'A×P×Q の3指標。Loss 6種：故障・段替・空転・速度低下・不良・立上',
+    compare:null,
+    related:'Capacity 3層 / Lean / Reliability'
+  },
+  // ===== Quality =====
+  'spc': {
+    keywords:['spc','statistical process control','control chart','common cause','special cause'],
+    title:'SPC / Control Charts',
+    formula:'UCL = X̄̄ + A₂R̄ ／ LCL = X̄̄ − A₂R̄ ／ Cpk ≥ 1.33',
+    tips:'工程を統計的に管理。±3σ で 99.73%。Common cause（偶然）と Special cause（異常）を区別。',
+    mnemonic:'X̄-R チャート。±3σ 外れたら異常',
+    compare:null,
+    related:'Six Sigma / Cost of Quality / FMEA'
+  },
+  'fmea': {
+    keywords:['fmea','rpn','severity','occurrence','detection'],
+    title:'FMEA（RPN）',
+    formula:'RPN = Severity × Occurrence × Detection',
+    tips:'前向き分析（原因→結果）。各 1-10 → 最大1000。Severity は下げにくいので O・D で下げる。',
+    mnemonic:'S × O × D = RPN。RPN高い順に対策',
+    compare:[['軸','下げ方'],['Severity','設計変更（難しい）'],['Occurrence','予防（FMEA・Poka-Yoke）'],['Detection','検査強化']],
+    related:'FTA / Poka-Yoke / Risk 3階層'
+  },
+  'fta': {
+    keywords:['fta','fault tree','top event'],
+    title:'FTA（Fault Tree Analysis）',
+    formula:null,
+    tips:'後ろ向き分析（結果→原因）。AND/OR ゲートで木構造に展開。確率計算で原因の寄与を出す。',
+    mnemonic:'FMEAの逆方向：上から下（結果→原因）',
+    compare:[['手法','方向','使用'],['FMEA','原因→結果','設計時'],['FTA','結果→原因','事後分析']],
+    related:'FMEA / System Reliability / Risk Analysis'
+  },
+  'poka_yoke': {
+    keywords:['poka-yoke','poka yoke','mistake-proofing','jidoka'],
+    title:'Poka-Yoke',
+    formula:null,
+    tips:'ミスを物理的に不可能にする。検査ではなくミス発生自体を防ぐ。Lean House の土台。Jidoka と兄弟。',
+    mnemonic:'予防 ＞ 検知 ＞ 封じ込め。Poka-Yoke は予防の代表',
+    compare:null,
+    related:'Lean House / Risk 3階層 / Jidoka'
+  },
+  'cost_quality': {
+    keywords:['cost of quality','paf','prevention','appraisal','internal failure','external failure'],
+    title:'Cost of Quality（PAF）',
+    formula:null,
+    tips:'予防(P)＋評価(A)＝投資、内部失敗(IF)＋外部失敗(EF)＝損失。予防1$=失敗10$削減の経験則。',
+    mnemonic:'P-A-F：Prevention（予防）・Appraisal（評価）・Failure（内部/外部）',
+    compare:[['分類','内容','投資 or 損失'],['Prevention','訓練・設計','投資'],['Appraisal','検査','投資'],['Internal Failure','廃棄・手直し','損失'],['External Failure','返品・クレーム','損失']],
+    related:'SPC / Six Sigma / Lean Prevention'
+  },
+  '6dim': {
+    keywords:['6 quality dimensions','six dimensions','functionality','appearance','reliability','durability'],
+    title:'6 Quality Dimensions',
+    formula:null,
+    tips:'製品・サービス両方に適用できる6軸。サービス特有として Recovery と Contact が重要。',
+    mnemonic:'F-A-R-D-R-C：Functionality / Appearance / Reliability / Durability / Recovery / Contact',
+    compare:null,
+    related:'Gap Model / SERVQUAL'
+  },
+  'gap_model': {
+    keywords:['gap model','servqual','service quality gap'],
+    title:'Gap Model of Quality',
+    formula:null,
+    tips:'サービス品質の4ギャップ。①顧客期待↔経営認識、②認識↔仕様、③仕様↔提供、④提供↔広告。',
+    mnemonic:'Gap 1-2-3-4。期待 → 認識 → 仕様 → 提供 → 広告',
+    compare:[['Gap','ギャップ','例'],['1','顧客期待↔経営認識','市場リサーチ不足'],['2','認識↔仕様','マニュアル古い'],['3','仕様↔提供','訓練不足'],['4','提供↔広告','過剰約束']],
+    related:'6 Quality Dimensions / Service Quality'
+  },
+  'reliability': {
+    keywords:['mtbf','mttr','availability','failure rate','reliability','λ'],
+    title:'Reliability（信頼性）',
+    formula:'A = MTBF ÷ (MTBF + MTTR) ／ λ = 1 ÷ MTBF ／ R(t) = e^(−λt)',
+    tips:'MTBF=平均故障間隔、MTTR=平均修復時間。Availability は %表示。',
+    mnemonic:'A = 稼働時間 ÷ 全時間 = MTBF ÷ (MTBF+MTTR)',
+    compare:null,
+    related:'System Reliability / TPM / FMEA'
+  },
+  'sys_reliability': {
+    keywords:['system reliability','serial','parallel','redundancy','直列','並列'],
+    title:'System Reliability',
+    formula:'Serial: R = R₁·R₂·...·Rₙ ／ Parallel: R = 1 − (1−R₁)(1−R₂)...',
+    tips:'直列は弱い（全部の積）、並列は強い（冗長性で大幅向上）。重要系統は並列化。',
+    mnemonic:'直列＝積（弱い）、並列＝1から非信頼の積を引く（強い）',
+    compare:null,
+    related:'Reliability / FTA / Redundancy'
+  },
+  'cpm': {
+    keywords:['critical path','cpm','pert','project management'],
+    title:'CPM / PERT',
+    formula:'CPM: max(全経路長) ／ PERT: E = (a+4m+b)÷6, Var = ((b−a)÷6)²',
+    tips:'Critical Path=最長経路=プロジェクトLT。PERTは確率的版（楽観・最頻・悲観）。',
+    mnemonic:'CPM=最長、Slack=その作業の余裕、PERT=Beta分布',
+    compare:null,
+    related:'Crashing / Gantt / Project Management'
+  },
+  'crashing': {
+    keywords:['crashing','crash cost','cost slope','project shortening'],
+    title:'Crashing（短縮）',
+    formula:'Cost Slope = (Crash Cost − Normal Cost) ÷ (Normal Time − Crash Time)',
+    tips:'Critical Path上の作業に追加投入で短縮。Cost slope小さい順に短縮。短縮で他経路がCriticalになる可能性に注意。',
+    mnemonic:'CP上のみ意味あり。安い順に潰す',
+    compare:null,
+    related:'CPM / Project Management'
+  },
+  'risk3': {
+    keywords:['prevention','detection','containment','risk mitigation'],
+    title:'リスク軽減の3階層',
+    formula:null,
+    tips:'起こさない（予防・最安）→ 早く気付く（検知・中）→ 被害を抑える（封じ込め・最高コスト）。',
+    mnemonic:'予防 ＞ 検知 ＞ 封じ込め（上流ほど安い）',
+    compare:[['階層','コスト','例'],['Prevention','低','Poka-Yoke・FMEA'],['Detection','中','SPC・検査'],['Containment','高','リコール・隔離']],
+    related:'FMEA / Poka-Yoke / Cost of Quality'
+  }
+};
+
+
+// Topic detection from question text
+function detectTopics(q){
+  var text = ((q.q||"") + " " + (q.expl||q.exp||"")).toLowerCase();
+  var matched = [];
+  for (var key in TOPIC_TIPS){
+    var t = TOPIC_TIPS[key];
+    for (var i=0;i<t.keywords.length;i++){
+      if (text.indexOf(t.keywords[i].toLowerCase()) >= 0){ matched.push(t); break; }
+    }
+    if (matched.length >= 2) break; // limit to 2 topics
+  }
+  return matched;
+}
+
 // ===== Auto-tag calculation vs non-calculation questions =====
 (function autoTagCalc(){
   // Strong calc signals (formula symbols, explicit math operations in expl)
