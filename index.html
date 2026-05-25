@@ -7976,6 +7976,8 @@ function startQuiz(n) {
   document.getElementById('quiz-review').classList.add('hidden');
   document.getElementById('quiz-footer').classList.remove('show');
   renderQuestion();
+  // クイズ開始時にも必ず最上部から
+  window.scrollTo({top:0, behavior:'auto'});
 }
 
 function getSourceBadge(q) {
