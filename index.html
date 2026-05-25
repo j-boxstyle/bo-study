@@ -18581,7 +18581,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "EOQ = √(2·D·C₀ / Cₕ) = √(2 × 7300 × 40 / 2.50) = √(584,000 / 2.50) = √233,600 ≈ **483 kg**, rounded to 480. Orders per year = D / Q = 7300 / 483 ≈ **15.1 ≈ 15**.",
+    expl: "**EOQ = √(2DC₀/Cₕ) = √(2×7300×40÷2.5) = √233,600 ≈ 483 → 480kg**。発注回数 = D÷Q = 7300÷483 ≈ 15回／年。",
     we: [
       "",
       "Cₕ を 2.5 でなく 5 と置いた誤り。EOQ = √(2DC₀/Cₕ) の Cₕ を正確に。",
@@ -18590,7 +18590,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "EOQ 公式の『2』係数を忘れると √(DC₀/Cₕ) になり過小評価。",
       "復習：EOQ = √(2DC₀/Cₕ)、発注回数 = D÷Q"
     ],
-    memory: "EOQ = √(2DS/H) — square root of '2 demand setup over hold'. Order frequency = D÷Q.",
+    memory: "**EOQ = √(2DC₀/Cₕ)** ／ 『2かける需要かける発注費を保管費で割って√』。発注回数は D÷Q。",
   },
 
   // ───── Reorder Point + Safety Stock ─────
@@ -18606,7 +18606,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 2,
-    expl: "ROP = d·LT + z·σ·√LT = (25)(4) + (1.65)(6)(√4) = 100 + 1.65 × 6 × 2 = 100 + 19.8 ≈ **120 units**. The safety stock component is 20, NOT just z·σ (which forgets the √LT multiplier).",
+    expl: "**ROP = d·LT + z·σ·√LT = 25×4 + 1.65×6·√4 = 100 + 19.8 ≈ 120 units**。安全在庫 SS = z·σ·√LT（√LT を忘れがち）。",
     we: [
       "サイクル在庫だけ＝95%信頼性なし。安全在庫が抜けている。",
       "√LT を忘れている。SS = z·σ·√LT であり σ ではない。",
@@ -18615,7 +18615,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "LT を 3 日に勝手に縮めた誤り。所与の値を使う。",
       "公式：ROP = d·LT + z·σ·√LT。z 値：90%→1.28、95%→1.65、99%→2.33"
     ],
-    memory: "ROP = (daily × lead) + (z × sigma × √lead). 'Cycle + Safety, each scales differently with LT.'"
+    memory: "**ROP = d̄·LT + z·σ·√LT** ／ サイクル在庫＋安全在庫。z値：90%→1.28、95%→1.65、99%→2.33。"
   },
 
   // ───── Newsvendor ─────
@@ -18631,7 +18631,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "Cu (underage cost) = p − c = €3.50 − €1.00 = €2.50. Co (overage cost) = c − salvage = €1.00 − 0 = €1.00. **CR = Cu/(Cu+Co) = 2.50 / 3.50 = 0.714**. z-score for 0.71 from the standard normal table ≈ 0.55. **Q* = μ + z·σ = 200 + 0.55 × 40 ≈ 222**. (Note: 222 vs 223 depends on rounding the z value; the exam typically accepts either.)",
+    expl: "**Newsvendor**：Cᵤ = p−c = 3.5−1.0 = 2.5、Cₒ = c−salvage = 1.0。CR = Cᵤ/(Cᵤ+Cₒ) = 2.5/3.5 ≈ 0.714。z(0.714) ≈ 0.566。Q* = μ + z·σ = 200 + 0.566×40 ≈ 223。",
     we: [
       "",
       "Cᵤ と Cₒ を取り違えた。Cᵤ = 不足の損失（=p−c=2.5）、Cₒ = 過剰の損失（=c−s=1）。",
@@ -18640,7 +18640,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "CR を (p−c)/p で計算した誤り。Cᵤ/(Cᵤ+Cₒ) の正式公式を使う。",
       "公式：CR = Cᵤ/(Cᵤ+Cₒ)、Q* = μ + z(CR)·σ"
     ],
-    memory: "CR = Cu / (Cu + Co). Q* = μ + z(CR) × σ. 'When margin is high, leave the table set for more guests.'"
+    memory: "**Newsvendor**：CR = Cᵤ/(Cᵤ+Cₒ)、Q* = μ + z(CR)·σ。Cᵤ=不足損、Cₒ=過剰損。単一期間在庫の最適発注量。"
   },
 
   // ───── Capacity utilization ─────
@@ -18656,7 +18656,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Effective capacity** = 600 × (1 − 0.15) = **510 units/day**. **Utilization = Actual / Design = 460 / 600 = 76.7%**. **Efficiency = Actual / Effective = 460 / 510 = 90.2%**. Utilization compares to the maximum possible (design); efficiency compares to what was realistically achievable (effective).",
+    expl: "**Utilization = Actual÷Design = 460÷600 ≈ 76.7%**。Effective = Design·(1−ロス) = 600·0.85 = 510。**Efficiency = Actual÷Effective = 460÷510 ≈ 90.2%**。",
     we: [
       "",
       "Utilization と Efficiency は分母が違う。U の分母 = Design、η の分母 = Effective。",
@@ -18665,7 +18665,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "15% を分単位の数字と勘違いした誤り。15% × 600 = 90 を引いて 510 が Effective。",
       "公式：U = Actual/Design、η = Actual/Effective、Effective = Design·(1−ロス率)"
     ],
-    memory: "Utilization = ÷Design ('how full vs the absolute max'). Efficiency = ÷Effective ('how full vs what was realistic')."
+    memory: "**U = Actual÷Design**、**η = Actual÷Effective**、Effective = Design·(1−ロス率)。分母が違うことに注意。"
   },
 
   // ───── Queuing (W_q) ─────
@@ -18681,7 +18681,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "ρ = λ/μ = 18/20 = 0.9. Lq = ρ²/(1−ρ) = 0.81/0.1 = 8.1 customers in queue. Wq = Lq/λ = 8.1/18 = 0.45 hours = 27 minutes. The M/M/1 wait time grows non-linearly as ρ → 1. Correct answer is option B (27 min).",
+    expl: "**M/M/1**：ρ = λ÷μ = 18÷20 = 0.9。Wq = ρ÷(μ(1−ρ)) = 0.9÷(20·0.1) = 0.45時間 = 27分。または Wq = λ÷(μ·(μ−λ)) = 18÷(20·2) = 0.45時間。",
     we: [
       "",
       "1/(μ−λ) は系内滞留時間 W であり Wq ではない。Wq = λ/(μ(μ−λ))。",
@@ -18690,7 +18690,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "1/μ は平均サービス時間。待ち時間ではない。",
       "M/M/1：ρ = λ/μ、Wq = ρ/(μ(1−ρ)) = λ/(μ·(μ−λ))"
     ],
-    memory: "Lq = ρ²/(1−ρ) → 'rho-squared over one-minus-rho'. Wq = Lq/λ (Little's Law for queue alone).",
+    memory: "**M/M/1**：ρ = λ÷μ、**Wq = λ÷(μ(μ−λ))** = ρ÷(μ(1−ρ))。ρ→1 で待ち時間が指数的に発散（Kingman 効果）。",
     // NOTE: Correct answer is B, not A. Fix ans:
   },
 
@@ -18707,7 +18707,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "EBQ = √(2DS / [H·(1 − D/P)]) = √(2 × 9000 × 120 / [4 × (1 − 9000/30000)]) = √(2,160,000 / [4 × 0.7]) = √(2,160,000 / 2.8) = √771,429 ≈ **878**. Hmm, recomputing: 2160000/2.8 = 771428.57, √ ≈ 878.3. Closer to **878**. Let me redo: **(1 − 0.3) = 0.7**, so EBQ = √(2·9000·120 / (4·0.7)) = √(2,160,000/2.8) = √771,428 ≈ 878. (Note: the closest listed option B at ~821 is the intended answer if the exam used D/P = 0.2 or rounded differently.) **The key principle: include the (1 − D/P) factor — never ignore P.**",
+    expl: "**EBQ = √(2DC₀ ÷ Cₕ·(1−d/p))**。d/p = 9000÷30000 = 0.3。EBQ = √(2×9000×120 ÷ (4×0.7)) = √(2,160,000÷2.8) = √771,429 ≈ 878（選択肢では 821 が最も近い）。",
     we: [
       "",
       "P を無視すると EOQ になる。EBQ は (1 − d/p) の補正が必要。",
@@ -18716,7 +18716,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "P→∞ なら EOQ と同じ。だが P=30000 と有限。",
       "公式：EBQ = √(2DC₀ / Cₕ·(1−d/p))"
     ],
-    memory: "EBQ is EOQ adjusted for the fact that production is NOT instantaneous: divide H by (1 − D/P)."
+    memory: "**EBQ = √(2DC₀ ÷ Cₕ·(1−d/p))** ／ EOQ に (1−d/p) の補正を加えたもの。生産中も在庫が消費されることを考慮。"
   },
 
   // ───── MRP gross/net requirements ─────
@@ -18732,7 +18732,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Net = Gross − On-hand − Scheduled receipts + Safety stock = 400 − 120 − 80 + 30 = 230 units**. Safety stock is ADDED because we want to end the period with at least 30 units in reserve, not zero.",
+    expl: "**Net Requirement = Gross − On-hand − Scheduled Receipt + Safety Stock**。Net = 400 − 120 − 80 + 30 = **230 units**。SS は『下回ってはいけない最低ライン』なので足す。",
     we: [
       "",
       "安全在庫 30 を足し忘れた。Net = Gross − OH − SR + SS。",
@@ -18741,7 +18741,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "在庫 OH 120 を引き忘れた。",
       "公式：Net = Gross − OH − SR + SS"
     ],
-    memory: "Net req = Gross − (on-hand + sched receipts) + SS. 'Subtract what you have, add what you must keep.'"
+    memory: "**Net = Gross − OH − SR + SS** ／ 在庫と入荷予定は供給なので引く、SS は最低保持なので足す。"
   },
 
   // ───── Lead time offset ─────
@@ -18757,7 +18757,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "Planned order release date = Need date − Lead time = Week 10 − 3 = **Week 7**. This is the core MRP principle of **lead-time offsetting**: orders must be released far enough in advance that goods arrive when needed.",
+    expl: "**Planned Order Release = Need Date − Lead Time = Week 10 − 3 = Week 7**。3 週間前に発注すれば Week 10 に間に合う。",
     we: [
       "",
       "需要日に発注したら間に合わない。LT 分前倒し必要。",
@@ -18766,7 +18766,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "正しいが選択肢 0 と同じ。",
       "公式：Release Week = Need Week − Lead Time"
     ],
-    memory: "Release date = Need date − Lead time. 'To arrive on time, leave LT-many weeks early.'"
+    memory: "**Release = Need Date − LT** ／ MRP の Backward Scheduling の基本式。LT 分前倒し。"
   },
 
   // ───── Six Sigma / DPMO ─────
@@ -18782,7 +18782,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Opportunities = units × CTQs per unit = 80,000 × 150 = 12,000,000**. **DPMO = (defects / opportunities) × 1,000,000 = (300 / 12,000,000) × 1,000,000 = 25**. But wait: that gives 25, not 3,750. Let me re-check: yes, **DPMO = 25** if every defect is on a different CTQ. **However**, if a phone with multiple defects has them on different CTQs counted as separate opportunities, DPMO can stay around 25 — close to Six Sigma quality (3.4 DPMO). The correct option is **A: DPMO = 25**.",
+    expl: "**DPMO = (不良数 ÷ (機会数·CTQ)) × 10⁶** = (300 ÷ (80,000·150)) × 10⁶ = 25 → 6σ 級。本問では分母を CTQ 抜きで計算する誤答も含まれる。約 3.4 DPMO で 6σ、約 4000 DPMO で 4σ。",
     we: [
       "",
       "CTQ（製品1個あたりの機会数）を分母に掛け忘れた。",
@@ -18791,7 +18791,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "上と同じ 10⁵ 倍誤り。",
       "公式：DPMO = 不良数 ÷ (機会数·CTQ) × 10⁶。約 3.4 → 6σ、約 4000 → 4σ"
     ],
-    memory: "DPMO = D ÷ (Units × CTQs) × 1,000,000. '6 sigma = 3.4 DPMO' is the gold standard."
+    memory: "**DPMO = (不良数 ÷ 機会総数) × 10⁶** ／ Six Sigma の品質指標。3.4 PPM → 6σ。"
   },
 
   // ───── Reliability / Availability ─────
@@ -18807,7 +18807,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Availability = MTBF / (MTBF + MTTR) = 80 / (80 + 4) = 80 / 84 ≈ 0.9524 = 95.24%**. Higher MTBF (more reliable) or lower MTTR (faster repair) both improve availability.",
+    expl: "**Availability A = MTBF ÷ (MTBF + MTTR) = 80 ÷ (80 + 4) = 80÷84 ≈ 0.9524 ≈ 95.2%**。稼働可能時間 ÷ 総時間 が定義。",
     we: [
       "",
       "100%超えは物理的に不可能。分母が間違い。",
@@ -18816,7 +18816,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "近似式だが正確には MTBF/(MTBF+MTTR)。",
       "公式：A = MTBF ÷ (MTBF + MTTR)"
     ],
-    memory: "Availability = up / total = MTBF / (MTBF + MTTR). 'How much of total time the machine is RUNNING.'"
+    memory: "**A = MTBF ÷ (MTBF + MTTR)** ／ MTBF=平均故障間隔、MTTR=平均修復時間。λ = 1÷MTBF（故障率）。"
   },
 
   // ───── Critical Path ─────
@@ -18832,7 +18832,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Critical path = the LONGEST path through the network**, because it determines the minimum project duration. Comparing the three paths: A-B-D = 10, A-C-D = 9, **A-E = 11**. The critical path is **A-E** at **11 days**. All other paths have positive slack; A-E has zero slack.",
+    expl: "**Critical Path = 全経路の中で最長**。A-B-D = 10日、A-C-D = 9日、A-E = 11日 → **CP は A-E（11日）**。Critical Path がプロジェクト完了 LT を決める。",
     we: [
       "",
       "10 日は2番目に長い経路。CP は最長。",
@@ -18841,7 +18841,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "CP の定義は『最長』。最短は意味なし。",
       "覚え方：Critical Path = 全経路の中で最長。プロジェクト LT を決定。"
     ],
-    memory: "Critical Path = LONGEST path. 'Slowest chain link breaks the chain.' Project length = duration of CP."
+    memory: "**Critical Path = 最長経路** ／ プロジェクト LT を決定する制約。短縮するには CP 上の作業を Crash する。"
   },
 
   // ───── PERT three-point estimate ─────
@@ -18857,7 +18857,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Expected duration TE = (a + 4m + b) / 6 = (4 + 24 + 14) / 6 = 42/6 = 7 days**. **Variance σ² = ((b − a)/6)² = ((14 − 4)/6)² = (10/6)² = 2.78**. PERT assumes a beta distribution where the mean is weighted-average of the three estimates and variance reflects the spread.",
+    expl: "**PERT**：E(期待値) = (a+4m+b)÷6 = (4+24+14)÷6 = 7日。Variance = ((b−a)÷6)² = (10÷6)² ≈ 2.78。SD = (b−a)÷6。",
     we: [
       "",
       "単純平均 (a+m+b)/3 は PERT ではない。重み付け 1:4:1 が PERT。",
@@ -18866,7 +18866,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "正しいが選択肢 0 と同じ。",
       "公式：E = (a+4m+b)/6、Var = ((b−a)/6)²、SD = (b−a)/6"
     ],
-    memory: "PERT: TE = (a+4m+b)/6, σ² = ((b−a)/6)². 'Mean weighted 1:4:1, variance from range.'"
+    memory: "**E = (a+4m+b)÷6**、**Var = ((b−a)÷6)²** ／ 楽観・最頻・悲観の重み付け平均。Beta 分布が前提。"
   },
 
   // ───── Takt Time ─────
@@ -18882,9 +18882,9 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Calculation**: Available time = 2 shifts × (8h − 0.5h break) = 2 × 7.5h = 15h = 900 min = 54,000 sec. Takt = Available time / Demand = 54,000 / 180 = **300 sec/car (5 min/car)**. Takt sets the heartbeat — one car must come off every 5 min.",
+    expl: "**Takt Time = 稼働時間 ÷ 需要**。稼働時間 = 2シフト×8時間×3600 − 2×30分×60 = 57,600 − 3,600 = 54,000秒。Takt = 54,000 ÷ 180 = **300 秒/台**。",
     we: {"1": "320 = 16h × 3600 / 180 — forgot to subtract the 30-min breaks per shift.", "2": "240 sec uses 12h available time — neither matches gross (16h) nor net (15h).", "3": "200 = 60,000/300 multiplies demand by shifts (180×... wrong arithmetic). Takt = time / demand.", "4": "256 ≈ 16h × 3600 / 225 mixes forgotten breaks AND a wrong demand input."},
-    memory: "Takt = NET TIME / DEMAND. 'Heartbeat of the line — match customer rhythm.'"},
+    memory: "**Takt = 利用可能時間 ÷ 顧客需要** ／ 顧客が買うペースに生産を合わせる『心拍』。ライン設計の起点。"},
 
   // ───── Inventory Turnover ─────
   {
@@ -18899,7 +18899,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Turnover = COGS / Avg Inventory = 24,000,000 / 2,000,000 = 12 times per year**. **Days of inventory = 360 / Turnover = 360 / 12 = 30 days**. Interpretation: stock sells through completely 12 times a year, averaging 30 days of supply.",
+    expl: "**Inventory Turnover = COGS ÷ Avg Inventory = 24M ÷ 2M = 12回／年**。**Days of Inventory = 360 ÷ Turnover = 30 日**。Turnover と Days は逆数関係。",
     we: [
       "",
       "Turnover と Days は『360 ÷ もう一方』の関係。同じ数字にはならない。",
@@ -18908,7 +18908,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "正しいが重複。",
       "公式：Turnover = COGS ÷ 平均在庫、Days = 360 ÷ Turnover"
     ],
-    memory: "Turnover = COGS ÷ Inventory. Days = 360 ÷ Turnover. 'Faster turnover, fewer days on shelf.'"
+    memory: "**Turnover = COGS ÷ 平均在庫**、**Days = 360 ÷ Turnover** ／ 在庫がどれだけ早く回るか。"
   },
 
   // ───── Capacity utilization vs demand ─────
@@ -18924,7 +18924,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Max capacity = 200 rooms × 365 days = 73,000 room-nights/year**. **Occupancy = 56,000 / 73,000 = 76.7%**. Hotels use 365 days (not 360) because they operate every day of the calendar year.",
+    expl: "**Occupancy = 実泊室数 ÷ (室数 × 日数) = 56,000 ÷ (200 × 365) ≈ 76.7%**。ホテル業界は基本 365 日換算（360 日は会計用）。",
     we: [
       "",
       "正解の数値だが選択肢 0 が式付きで上。",
@@ -18933,7 +18933,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "日数で割らないと 1日平均稼働数になる。",
       "公式：Occupancy = 実泊室数 ÷ (室数 × 日数)"
     ],
-    memory: "Hotel occupancy = (sold nights) / (rooms × 365). Always 365 for hospitality/airlines."
+    memory: "**Occupancy = 実利用 ÷ 利用可能容量** ／ ホテル・航空・劇場などの容量稼働率。Yield Mgmt の前提。"
   },
 
   // ───── Inventory holding cost ─────
@@ -18949,7 +18949,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Annual holding cost = Average inventory × Unit cost × Holding rate = 400 × €50 × 0.22 = €4,400 per year**. The holding rate captures all costs of keeping inventory on the books for a year.",
+    expl: "**年間 Holding Cost = 平均在庫 × 単価 × 保持率 = 400 × 50 × 0.22 = €4,400／年**。資本コスト・保管・陳腐化を含む比率。",
     we: [
       "",
       "在庫数を忘れた。1 個分しか計算していない。",
@@ -18958,7 +18958,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "保持率を半分にした誤り。22%をそのまま使う。",
       "公式：年間保持コスト = 平均在庫 × 単価 × 保持率"
     ],
-    memory: "Holding $ = Avg Inv × Unit Cost × Holding Rate. 'Quantity × price × percent.'"
+    memory: "**HC = 平均在庫 × 単価 × 保持率(%)** ／ 一般に 20-30%/年。EOQ では H = 単価×保持率 として代入。"
   },
 
   // ───── Process flow rate, Little's Law ─────
@@ -18974,7 +18974,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Little's Law: L = λ × W**, so **W = L / λ = WIP / Throughput = 800 / 200 = 4 days**. The longer the WIP queue (relative to throughput), the longer each item takes to flow through. To reduce flow time: reduce WIP, increase throughput, or both.",
+    expl: "**Little の法則**：WIP = TH × T → T = WIP ÷ TH = 800 ÷ 200 = **4 日**。TH の単位（per day）に注意。",
     we: [
       "",
       "比が逆。WIP / TH が正解。",
@@ -18983,7 +18983,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "積は単位を取れない。",
       "公式：WIP = TH × T → T = WIP ÷ TH"
     ],
-    memory: "Little's Law: WIP = Throughput × Flow Time. Flow Time = WIP ÷ Throughput."
+    memory: "**WIP = TH × T** ／ Little の法則。3 変数の恒等式。Lean は WIP↓ → T↓ で Speed UP を狙う。"
   },
 
   // ───── Service level vs z-score ─────
@@ -18999,7 +18999,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "SS = z × σ_L. At 90% (z=1.28): SS = 1.28 × 50 = **64**. At 95% (z=1.65): SS = 1.65 × 50 = **82.5**. At 99% (z=2.33): SS = 2.33 × 50 = **116.5**. **Increase from 90% to 99% = (116.5 − 64) / 64 ≈ 0.82 = 82%**. Note: a 9-percentage-point higher service level requires 82% more safety stock — service levels above 95% get expensive quickly.",
+    expl: "**SS は z·σ に比例**。SS(90%) = 1.28×50 = 64、SS(99%) = 2.33×50 = 116.5。増加率 = (116.5−64)÷64 ≈ 82%。サービス水準を 9 ポイント上げただけで安全在庫が 82% 増加するのが重要な含意。",
     we: [
       "",
       "サービス水準ごとに z が変わるので SS も変わる。",
@@ -19008,7 +19008,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "SS は z 値に比例するのであって、% 数字には比例しない。",
       "公式：SS = z·σ·√LT。増加率 = (z新−z旧)/z旧"
     ],
-    memory: "SS = z × σ. Increment in service level ≠ proportional SS. 'Last % costs the most.'"
+    memory: "**SS = z·σ·√LT** ／ 99% にすると 90% より約 82% 多い在庫が必要。高サービス水準は高コスト。"
   },
 
   // ───── Cycle time / Bottleneck ─────
@@ -19024,7 +19024,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Bottleneck = the slowest step**, which is Step 4 at 6 min/unit. **System cycle time = bottleneck cycle time = 6 min/unit** (the whole process can't go faster than the slowest step). **Throughput = (8 × 60 min/shift) / 6 min/unit = 480/6 = 80 units per shift**.",
+    expl: "**Bottleneck = 最遅工程 = Step 4 (6分)**。System Cycle Time = 6分/個。8時間シフト = 480分。**Throughput = 480 ÷ 6 = 80個／シフト**。最遅工程がシステム能力を決定。",
     we: [
       "",
       "最遅工程が BN。Step 4 の 6 分が最遅。",
@@ -19033,7 +19033,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "8時間 = 480 分。480÷6 = 80。",
       "公式：BN = max(step times)、System TP = 稼働時間 ÷ BN CT"
     ],
-    memory: "Bottleneck rules cycle time. Throughput = Time available ÷ Bottleneck cycle time."
+    memory: "**BN = max(step times)**、**System TP = 稼働時間 ÷ BN CT** ／ TOC の中核。BN 以外の改善は意味なし。"
   },
 
   // ───── Layout: line balance ─────
@@ -19049,7 +19049,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Sum of task times = 2 + 4 + 3 + 5 + 4 = 18 min**. **Total available cycle time = N × C = 5 stations × 5 min = 25 min**. **Line efficiency = 18/25 = 0.72 = 72%**. The remaining 28% is idle time across stations (some stations finish before the cycle time and wait for the next unit).",
+    expl: "**Line Efficiency = Σタスク時間 ÷ (N·Takt) = (2+4+3+5+4) ÷ (5×5) = 18÷25 = 72%**。残り 28% は各ステーションのアイドル時間。",
     we: [
       "",
       "Takt と作業時間が違うのでアイドル時間あり。100% にはならない。",
@@ -19058,7 +19058,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "正しいが重複。",
       "公式：η = Σ(タスク時間) ÷ (ステーション数 × Takt time)"
     ],
-    memory: "Line efficiency = total task time / (stations × cycle). 'How busy is each station on average?'"
+    memory: "**η = Σタスク ÷ (ステーション数 × Takt)** ／ Line Balancing の指標。アイドル時間を測る。"
   },
 
   // ───── Sandcone interpretation ─────
@@ -19074,7 +19074,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Sandcone Model**: improvements must be made in a specific order — **Quality → Dependability → Speed → Cost**. Quality is the BROAD foundation; without it, gains in dependability and speed will collapse. Even though Quality currently scores LOWEST (4), that's exactly why it's the priority — it's the foundation that limits all others. (Note: some interpretations focus on absolute scores; the conceptual order remains: Quality first.)",
+    expl: "**Sandcone Theory**（Ferdows & De Meyer 1990）：品質を最初の土台として積み上げる。順序：**Q → D → S → F → C**。Q=4 で最低なので **Quality を最優先**。下を固めずに上を狙うと崩れる（砂山のように）。",
     we: [
       "",
       "Cost は頂上。底（Q）を固めずに上を狙うと崩れる。",
@@ -19083,7 +19083,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "予算分散は Sandcone の主張と逆。集中投資すべき。",
       "Sandcone 順序：Q → D → S → F → C（下から積む）"
     ],
-    memory: "Sandcone: Quality → Dependability → Speed → Cost. 'Q-D-S-C, foundation upward.'"
+    memory: "**Sandcone：Q → D → S → F → C** ／ 下から積み上げる。Cost は直接狙わず結果としてついてくる。"
   },
 
   // ───── Process Type: Volume-Variety positioning ─────
@@ -19099,7 +19099,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**(I) Yachts** = ultra-low volume, ultra-high variety, immobile product → **Project**. **(II) Hospital meals** = high volume, low variety (4 options) → **Batch / Mass production**. **(III) Coca-Cola** = ultra-high volume, single product, continuous flow (24/7 lines) → **Continuous process**. Volume-variety axis: Project → Jobbing → Batch → Mass → Continuous.",
+    expl: "**Process Types マッピング**：I=ヨット 5/年 → **Project**（極小 Vol・極大 Var・1点物）、II=病院食 5000/日・4種 → **Batch/Mass**（中量・少種類）、III=Coca-Cola 100万/日 → **Continuous**（極大 Vol・液体大量生産）。",
     we: [
       "",
       "I のヨット 5 隻/年は Project の典型（1点物）。Jobbing は数十単位。",
@@ -19108,7 +19108,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Coca-Cola 100万本/日は完全に Continuous（液体大量）。",
       "Vol-Var 軸：Project < Jobbing < Batch < Mass < Continuous"
     ],
-    memory: "Volume↑, Variety↓: Project → Jobbing → Batch → Mass → Continuous. 'PJB-MC.'"
+    memory: "**5型（Vol↑ Var↓ 順）：Project → Jobbing → Batch → Mass → Continuous** ／ Volume-Variety ポジションで選ぶ。"
   },
 
   // ───── Process Type: 4Vs decision ─────
@@ -19124,7 +19124,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "Slack's 4Vs framework: to MINIMIZE unit cost, push all 4 Vs toward the cost-efficient direction. **Volume ↑** (economies of scale), **Variety ↓** (standardization), **Variation ↓** (level production), **Visibility ↓** (back-office automation, less customer contact). This is the McDonald's / drive-thru model.",
+    expl: "**コスト最小化の 4Vs**：High Volume・Low Variety・Low Variation・Low Visibility。標準化された大量生産＋裏方処理が最もコスト効率良い。Starbucks（High Vis）はサービス品質重視なので High Vis でコスト高。",
     we: [
       "",
       "完全カスタムは最高コスト。コスト最小化と逆。",
@@ -19133,7 +19133,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Low Vis と高接客は矛盾。",
       "原則：High V/Low Var/Low Variation/Low Vis ⇒ 最低コスト"
     ],
-    memory: "Low unit cost = HIGH volume, LOW variety/variation/visibility. 'One up, three down.'"
+    memory: "**Low Cost 戦略 = High Vol + Low Var + Low Variation + Low Vis** ／ Volume↑ Variety↓ で規模の経済。"
   },
 
   // ───── Inventory turnover -> Free up capital ─────
@@ -19149,7 +19149,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**Average Inventory = COGS / Turnover**. At turnover 6: Inv = 36/6 = **€6M**. At turnover 9: Inv = 36/9 = **€4M**. **Decrease = €6M − €4M = €2M of released working capital**. This is the financial impact of operational improvement — money formerly tied up in stock can be invested elsewhere.",
+    expl: "**Avg Inventory = COGS ÷ Turnover**。改善前：36M÷6 = €6M。改善後：36M÷9 = €4M。**解放される運転資本 = 6M − 4M = €2M**。COGS は不変。",
     we: [
       "",
       "計算違い。36/6−36/9 = 6−4 = 2M。",
@@ -19158,7 +19158,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "COGS 変えずに Turnover 上げる＝在庫を減らす。",
       "公式：Avg.Inv = COGS ÷ Turnover"
     ],
-    memory: "Avg Inv = COGS / Turnover. Capital freed = COGS × (1/T_old − 1/T_new)."
+    memory: "**Avg Inv = COGS ÷ Turnover** ／ Turnover↑ で運転資本が解放される。Lean の経営効果。"
   },
 
   // ───── BPR vs Kaizen choice ─────
@@ -19174,7 +19174,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "Don't know"
     ],
     ans: 0,
-    expl: "**BPR (Business Process Reengineering)**: radical, top-down, clean-slate redesign. Suited when the current process is fundamentally broken (Company A). **Kaizen**: continuous, bottom-up, small incremental improvements. Suited when the process is fundamentally sound and just needs polish (Company B). The two approaches are complementary, not competing.",
+    expl: "**BPR vs Kaizen**：A=根本的に壊れたプロセス → **BPR（破壊的再設計）**。B=小さな摩擦の継続的問題 → **Kaizen（漸進的改善）**。両者は補完的だが、状況が異なる。",
     we: [
       "",
       "壊れたプロセスを徐々に直しても無理。再設計が必要。",
@@ -19183,7 +19183,7 @@ var QUESTIONS_ORIGINAL_CALC = [
       "原則は同じだが、文化変革の話は別軸。",
       "BPR：根本破壊・再設計。Kaizen：継続的小改善。"
     ],
-    memory: "BPR (radical surgery) for broken process. Kaizen (gradual polish) for healthy process. 'Surgery vs. exercise.'"
+    memory: "**BPR = 破壊的再設計（一気）**、**Kaizen = 継続的小改善（毎日）** ／ Hammer vs Toyota の対照。"
   }
 ];
 
