@@ -1148,8 +1148,8 @@ const CONCEPTS = [
 
 /* ============ WEEK 7 — Ch 15,16：Lean ============ */
 {id:"w7_lean", w:7, ch:"Ch15", group:"Lean Basics", name:"Lean & 7 Wastes (TIMWOOD)",
- def:"流れを止めずムダを徹底排除する思想。TIMWOOD=Transport/Inventory/Motion/Waiting/Over-production/Over-processing/Defects。",
- example:"De Gouden Wafel工場：Transport=倉庫遠い、Inventory=過剰在庫、Motion=道具探し、Waiting=焼成待ち、Over-prod=売れない分焼く、Over-proc=過剰デコ、Defects=焦げ品。",
+ def:"Toyota Production System（TPS）に由来する経営思想。『顧客価値を生まない作業＝Muda（無駄）を徹底的に排除する』が核心。5原則：①顧客視点の Value 定義、② Value Stream の可視化、③ Flow（流れ）の確立、④ Pull（後工程からの引き）、⑤ Perfection（完璧追求）。Muda の代表分類が 7 wastes（TIMWOOD）。最も悪いのは Over-production（売れないものを作る）— 在庫・運搬・検査など他のムダを連鎖的に生む元凶。在庫を『水位』に例え、水位を下げると岩（=問題）が見える、というメタファーが有名。",
+ example:"De Gouden Wafel工場で発見した7つのムダ：Transport=原料を100m離れた倉庫から運ぶ、Inventory=売れない3か月分のシロップ滞留、Motion=作業者が道具を毎回探す（年間60時間ロス）、Waiting=焼成待ちで充填工程が遊休、Over-production=売れない味を在庫予測で焼成（最悪のムダ）、Over-processing=Albert Heijn 用なのに過剰なギフト包装、Defects=焦げ品の再焼成（人件費+材料費の二重ロス）。",
  visual:"compare",
  cmpTable:[["記号","ムダ","例"],
    ["T","Transport","遠隔倉庫往復"],
@@ -1163,30 +1163,30 @@ const CONCEPTS = [
  related:["w7_jit","w7_vsm","w2_thr_eff"]},
 
 {id:"w7_jit", w:7, ch:"Ch15", group:"Lean Basics", name:"JIT, Kanban & Lean Tools",
- def:"JIT=必要な物を必要な時に必要な量だけ。Kanban=Pull信号カード。5S、SMED、Poka-Yoke なども含む。",
- example:"De Gouden Wafel：シロップタンクが半分→自動Kanban信号でサプライヤー発注。在庫は2日分のみ。",
+ def:"JIT（Just-In-Time）=『必要な物を、必要な時に、必要な量だけ』作り届ける思想。Lean の核心メカニズム。Kanban（看板）はその情報伝達道具で、後工程が前工程に『これを補充して』と引く Pull の物理的信号（カード／カンバン）。Lean Tools の全体系には 5S（職場整備）・SMED（段取り短縮）・Poka-Yoke（ミス防止）・Andon（異常停止）・Heijunka（平準化）・Jidoka（自働化）などが含まれる。前提条件：低変動・小ロット・短LT・高品質。これらが揃わないと JIT は機能しない。",
+ example:"De Gouden Wafel：シロップタンクが半分になると自動 Kanban信号がサプライヤーへ→2時間以内に補充。在庫は常に2日分のみ。原料の発注書は不要、看板（実物の容器の往復）が信号。直営カフェも同じ：抹茶味の在庫が3個になったら自動でバックヤード焼成開始。需要に同期した呼吸する工場。",
  visual:"flow",
  flow:["顧客需要","→ Kanban信号","→ 後工程の作動","→ 前工程の補充"],
  memorize:["Pull型の代表","JIT+Jidoka=TPSの2本柱","次のLean Houseで全体像"],
  related:["w3_push_pull","w7_lean_house","w7_lean_wip","w6_mrp"]},
 
 {id:"w7_lean_wip", w:7, ch:"Ch15", group:"Lean Basics", name:"Lean & WIP",
- def:"Little's Law：WIP=TH×T。WIPを下げると Throughput Time が短くなる。ただし変動が大きいと欠品。",
- example:"De Gouden Wafel：WIP=200箱→100箱に減らすと、TT が4時間→2時間に短縮。ただし焼成変動を Lean で抑える必要。",
+ def:"Lean が WIP（仕掛在庫）削減を目指す理由：Little's Law（WIP=TH×T）から、TH 一定なら WIP↓⇒ Throughput Time↓ → Speed↑。さらに WIP が少ないと不良発見が早く、品質も上がる。ただし Kingman の式 Wq ≈ (Ca²+Cs²)/2 × U/(1−U) × Ts より、変動（C²）と稼働率（U）が高いと待ちが指数的に増えるので、WIP を下げるには『変動を抑える』と『稼働率を 100% にしない』ことが前提。これが Heijunka（平準化）と意図的なゆとり保持の理由。",
+ example:"De Gouden Wafel焼成ライン：WIP=200箱→100箱に削減すると Throughput Time が 4時間→2時間に短縮（Little's Law）。ただし焼成時間のばらつきが大きいまま WIP を半分にすると、欠品リスク急増。先に SMED で段取り変動を抑え、5S で作業ばらつきを抑え、Jidoka で異常を即発見してから初めて WIP を下げられる。",
  formula:"WIP = Throughput × Throughput Time<br>低WIPを成立させる ⇒ 変動を下げる必要",
  memorize:["WIP↓ → Speed↑","ただしVariability低が前提","Kingmanの式（Variability×Util）に繋がる"],
  related:["w2_throughput","w2_var_util","w7_lean","w3_queuing"]},
 
 {id:"w7_vsm", w:7, ch:"Ch15", group:"Lean Basics", name:"Value Stream Mapping",
- def:"製品の流れを Current State→Future State で図示。Value-added と Non-value-added を区別。",
- example:"De Gouden Wafel：原料受入→保管(2日待)→計量→混合→焼成→冷却(1日)→出荷。VA=工程時間20分／Total=72時間 → η≈0.5%。",
+ def:"製品が原料→顧客まで届く『物と情報の流れ全体』を1枚に可視化する Lean の最重要ツール。Toyota の手法を Womack & Jones が体系化。各工程ボックスにサイクルタイム・段取り時間・稼働率・WIP・歩留りを記載。工程間は Push（→）か Pull（◯）かで線種を区別。Current State（現状）と Future State（理想）の2枚を作り差分を改善ターゲットに。Value-added Time（顧客が対価を払う加工時間）と Non-value-added Time（待ち・搬送・検査）を分けると、多くの工場で VA は全体の 1〜5% 程度しかなく、残り 95% 超がムダ＝改善余地と判明する。",
+ example:"De Gouden Wafel の Current State VSM：原料受入→保管(2日待)→計量(3分)→混合(15分)→寝かせ(60分)→焼成(8分)→冷却(24時間)→包装(2分)→出荷待ち(48時間)。Total Lead Time=4.3日、Value-added=28分 → η ≈ 0.45%。Future State：寝かせ連続化＋強制冷却で Total 8時間／VA 28分 → η ≈ 5.8%（13倍改善）。",
  formula:"η = Value-added Time / Total Lead Time",
  memorize:["Current → Future","Process Mapping の進化版","Lean改善の最重要ツール"],
  related:["w2_proc_map","w2_thr_eff","w7_lean"]},
 
 {id:"w7_batch_flow", w:7, ch:"Ch15", group:"Lean Basics", name:"Batch vs Continuous Flow",
- def:"Batch=ロット単位で工程移動（待ち多）。Continuous=1個流し（待ち最小）。",
- example:"De Gouden Wafel：旧来 50個バッチで工程間移動→全部終わるまで次工程待ち。1個流しに変えると Throughput Time が1/10。",
+ def:"Batch Flow（バッチ流れ）= 一定ロット数まとめて工程間移動する従来方式。前工程が全部完了するまで後工程は待機する。Continuous Flow / One-Piece Flow（1個流し）= 1単位ずつ次工程へ渡す Lean の理想形。数学：ロットサイズ N・工程数 k の場合、Batch の Throughput Time ≈ N × Σ(cycle time)、One-Piece は ≈ Σ(cycle) + (N−1) × max(cycle) — 工程数 k が増えるほど差が拡大。ただし One-Piece Flow の前提：SMED で段取り短縮、工程バランス（Takt time 同期）、低不良率。",
+ example:"De Gouden Wafel：焼成→充填→冷却→包装 の4工程、各5分／個、ロット50個。Batch Flow なら 50×5×4=1000分（16.7時間）。1個流しに変更すると、最初の1個は4×5=20分、最後の1個は20+49×5=265分（4.4時間）。Throughput Time は約 1/4 に短縮。さらに Batch では1個目の不良は50個全部焼いた後に判明（手戻り50個）、1個流しなら即発見で手戻り1個のみ。",
  visual:"compare",
  cmpTable:[["軸","Batch","Continuous Flow"],
    ["移動単位","ロット","1個"],
@@ -1206,22 +1206,22 @@ const CONCEPTS = [
  related:["w7_lean_house","w7_lean","w7_smed"]},
 
 {id:"w7_smed", w:7, ch:"Ch15", group:"Lean Basics", name:"SMED — 段取り短縮 4手法",
- def:"Single-Minute Exchange of Dies。①内・外段取り分離、②内→外変換、③並列化、④機構改善。",
- example:"De Gouden Wafelフレーバー切替：従来30分→外段取り（次品準備）と並列化で7分に短縮。EOQも自動的に減少。",
+ def:"Single-Minute Exchange of Dies（10分未満で金型交換）— Shigeo Shingo が Toyota で開発した段取り時間短縮の技法。Lean 実現の最重要技術。段取り時間が長いと EOQ（経済的発注量）が大きくなり大ロット生産＝在庫増・流れ阻害になる。SMED で段取り時間が劇的に短縮（典型的に 90%減）すると、小ロット生産が経済的になり、JIT・1個流しが可能になる。手法：①内段取り（機械停止中の作業）と外段取り（稼働中にできる作業）を区別、②内→外への変換、③両方の並列実行、④機構改善（クランプの簡素化、ワンタッチ化）。",
+ example:"De Gouden Wafel のフレーバー切替（プレーン→抹茶）：旧来 30分（オーブン停止→金型交換→温度再調整→試焼き）。SMED 適用後：①次の抹茶生地・型を稼働中に外段取りで準備、②試焼き条件を事前計算で内→外へ移管、③2人で並列に金型交換と温度設定、④ワンタッチ式金型ロックに改造 → 7分に短縮。結果として EOQ が 500個→100個に減少、小ロット高頻度生産が可能に。",
  visual:"flow",
  flow:["①内/外段取り分離","②内→外変換","③並列化","④機構改善"],
  memorize:["4段階で短縮","Co低下→EOQ低下→Lean可能","Batch→Flow の鍵"],
  related:["w6_eoq","w7_batch_flow","w7_lean"]},
 
 {id:"w7_red_queen", w:7, ch:"Ch15", group:"Lean Basics", name:"Red Queen Effect",
- def:"競合も改善するので、自社も改善し続けないと相対的に後退する。『同じ場所にいるために全力で走る必要がある』。",
- example:"De Gouden Wafel：競合A社も Lean 化→自社も毎年5%改善しないと市場シェア低下。",
+ def:"『鏡の国のアリス』の赤の女王の言葉『同じ場所にいるためには全力で走り続けなければならない』に由来する経営概念。市場での競争は相対的なので、競合が改善し続ける限り自社の改善が止まれば相対的に後退する。Lean を『一度導入したら終わり』ではなく『継続的改善（Kaizen）が文化として根付くべき』理由。Lean Strategy における Dynamic Capability の前提。",
+ example:"De Gouden Wafel：競合 A社（Hema）も Lean 導入し年8%生産性改善中。自社が現状維持なら3年でコスト競争力で20%劣位に。だから毎年最低5%改善目標を全社で設定し、月次 Kaizen 会議で進捗チェック。改善が止まった瞬間、市場シェアの侵食が始まる。",
  memorize:["停滞=後退","継続的Kaizenが必要","Strategy の Dynamic capabilityと繋がる"],
  related:["w7_lean","w1_strategy"]},
 
 {id:"w7_lean_house", w:7, ch:"Ch15", group:"Lean Basics", name:"Lean House — TPS構造",
- def:"屋根=高品質低コスト短LT。柱=JIT＋Jidoka。土台=Heijunka・Standardized Work・Kaizen・5S。",
- example:"De Gouden Wafel：屋根=プレミアム品質維持＋コスト最適、柱=JIT発注＋Jidokaセンサー、土台=週次平準化・5S。",
+ def:"Toyota Production System の全体構造を『家』のメタファーで表現したフレーム。屋根（目標）＝最高品質・最低コスト・最短LT。2本の柱＝JIT（流れ）と Jidoka（自働化＝異常時に自動停止して人を呼ぶ）。土台（基礎活動）＝Heijunka（生産平準化）・Standardized Work（標準作業）・Kaizen（継続改善）・5S。中心に『人尊重（Respect for People）』。柱だけ・土台だけ・屋根だけ導入は崩壊する。全要素揃って初めて機能するという思想。",
+ example:"De Gouden Wafel の TPS House：屋根=『プレミアム品質×アムステルダム最低コスト×注文翌日配送』、柱1（JIT）=Kanban発注で在庫2日分、柱2（Jidoka）=オーブン温度センサー＆充填センサーで異常時自動停止→ベイカー呼出、土台=毎週月曜の Heijunka 生産計画＋標準作業書＋週次 Kaizen 会議＋毎日5S。これらが全部揃って初めて Toyota レベルの結果が出る。",
  visual:"flow",
  flow:["屋根：Q↑・C↓・LT↓","柱1：JIT","柱2：Jidoka（自働化）","土台：Heijunka / Standardized Work / Kaizen / 5S"],
  memorize:["TPSの全体像","屋根=目標、柱=手段、土台=基礎","全部揃って機能する"],
@@ -1245,6 +1245,79 @@ const CONCEPTS = [
  formula:"OEE = Availability × Performance × Quality",
  memorize:["OEE=A×P×Q","Loss 6種：故障・段替・空転・速度低下・不良・立上","Leanの設備版"],
  related:["w3_design_eff","w7_lean","w8_reliability"]},
+
+/* ====== 追加：Lean の重要欠落概念 ====== */
+
+{id:"w7_5s", w:7, ch:"Ch15", group:"Lean Basics", name:"5S（職場の基礎）",
+ def:"職場を整理・清潔・効率的に保つ5段階の活動。Lean House の土台にあり、ムダ排除・安全性・品質の前提条件。Toyota が体系化し全世界に広がった。",
+ example:"De Gouden Wafel工場の5S：① Sort=不要な型抜きを廃棄、② Set in Order=道具を作業順に配置・形跡管理、③ Shine=毎終業時に清掃チェック、④ Standardize=色分け＆写真標識で誰がやっても同じ、⑤ Sustain=月次5S監査で習慣化。",
+ memorize:["5つのS（日本語と英語の両方を覚える）","Lean Houseの土台部分","Visual Management（見える化）の前提","Sustain（習慣化）が一番難しい","欧米企業の Lean 導入失敗の8割が5Sでつまずく"],
+ related:["w7_lean","w7_lean_house","w7_jit","w7_poka_yoke"]},
+
+{id:"w7_3m", w:7, ch:"Ch15", group:"Lean Basics", name:"3M — Muda・Mura・Muri",
+ def:"Toyota が定義した『排除すべき3つのM』。Muda（無駄）= 価値を生まない作業、Mura（ムラ）= 仕事量のばらつき、Muri（無理）= 人・設備への過負荷。Muda は最も有名だが、Mura と Muri が Muda を生む根本原因。",
+ example:"De Gouden Wafel：Muda=売れない分の焼成（過剰生産）、Mura=月曜は閑古鳥・金曜は大忙し（需要平準化されず）、Muri=繁忙期に1人が3工程兼任で疲弊→不良率増。Mura・Muri を Heijunka（平準化）で抑える。",
+ memorize:["3つの M（漢字とローマ字）","Muri と Mura が Muda を引き起こす（順番が重要）","対策：Heijunka（平準化生産）で Mura・Muri 解消 → Muda 削減","TIMWOOD は Muda の細分化","Toyota Way の根本"],
+ related:["w7_lean","w7_lean_house"]},
+
+{id:"w7_six_sigma", w:7, ch:"Ch16", group:"Improvement Methods", name:"Six Sigma & DMAIC",
+ def:"統計的手法で品質ばらつきを徹底削減（6σ = 不良率 3.4 PPM）するMotorola発・GE普及の改善手法。DMAIC（Define・Measure・Analyze・Improve・Control）の5フェーズで進める。Lean とは別アプローチ（Lean=流れ・速さ重視、Six Sigma=ばらつき・統計重視）。",
+ example:"De Gouden Wafel：ワッフル重量のばらつきが大きい問題。D=目標設定（30g±1g）、M=毎時5個サンプリング、A=温度との相関分析、I=オーブン温度自動制御導入、C=SPC で継続監視。不良率 0.5%→0.01% へ。",
+ formula:"6σ ≈ 99.99966% 良品 = 3.4 PPM 不良<br>Cpk ≥ 2.0 が目標",
+ memorize:["DMAIC の5段階","6σ の意味（標準偏差6個分の余裕）","役割：Champion / Master BB / Black Belt / Green Belt","Lean と組み合わせて Lean Six Sigma に","『データ駆動』の品質改善"],
+ related:["w7_lean","w8_spc","w7_pdca","w7_improve_compare"]},
+
+{id:"w7_pdca", w:7, ch:"Ch16", group:"Improvement Methods", name:"PDCA Cycle（Demingサイクル）",
+ def:"Plan-Do-Check-Act の継続的改善サイクル。Deming が日本に持ち込み Toyota が現場で深化させた。すべての改善活動の基本フレーム。Kaizen の原理。",
+ example:"De Gouden Wafelカフェ：P=待ち時間を5分→3分にする計画、D=2号店で先行試験（追加スタッフ配置）、C=2週間データで2.8分達成を確認、A=全店展開＆標準作業書改訂。次のサイクル開始。",
+ visual:"flow",
+ flow:["Plan（計画）","Do（実行）","Check（検証）","Act（標準化／次の改善）"],
+ memorize:["P-D-C-A の4段階","螺旋的に上昇するサイクル（毎回少しずつ良くなる）","DMAIC・SDCA・OODA など派生多数","Check が省略されがち（だが最重要）","Sustain（持続化）= Act の本質"],
+ related:["w7_lean","w7_six_sigma","w7_innovation_kaizen","w8_spc"]},
+
+{id:"w7_toc", w:7, ch:"Ch16", group:"Improvement Methods", name:"Theory of Constraints（TOC）",
+ def:"Goldratt の『制約理論』。システムのスループットはボトルネック（=制約）に支配されるので、制約に集中投資すべきという原理。5 Focusing Steps で進める。DBR（Drum-Buffer-Rope）はTOC の運用手法。",
+ example:"De Gouden Wafel：焼成オーブン1台が制約 → ① Identify=焼成を特定、② Exploit=オーブン稼働率最大化（昼休み交代で休まず稼働）、③ Subordinate=他工程を焼成に同期、④ Elevate=オーブン2台目購入、⑤ Repeat=次は包装が新ボトルネック。",
+ visual:"flow",
+ flow:["① Identify the Constraint（制約を特定）","② Exploit the Constraint（制約を最大活用）","③ Subordinate Everything（他は制約に従属）","④ Elevate the Constraint（制約を上げる＝投資）","⑤ Repeat（次の制約へ）"],
+ memorize:["5 Focusing Steps（5段階）","制約以外の改善はムダ（Goldratt の主張）","『The Goal』Goldratt 著","DBR は TOC の実装","Lean と相補的（Lean=流れ、TOC=制約集中）"],
+ related:["w2_bottleneck","w3_dbr","w7_lean","w7_improve_compare"]},
+
+{id:"w7_sandcone", w:7, ch:"Ch16", group:"Improvement Methods", name:"Sandcone Theory（砂山理論）",
+ def:"パフォーマンス改善の優先順位を示すモデル：Quality → Dependability → Speed → Flexibility → Cost の順で積み上げる（下から）。下位を確立せず上を狙うと崩れる、砂山のように。Ferdows & De Meyer 1990。",
+ example:"De Gouden Wafel：いきなり Cost 削減を狙うと品質崩壊。順序を守って、まず Quality（不良率0.1%）→ Dependability（納期遵守99%）→ Speed（リードタイム3日）→ Flexibility（限定品月替わり）→ 最後にCost 削減。結果として全部が改善され、コストも自然に下がる。",
+ visual:"flow",
+ flow:["底：Quality（品質）","↑ Dependability（信頼性）","↑ Speed（速さ）","↑ Flexibility（柔軟性）","頂上：Cost（コスト）"],
+ memorize:["積み上げ順序：Q→D→S→F→C","下が崩れたら上も崩れる","Cost を直接狙わない（結果としてついてくる）","Performance Trade-offs に対する答え（長期的には全部改善可）","Lean 思想と一致"],
+ related:["w1_quality","w1_speed","w1_depend","w1_flex","w1_cost","w1_tradeoff","w1_frontier"]},
+
+{id:"w7_innovation_kaizen", w:7, ch:"Ch16", group:"Improvement Methods", name:"Breakthrough vs Continuous（Innovation vs Kaizen）",
+ def:"改善には2タイプ：Breakthrough（一気の革新・大投資・低頻度）と Continuous（Kaizen＝日々の小改善・高頻度）。両方必要だが、文化が違う。日本企業＝Kaizen偏重、欧米＝Breakthrough偏重とも言われる。",
+ example:"De Gouden Wafel：Breakthrough=自動充填ライン導入（€500K投資、生産性2倍）。Continuous=毎週の Kaizen ミーティングで作業者から改善提案を集める（1件€100だが年間500件で€50K効果）。両輪で回す。",
+ visual:"compare",
+ cmpTable:[["軸","Breakthrough","Continuous（Kaizen）"],
+   ["性質","革新的・大規模","漸進的・小規模"],
+   ["頻度","数年に1度","毎日・毎週"],
+   ["主導","経営層・専門家","現場全員"],
+   ["コスト","高額投資","ほぼゼロ"],
+   ["リスク","失敗の影響大","小さく試せる"],
+   ["代表","BPR・Six Sigma","Lean・QC Circle"]],
+ compare:true,
+ memorize:["2つの改善モード","Breakthrough = Innovation","Continuous = Kaizen（改善）","両輪が必要（一方だけだと停滞）","PDCAは両方に使える"],
+ related:["w7_pdca","w7_red_queen","w7_improve_compare","w7_lean"]},
+
+{id:"w7_improve_compare", w:7, ch:"Ch16", group:"Improvement Methods", name:"4つの改善アプローチ比較",
+ def:"BPR（Business Process Re-engineering）・TQM（Total Quality Management）・Lean・Six Sigma の4つの改善アプローチ。それぞれ起源・焦点・手法が違うが、組み合わせて使うのが現代の主流。",
+ example:"De Gouden Wafel の使い分け：BPR=新工場立ち上げ時に全プロセスをゼロから再設計、TQM=全社品質方針として展開、Lean=日々の現場改善、Six Sigma=不良率削減プロジェクト。",
+ visual:"compare",
+ cmpTable:[["手法","起源","焦点","変化","代表ツール"],
+   ["BPR","Hammer 1990s","プロセス再設計","革新的","Process map / IT化"],
+   ["TQM","Deming・Juran","全社品質文化","継続的","PDCA / QC7つ道具"],
+   ["Lean","Toyota 1950s","ムダ排除・流れ","継続的","JIT・5S・VSM"],
+   ["Six Sigma","Motorola 1980s","ばらつき削減","プロジェクト型","DMAIC・統計"]],
+ compare:true,
+ memorize:["4手法の起源・焦点","BPR=破壊的、Lean=継続的","TQM=哲学、Six Sigma=統計","現代は Lean Six Sigma が主流","どれも PDCA を中核に持つ"],
+ related:["w7_lean","w7_six_sigma","w7_pdca","w7_innovation_kaizen"]},
 
 /* ============ WEEK 8 — Ch 17,18,19：Quality・Reliability・PM ============ */
 {id:"w8_spc", w:8, ch:"Ch17", group:"Quality", name:"SPC & Control Charts",
@@ -1664,6 +1737,57 @@ const PARTS = {
   w8_cpm: [
     {name:"Project Management", brief:"一回限り・期限あり・複数活動"},
     {name:"Critical Path (CPM)", brief:"最長経路＝プロジェクトLT"}
+  ],
+
+  /* ====== 追加：Lean 重要欠落概念の parts ====== */
+  w7_5s: [
+    {name:"Sort（整理 / 整）", brief:"不要な物を捨てる。Red Tag 法"},
+    {name:"Set in Order（整頓 / 頓）", brief:"必要な物を置き場所決め＆形跡管理"},
+    {name:"Shine（清掃 / 清）", brief:"職場・設備を清潔に保つ。点検も兼ねる"},
+    {name:"Standardize（清潔 / 潔）", brief:"3Sを標準化＝色・表示・写真"},
+    {name:"Sustain（しつけ / 躾）", brief:"習慣化・自律化。最難関"}
+  ],
+  w7_3m: [
+    {name:"Muda（無駄）", brief:"価値を生まない作業＝7 wastes（TIMWOOD）"},
+    {name:"Mura（ムラ / 斑）", brief:"仕事量のばらつき。Muda を生む"},
+    {name:"Muri（無理）", brief:"人・設備への過負荷。事故と不良を生む"}
+  ],
+  w7_six_sigma: [
+    {name:"D - Define（定義）", brief:"問題・顧客要求・ゴールを明確化"},
+    {name:"M - Measure（測定）", brief:"現状を定量化。Baseline 設定"},
+    {name:"A - Analyze（分析）", brief:"根本原因を統計で特定（魚骨図・回帰）"},
+    {name:"I - Improve（改善）", brief:"対策実装・実験"},
+    {name:"C - Control（管理）", brief:"SPC で維持・標準化"}
+  ],
+  w7_pdca: [
+    {name:"Plan（計画）", brief:"目標と仮説を立てる"},
+    {name:"Do（実行）", brief:"小規模に試行する"},
+    {name:"Check（検証）", brief:"結果を計画と比較"},
+    {name:"Act（標準化）", brief:"成功は標準化、失敗は次サイクルへ"}
+  ],
+  w7_toc: [
+    {name:"① Identify", brief:"システムの制約を特定"},
+    {name:"② Exploit", brief:"制約を最大限活用（投資せず）"},
+    {name:"③ Subordinate", brief:"他工程を制約に従属させる"},
+    {name:"④ Elevate", brief:"制約を拡張（投資して上げる）"},
+    {name:"⑤ Repeat", brief:"次の制約に移る（無限ループ）"}
+  ],
+  w7_sandcone: [
+    {name:"Quality（品質）", brief:"基礎。最初に確立"},
+    {name:"Dependability（信頼性）", brief:"次に積む"},
+    {name:"Speed（速さ）", brief:"その上"},
+    {name:"Flexibility（柔軟性）", brief:"さらに上"},
+    {name:"Cost（コスト）", brief:"頂上。直接狙わず結果として下がる"}
+  ],
+  w7_innovation_kaizen: [
+    {name:"Breakthrough（革新）", brief:"一気の大改善。大投資。低頻度"},
+    {name:"Continuous / Kaizen（漸進）", brief:"小さく毎日。低コスト。高頻度"}
+  ],
+  w7_improve_compare: [
+    {name:"BPR", brief:"プロセス再設計（破壊的）"},
+    {name:"TQM", brief:"全社品質文化（継続的）"},
+    {name:"Lean", brief:"ムダ排除・流れ（継続的）"},
+    {name:"Six Sigma", brief:"ばらつき削減（統計的）"}
   ]
 };
 // merge parts into concept records
@@ -1863,11 +1987,16 @@ const HOUSE = [
      {title:"計算システム", concepts:["w6_mrp"]}
    ]},
 
-  /* ===== Lean エリア（3部屋） ===== */
+  /* ===== Lean エリア（4部屋） ===== */
   {id:"r_leanphil", icon:"🧠", title:"Lean 思想", jp:"何がムダか・なぜ改善し続けるか", color:"#9a6ad9",
    subrooms:[
-     {title:"ムダの認識（7 wastes）", concepts:["w7_lean"]},
-     {title:"全体フレーム", concepts:["w7_lean_3layer","w7_lean_house"]},
+     {title:"ムダの3つの源（3M）", concepts:["w7_3m"]},
+     {title:"7つのムダ（TIMWOOD）", concepts:["w7_lean"]},
+     {title:"全体フレーム", subsub:[
+       {title:"3層構造", concepts:["w7_lean_3layer"]},
+       {title:"TPS の家", concepts:["w7_lean_house"]},
+       {title:"職場の基礎", concepts:["w7_5s"]}
+     ]},
      {title:"動機 — なぜ続けるか", concepts:["w7_red_queen"]}
    ]},
 
@@ -1879,6 +2008,18 @@ const HOUSE = [
        {title:"WIP を減らす", concepts:["w7_lean_wip"]}
      ]},
      {title:"可視化", concepts:["w7_vsm"]}
+   ]},
+
+  {id:"r_improve", icon:"📈", title:"改善手法フレーム", jp:"PDCA・TOC・Six Sigma・Sandcone", color:"#7c5bc4",
+   subrooms:[
+     {title:"継続改善の原型", subsub:[
+       {title:"PDCA サイクル", concepts:["w7_pdca"]},
+       {title:"革新 vs 漸進", concepts:["w7_innovation_kaizen"]}
+     ]},
+     {title:"制約集中型（TOC）", concepts:["w7_toc"]},
+     {title:"統計型（Six Sigma）", concepts:["w7_six_sigma"]},
+     {title:"優先順位（Sandcone）", concepts:["w7_sandcone"]},
+     {title:"4つのアプローチ比較", concepts:["w7_improve_compare"]}
    ]},
 
   {id:"r_tpm", icon:"🛠️", title:"TPM・OEE", jp:"設備を Lean 化する", color:"#af83e0",
@@ -1956,7 +2097,7 @@ const ROOM_AREAS = {
   r_network:"design", r_capdesign:"design", r_process:"design", r_throughput:"design", r_layout:"design",
   r_planbasic:"planning", r_schedule:"planning", r_control:"planning", r_orderstrat:"planning", r_capmgmt:"planning", r_queue:"planning",
   r_invbasic:"inventory", r_order:"inventory", r_invsys:"inventory",
-  r_leanphil:"lean", r_leantech:"lean", r_tpm:"lean",
+  r_leanphil:"lean", r_leantech:"lean", r_improve:"lean", r_tpm:"lean",
   r_quality:"quality", r_qualdim:"quality", r_risk:"quality", r_reliability:"quality", r_project:"quality"
 };
 
