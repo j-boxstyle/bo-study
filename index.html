@@ -927,6 +927,14 @@ body{
         var src = document.getElementById('tab-roadmap');
         if (src) {
           body.innerHTML = src.innerHTML;
+          // ID重複防止：クローンした modal-bg / modal / roadmap / search を削除
+          // (オリジナルは tab-roadmap 内に残し、こちらは UI だけ表示用)
+          ['modal-bg','modal','search','roadmap'].forEach(function(id){
+            var dup = body.querySelector('#'+id);
+            if (dup) dup.removeAttribute('id');
+          });
+          // クローンした roadmap div の中身を空に → 新規renderRoadmapで描画し直し
+          // ただし元の renderRoadmap は #roadmap を探すので、こちらも別IDで再描画
           body.dataset.loaded = '1';
         }
       }
