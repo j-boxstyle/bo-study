@@ -7747,9 +7747,9 @@ function renderQuizHome() {
     html += '<div style="margin:10px 0 18px;padding:12px 14px;background:rgba(249,115,22,0.08);border-radius:10px;border:1px dashed #f97316;">';
     html += '<div style="font-size:18px;font-weight:700;color:#f97316;margin-bottom:4px;">🤖 AI 苦手分野プロンプト</div>';
     html += '<div style="color:#94a3b8;font-size:14px;margin-bottom:8px;">解答' + totalAns + '問の履歴から弱点をまとめた AI 用プロンプトを生成 (コピペ可)</div>';
-    html += '<button onclick="showAIPromptModal(\'recent50\')" style="background:#f97316;color:#0f1c2e;border:none;padding:9px 14px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;margin-right:6px;">直近50問</button>';
+    html += '<button onclick="showBatchPicker()" style="background:#f97316;color:#0f1c2e;border:none;padding:9px 14px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;margin-right:6px;">直近50問</button>';
     if (totalAns >= 50) {
-      html += '<button onclick="showAIPromptModal(\'all\')" style="background:#1a2940;border:1px solid #f97316;color:#f97316;padding:9px 14px;border-radius:8px;font-size:14px;cursor:pointer;">全' + totalAns + '問</button>';
+      html += '<button onclick="showBatchPicker()" style="background:#1a2940;border:1px solid #f97316;color:#f97316;padding:9px 14px;border-radius:8px;font-size:14px;cursor:pointer;">全' + totalAns + '問</button>';
     }
     html += '</div>';
   }
@@ -8154,26 +8154,21 @@ function rateAnswer(rating) {
   saveState('ratings', ratings);
 
   // ── Record answered Q + correctness in a history log for AI prompt generation ──
-  var history = loadState('answer_history', []);
-  // Avoid duplicates: only record one entry per question per session
   var lastResult = quizState.blockResults[quizState.blockResults.length - 1] || {};
   var correct = !!lastResult.correct;
   var chosen = lastResult.chosen;
-  // Map chosen (display idx) → original opts idx
   var chosenOrig = (quizState.currentShuffle && quizState.currentShuffle[chosen] !== undefined) ? quizState.currentShuffle[chosen] : chosen;
-  history.push({
-    qid: q.id,
-    ch: q.ch,
-    week: q.week,
-    source: q.source || '',
-    correct: correct,
-    rating: rating,
-    chosenOrig: chosenOrig,
-    ts: Date.now()
-  });
-  // Keep last 500 entries
-  if (history.length > 500) history = history.slice(-500);
-  saveState('answer_history', history);
+  var record = {
+    qid: q.id, ch: q.ch, week: q.week, source: q.source || '',
+    correct: correct, rating: rating, chosenOrig: chosenOrig, ts: Date.now()
+  };
+  // バッチ管理：アクティブバッチに追加（封印済みなら次の新規バッチに）
+  addToActiveBatch(record);
+  // 互換：従来の answer_history も並行更新（全バッチの records 結合）
+  var allBatches = getBatches();
+  var fullHistory = [];
+  allBatches.forEach(function(b){ fullHistory = fullHistory.concat(b.records); });
+  saveState('answer_history', fullHistory);
 
   // ── Check for 50-question milestone → show AI prompt offer ──
   var milestoneShown = loadState('ai_prompt_milestone_shown', 0);
@@ -8317,6 +8312,213 @@ function generateAIPrompt(scope) {
   return lines.join("\n");
 }
 
+
+// ═══ 回答履歴バッチシステム（コピーすると次のバッチへ） ═══
+function getBatches() {
+  var b = loadState('quiz_batches', null);
+  if (!b) {
+    // 既存の answer_history があれば migration（初回のみ）
+    var legacy = loadState('answer_history', []);
+    if (legacy && legacy.length > 0) {
+      b = [{id:1, sealed:false, records: legacy, startedAt: legacy[0].ts || Date.now()}];
+    } else {
+      b = [{id:1, sealed:false, records:[], startedAt: Date.now()}];
+    }
+    saveState('quiz_batches', b);
+  }
+  return b;
+}
+function getActiveBatch() {
+  var batches = getBatches();
+  // 末尾が sealed なら新しいバッチ追加
+  if (batches.length === 0 || batches[batches.length - 1].sealed) {
+    batches.push({id: batches.length + 1, sealed: false, records: [], startedAt: Date.now()});
+    saveState('quiz_batches', batches);
+  }
+  return batches[batches.length - 1];
+}
+function addToActiveBatch(record) {
+  var batches = getBatches();
+  if (batches.length === 0 || batches[batches.length - 1].sealed) {
+    batches.push({id: batches.length + 1, sealed: false, records: [], startedAt: Date.now()});
+  }
+  batches[batches.length - 1].records.push(record);
+  saveState('quiz_batches', batches);
+}
+function sealActiveBatchAndStartNew() {
+  var batches = getBatches();
+  if (batches.length === 0) return;
+  var last = batches[batches.length - 1];
+  if (last.sealed || last.records.length === 0) return; // 空ならシールしない
+  last.sealed = true;
+  last.copiedAt = Date.now();
+  // 新規バッチ追加
+  batches.push({id: batches.length + 1, sealed: false, records: [], startedAt: Date.now()});
+  saveState('quiz_batches', batches);
+}
+function getBatchRange(batch, allBatches) {
+  // バッチが何問目〜何問目に相当するか計算
+  var start = 1;
+  for (var i = 0; i < allBatches.length; i++) {
+    if (allBatches[i].id === batch.id) break;
+    start += allBatches[i].records.length;
+  }
+  var end = start + batch.records.length - 1;
+  return {start: start, end: end};
+}
+function buildPromptFromRecords(records, title) {
+  if (!records || records.length === 0) return '';
+  var byCh = {};
+  var byWeek = {};
+  records.forEach(function(r){
+    var q = QUESTIONS.find(function(x){ return x.id === r.qid; });
+    if (!q) return;
+    var key = 'Ch' + q.ch;
+    if (!byCh[key]) byCh[key] = {total:0, wrong:0, items:[]};
+    byCh[key].total++;
+    var wRec = byWeek[q.week] = (byWeek[q.week] || {week: q.week, total: 0, wrong: 0});
+    wRec.total++;
+    if (!r.correct || r.rating === 'notunderstood') {
+      byCh[key].wrong++;
+      wRec.wrong++;
+      byCh[key].items.push({
+        qid: q.id, ch: q.ch, week: q.week, source: q.source || '',
+        q: q.q, opts: q.opts, ans: q.ans,
+        expl: q.expl || q.exp || '',
+        we: q.we || {}, memory: q.memory || '',
+        chosenOrig: r.chosenOrig, rating: r.rating
+      });
+    }
+  });
+  var out = '# ' + (title || 'クイズ履歴分析') + '\n\n';
+  out += '対象問題数: ' + records.length + '問\n\n';
+  out += '## 章別の理解度\n';
+  Object.keys(byCh).sort().forEach(function(ch){
+    var c = byCh[ch];
+    out += '- ' + ch + ': ' + (c.total - c.wrong) + '/' + c.total + ' 正解 (誤答: ' + c.wrong + ')\n';
+  });
+  out += '\n## 間違えた問題（詳細）\n';
+  Object.keys(byCh).forEach(function(ch){
+    byCh[ch].items.forEach(function(item){
+      out += '\n### Q' + item.qid + ' (' + ch + ')\n';
+      out += '問題: ' + (item.q || '').slice(0, 500) + '\n';
+      out += '正解: ' + (item.opts ? item.opts[item.ans] : '?') + '\n';
+      if (item.chosenOrig !== undefined && item.opts) {
+        out += 'あなたの選択: ' + (item.opts[item.chosenOrig] || '?') + '\n';
+      }
+      if (item.expl) out += '解説: ' + item.expl.slice(0, 300) + '\n';
+      if (item.memory) out += '覚えるべき: ' + item.memory + '\n';
+    });
+  });
+  out += '\n---\n上記の誤答パターンから、特に弱い分野を3つ挙げて、それぞれに対する覚え方・公式・例題を日本語で詳しく解説してください。';
+  return out;
+}
+
+function showBatchPicker() {
+  var batches = getBatches();
+  var existing = document.getElementById('batch-picker-modal');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'batch-picker-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:12px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#0f1c2e;border:2px solid #f97316;border-radius:14px;padding:18px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;gap:12px;';
+
+  var allRecords = [];
+  batches.forEach(function(b){ allRecords = allRecords.concat(b.records); });
+  var totalCount = allRecords.length;
+
+  var rowsHtml = '';
+  batches.forEach(function(b, idx){
+    if (b.records.length === 0 && !b.sealed) return; // 空のアクティブはスキップ
+    var range = getBatchRange(b, batches);
+    var label = (b.sealed ? '🔒 バッチ ' : '✏️ バッチ（進行中）') + b.id + '：' + range.start + '〜' + range.end + ' 問目（' + b.records.length + '問）';
+    rowsHtml += '<div style="display:flex;gap:10px;align-items:center;padding:12px 14px;background:#1a2940;border-radius:10px;border:1px solid #1e3a5f;">';
+    rowsHtml += '<div style="flex:1;color:#e2e8f0;font-size:15px;font-weight:600;">' + label + '</div>';
+    rowsHtml += '<button onclick="copyBatch(' + b.id + ', this)" style="background:#f97316;color:#0f1c2e;border:none;padding:8px 14px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;">📋 コピー</button>';
+    rowsHtml += '</div>';
+  });
+
+  if (totalCount > 0) {
+    rowsHtml += '<div style="display:flex;gap:10px;align-items:center;padding:12px 14px;background:#1e293b;border-radius:10px;border:2px dashed #3b82f6;margin-top:6px;">';
+    rowsHtml += '<div style="flex:1;color:#a5b4fc;font-size:15px;font-weight:700;">📚 全バッチまとめてコピー（' + totalCount + '問）</div>';
+    rowsHtml += '<button onclick="copyAllBatches(this)" style="background:#3b82f6;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;">📋 全部</button>';
+    rowsHtml += '</div>';
+  }
+  if (rowsHtml === '') {
+    rowsHtml = '<div style="color:#94a3b8;text-align:center;padding:20px;">まだ解答履歴がありません。クイズを解いてください。</div>';
+  }
+
+  box.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+      '<div style="font-size:20px;font-weight:800;color:#f97316;">🤖 AI 苦手分野プロンプト</div>' +
+      '<button onclick="document.getElementById(\'batch-picker-modal\').remove()" style="background:transparent;border:none;color:#94a3b8;font-size:28px;cursor:pointer;line-height:1;">×</button>' +
+    '</div>' +
+    '<div style="color:#94a3b8;font-size:14px;line-height:1.5;">' +
+      'コピーすると進行中バッチが封印され、次のバッチが自動で開始します。<br>過去のバッチはいつでも個別にコピーできます。' +
+    '</div>' +
+    rowsHtml;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.remove(); });
+}
+
+function copyBatch(batchId, btn) {
+  var batches = getBatches();
+  var batch = batches.find(function(b){ return b.id === batchId; });
+  if (!batch) return;
+  var range = getBatchRange(batch, batches);
+  var title = 'クイズ履歴 バッチ' + batch.id + '（' + range.start + '〜' + range.end + '問目）';
+  var prompt = buildPromptFromRecords(batch.records, title);
+  copyTextToClipboard(prompt, btn, function(){
+    // 進行中バッチをコピーした場合は封印して次のバッチ開始
+    if (!batch.sealed) {
+      sealActiveBatchAndStartNew();
+    }
+  });
+}
+
+function copyAllBatches(btn) {
+  var batches = getBatches();
+  var all = [];
+  batches.forEach(function(b){ all = all.concat(b.records); });
+  var prompt = buildPromptFromRecords(all, 'クイズ履歴 全バッチ統合');
+  copyTextToClipboard(prompt, btn);
+}
+
+function copyTextToClipboard(text, btn, onSuccess) {
+  var ok = false;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text);
+      ok = true;
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta);
+      ta.select();
+      ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+  } catch(e) { ok = false; }
+  if (btn) {
+    var orig = btn.innerHTML;
+    btn.innerHTML = ok ? '✓ コピー済み' : '× 失敗';
+    btn.style.background = ok ? '#10b981' : '#ef4444';
+    btn.style.color = '#fff';
+    setTimeout(function(){
+      btn.innerHTML = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+      if (ok && typeof onSuccess === 'function') {
+        onSuccess();
+        // モーダルを再描画して新しいバッチ状態を反映
+        showBatchPicker();
+      }
+    }, 1200);
+  }
+}
+
 function showAIPromptModal(scope) {
   scope = scope || 'recent50';
   var prompt = generateAIPrompt(scope);
@@ -8345,8 +8547,8 @@ function showAIPromptModal(scope) {
     '</div>' +
     '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
       '<button onclick="copyAIPrompt()" id="ai-prompt-copy-btn" style="background:#f97316;color:#0f1c2e;border:none;padding:10px 16px;border-radius:8px;font-size:16px;font-weight:800;cursor:pointer;">📋 コピー</button>' +
-      '<button onclick="showAIPromptModal(\'all\')" style="background:#1a2940;border:1px solid #3b82f6;color:#3b82f6;padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;">全履歴版</button>' +
-      '<button onclick="showAIPromptModal(\'recent50\')" style="background:#1a2940;border:1px solid #3b82f6;color:#3b82f6;padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;">直近50問</button>' +
+      '<button onclick="showBatchPicker()" style="background:#1a2940;border:1px solid #3b82f6;color:#3b82f6;padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;">全履歴版</button>' +
+      '<button onclick="showBatchPicker()" style="background:#1a2940;border:1px solid #3b82f6;color:#3b82f6;padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;">直近50問</button>' +
       '<span style="color:#64748b;font-size:13px;margin-left:auto;align-self:center;">' + charCount.toLocaleString() + '文字 / ' + lineCount + '行</span>' +
     '</div>' +
     '<textarea id="ai-prompt-text" readonly style="flex:1;min-height:300px;width:100%;background:#1a2940;color:#e2e8f0;border:1px solid #1e3a5f;border-radius:8px;padding:12px;font-size:13px;font-family:monospace;line-height:1.5;resize:none;"></textarea>' +
@@ -8540,7 +8742,7 @@ function offerAIPromptIfMilestone() {
   quizState.pendingAIPromptMilestone = null;
   var prompt = '🎯 ' + milestone + '問解答達成！\n\nここまでの結果から弱点を分析した AI 用プロンプトを生成しますか？\n(Claude/ChatGPT に貼り付けて、徹底解説と覚え方を取得できます)';
   if (confirm(prompt)) {
-    showAIPromptModal('recent50');
+    showBatchPicker();
   }
 }
 
@@ -8587,9 +8789,9 @@ function showBlockReview() {
     html += '<div style="font-size:20px;font-weight:800;color:#f97316;margin-bottom:6px;">🤖 AI 苦手分野プロンプト</div>';
     html += '<div style="color:#cbd5e1;font-size:15px;margin-bottom:10px;">これまで <strong>' + totalAns + '問</strong> 解答。AI に弱点を整理してもらうプロンプトを生成できます。</div>';
     html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
-    html += '<button onclick="showAIPromptModal(\'recent50\')" style="background:#f97316;color:#0f1c2e;border:none;padding:10px 16px;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;">📋 直近50問でプロンプト生成</button>';
+    html += '<button onclick="showBatchPicker()" style="background:#f97316;color:#0f1c2e;border:none;padding:10px 16px;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;">📋 直近50問でプロンプト生成</button>';
     if (totalAns >= 100) {
-      html += '<button onclick="showAIPromptModal(\'all\')" style="background:#1a2940;border:1px solid #f97316;color:#f97316;padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;">全' + totalAns + '問版</button>';
+      html += '<button onclick="showBatchPicker()" style="background:#1a2940;border:1px solid #f97316;color:#f97316;padding:10px 16px;border-radius:8px;font-size:14px;cursor:pointer;">全' + totalAns + '問版</button>';
     }
     html += '</div></div>';
   }
