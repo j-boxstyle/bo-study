@@ -652,24 +652,28 @@ a{color:#3b82f6;text-decoration:none;}
 .opt-wrong-exp{background:rgba(248,113,113,0.08);border-left:3px solid #f87171;color:#fca5a5;}
 .opt-wrong-exp strong{color:#f87171;}
 /* 公式・覚えるべきこと欄 */
-.q-memory{margin:10px 0;padding:14px 16px;background:rgba(245,158,11,0.08);border-left:4px solid #f59e0b;border-radius:8px;font-size:16px;color:#fde68a;}
-.q-memory strong{color:#f59e0b;font-size:16px;display:block;margin-bottom:4px;}
+.q-memory{margin:14px 0;padding:18px 22px;background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(245,158,11,0.05) 100%);border-left:6px solid #f59e0b;border-radius:10px;font-size:19px;color:#fde68a;line-height:1.7;}
+.q-memory strong{color:#fbbf24;font-size:20px;display:block;margin-bottom:8px;text-shadow:0 0 8px rgba(251,191,36,0.4);}
+.q-memory b, .q-memory strong:not(:first-child){background:linear-gradient(transparent 60%,rgba(251,191,36,0.35) 60%);padding:0 2px;font-weight:800;color:#fff;}
 /* トピック別の自動解説カード */
-.q-topic{margin:10px 0;padding:14px 16px;background:rgba(99,102,241,0.08);border-left:4px solid #6366f1;border-radius:8px;}
-.q-topic-title{font-size:16px;font-weight:700;color:#a5b4fc;margin-bottom:6px;}
-.q-topic-formula{font-size:15px;color:#cbd5e1;background:#0a1220;padding:8px 10px;border-radius:6px;margin:6px 0;font-family:'Courier New',monospace;}
-.q-topic-tips{font-size:14px;color:#cbd5e1;margin:6px 0;line-height:1.6;}
-.q-topic-mnemonic{font-size:14px;color:#fbbf24;margin:6px 0;}
+.q-topic{margin:14px 0;padding:18px 22px;background:linear-gradient(135deg,rgba(99,102,241,0.15) 0%,rgba(99,102,241,0.05) 100%);border-left:6px solid #6366f1;border-radius:10px;}
+.q-topic-title{font-size:21px;font-weight:800;color:#c7d2fe;margin-bottom:10px;text-shadow:0 0 8px rgba(99,102,241,0.4);}
+.q-topic-formula{font-size:18px;color:#e0e7ff;background:#0a1220;padding:12px 14px;border-radius:8px;margin:8px 0;font-family:'Courier New',monospace;border:1px solid #4338ca;}
+.q-topic-tips{font-size:17px;color:#e2e8f0;margin:10px 0;line-height:1.8;}
+.q-topic-mnemonic{font-size:18px;color:#fbbf24;margin:10px 0;padding:10px 14px;background:rgba(251,191,36,0.10);border-radius:8px;font-weight:600;}
 .q-topic-table{margin:8px 0;border-collapse:collapse;width:100%;font-size:13px;}
 .q-topic-table th{background:#1a2940;color:#a5b4fc;padding:6px 8px;border:1px solid #2d3a55;}
 .q-topic-table td{padding:6px 8px;border:1px solid #2d3a55;color:#cbd5e1;}
 .q-topic-related{font-size:13px;color:#94a3b8;margin-top:6px;}
 @media (max-width: 600px) {
-  .q-topic{padding:10px 12px;}
-  .q-topic-title{font-size:14px;}
-  .q-topic-formula{font-size:13px;}
-  .q-topic-tips,.q-topic-mnemonic{font-size:12px;}
-  .q-topic-table{font-size:11px;}
+  .q-topic{padding:14px 14px;}
+  .q-topic-title{font-size:17px;}
+  .q-topic-formula{font-size:15px;padding:10px 12px;}
+  .q-topic-tips{font-size:14px;}
+  .q-topic-mnemonic{font-size:15px;padding:8px 12px;}
+  .q-topic-table{font-size:12px;}
+  .q-memory{padding:14px 16px;font-size:15px;}
+  .q-memory strong{font-size:17px;}
 }
 @media (max-width: 600px) {
   .opt-inline{font-size:13px;padding:8px 11px;margin-left:18px;}
@@ -5961,7 +5965,16 @@ function getStats() {
 // ═══ TAB SWITCHING ═══
 // Per-tab scroll position memory
 var tabScrollPositions = {};
-var currentActiveTab = 'tab-textbook';
+var currentActiveTab = (function(){
+  try { return localStorage.getItem('activeTab') || 'tab-textbook'; }
+  catch(e){ return 'tab-textbook'; }
+})();
+// 起動時に保存されていたタブを復元
+document.addEventListener('DOMContentLoaded', function(){
+  if (currentActiveTab && currentActiveTab !== 'tab-textbook') {
+    try { switchTab(currentActiveTab); } catch(e) {}
+  }
+});
 
 function switchTab(tabName) {
   // Save current tab's scroll position before switching
@@ -5977,6 +5990,7 @@ function switchTab(tabName) {
     btns[i].classList.toggle('active', btns[i].getAttribute('data-tab') === tabName);
   }
   currentActiveTab = tabName;
+  try { localStorage.setItem('activeTab', tabName); } catch(e){}
   // Restore previous scroll position for this tab (or 0 if first visit)
   var savedY = tabScrollPositions[tabName] || 0;
   // Use setTimeout to let the DOM render before scrolling
@@ -7778,8 +7792,17 @@ function renderQuestion() {
   var optOrder = [];
   var shuffleEnd = hasDontKnow ? lastIdx : origOpts.length;
   for (var oi = 0; oi < shuffleEnd; oi++) optOrder.push(oi);
+  // 暗号学的 RNG で完全ランダム化（Math.random の偏り対策）
+  function randInt(max){
+    if (typeof window.crypto !== 'undefined' && window.crypto.getRandomValues) {
+      var arr = new Uint32Array(1);
+      window.crypto.getRandomValues(arr);
+      return arr[0] % max;
+    }
+    return Math.floor(Math.random() * max);
+  }
   for (var si = optOrder.length - 1; si > 0; si--) {
-    var ri = Math.floor(Math.random() * (si + 1));
+    var ri = randInt(si + 1);
     var ti = optOrder[si]; optOrder[si] = optOrder[ri]; optOrder[ri] = ti;
   }
   if (hasDontKnow) optOrder.push(lastIdx);
@@ -7861,9 +7884,28 @@ function selectOption(chosen) {
     if (!isDontKnow) {
       var inlineExp = '';
       if (oi === shuffledCorrect) {
-        inlineExp = '<div class="opt-inline opt-correct"><strong>✓ 正解の根拠</strong>：' + renderMd(q.expl || q.exp || '正解です。') + '</div>';
+        // 正解の根拠：日本語があれば優先、なければ英語 expl、それも無ければ既定文
+        var jpExpl = '';
+        var rawExp = q.expl || q.exp || '';
+        // 日本語が含まれているかチェック
+        var hasJp = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(rawExp);
+        if (hasJp) {
+          jpExpl = rawExp;
+        } else if (rawExp) {
+          // 英語 expl がある → トピック解説で代替
+          jpExpl = '正しい選択肢です。';
+        } else {
+          jpExpl = '正しい選択肢です。';
+        }
+        inlineExp = '<div class="opt-inline opt-correct"><strong>✓ 正解の根拠</strong>：' + renderMd(jpExpl) + '</div>';
       } else if (q.we && q.we[origIdx] !== undefined && q.we[origIdx] !== '') {
-        inlineExp = '<div class="opt-inline opt-wrong-exp"><strong>✗ なぜ違うか</strong>：' + renderMd(q.we[origIdx]) + '</div>';
+        var weText = q.we[origIdx];
+        // 英語のみの誤答解説を抑制 → 日本語があれば表示、なければトピック誘導
+        var weHasJp = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(weText);
+        if (!weHasJp) {
+          weText = 'この選択肢は誤りです。下の📐覚えるべき公式・概念と🎯トピック解説を確認してください。';
+        }
+        inlineExp = '<div class="opt-inline opt-wrong-exp"><strong>✗ なぜ違うか</strong>：' + renderMd(weText) + '</div>';
       }
       if (inlineExp) {
         opts[i].insertAdjacentHTML('afterend', inlineExp);
@@ -7874,8 +7916,10 @@ function selectOption(chosen) {
   // 元の選択肢インデックスを取得（正答インデックスを expl 表示にも使う）
   var chosenOrigIdx = quizState.currentShuffle[chosen];
   // フィードバック：判定 + 公式/覚えるべきこと（memory）
-  var verdict = correct ? '<span style="color:#10b981;">⭕ 正解</span>' : '<span style="color:#ef4444;">❌ 不正解</span>';
-  var fb = '<div class="q-exp"><strong style="font-size:22px;">' + verdict + '</strong></div>';
+  var verdict = correct
+    ? '<span style="color:#10b981;text-shadow:0 0 10px rgba(16,185,129,0.5);">⭕ 正解</span>'
+    : '<span style="color:#ef4444;text-shadow:0 0 10px rgba(239,68,68,0.5);">❌ 不正解</span>';
+  var fb = '<div class="q-exp" style="padding:14px 18px;background:rgba(255,255,255,0.03);border-radius:10px;margin:10px 0;"><strong style="font-size:32px;font-weight:900;">' + verdict + '</strong></div>';
   // 公式 / 覚えるべきこと (memory) があれば表示
   if (q.memory) {
     fb += '<div class="q-memory"><strong>📐 覚えるべき公式・概念</strong><br>' + renderMd(q.memory) + '</div>';
