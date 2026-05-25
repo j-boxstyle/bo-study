@@ -7683,7 +7683,9 @@ function renderQuizHome() {
     { id: 1, label: '🌱 1周目', desc: '授業問題のみ・軽く' },
     { id: 2, label: '📖 2周目', desc: '授業 + 過去問' },
     { id: 3, label: '🎓 3周目', desc: '教科書 + オリジナル' },
-    { id: 4, label: '🎨 Canvas', desc: 'Canvas のクイズ' }
+    { id: 4, label: '🎨 Canvas', desc: 'Canvas のクイズ' },
+    { id: 5, label: '📚 BookTest', desc: '教科書付属テスト' },
+    { id: 6, label: '✏️ Homework', desc: '宿題（解説付き）' }
   ];
   // 配列化（後方互換）
   if (!Array.isArray(quizState.passModes)) {
@@ -7849,6 +7851,8 @@ function getPassSources(passMode) {
     if (m === 2) ['授業','過去問'].forEach(function(s){ src[s]=1; });
     if (m === 3) ['教科書','Mock+Original'].forEach(function(s){ src[s]=1; });
     if (m === 4) ['Canvas'].forEach(function(s){ src[s]=1; });
+    if (m === 5) ['BookTest'].forEach(function(s){ src[s]=1; });
+    if (m === 6) ['Homework'].forEach(function(s){ src[s]=1; });
   });
   return Object.keys(src);
 }
@@ -7913,7 +7917,7 @@ function startQuiz(n) {
 
 function getSourceBadge(q) {
   var src = q.source || '教科書';
-  var colors = { '授業': '#10b981', '過去問': '#f59e0b', 'オリジナル': '#8b5cf6', '教科書': '#3b82f6', 'Canvas': '#ec4899', 'Mock+Original': '#a855f7' };
+  var colors = { '授業': '#10b981', '過去問': '#f59e0b', 'オリジナル': '#8b5cf6', '教科書': '#3b82f6', 'Canvas': '#ec4899', 'Mock+Original': '#a855f7', 'BookTest': '#06b6d4', 'Homework': '#84cc16' };
   var col = colors[src] || '#64748b';
   var examTag = (q.exam === 'midterm') ? ' 中間' : (q.exam === 'final') ? ' 期末' : '';
   return '<span style="background:' + col + '33;color:' + col + ';border:1px solid ' + col + ';padding:3px 10px;border-radius:20px;font-size:15px;font-weight:700;margin-right:8px;">' + src + examTag + '</span>';
@@ -23343,6 +23347,1193 @@ var QUESTIONS_CANVAS_HISTORY = [
   },
 ];
 QUESTIONS = QUESTIONS.concat(QUESTIONS_CANVAS_HISTORY);
+
+// ============== QUESTIONS_BOOK_TEST ==============
+var QUESTIONS_BOOK_TEST = [
+  { id: 7000, ch: 1, week: 1, source: 'BookTest',
+    q: "Which one of the statements is not true?",
+    opts: [
+      "Crude oil producers are concerned with making a product.",
+      "Whether an operation produces tangible products or intangible services is becoming increasingly irrelevant.",
+      "Most operations produce either a product or a service, but never a combination of both.",
+      "Many services involve both tangible and intangible outputs.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7001, ch: 1, week: 1, source: 'BookTest',
+    q: "What is operations management?",
+    opts: [
+      "The activity of managing the financial aspects of a company",
+      "The activity of delivering products together with marketing and sales",
+      "All of the above",
+      "The activity of managing the resources that create and deliver services and products",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7002, ch: 1, week: 1, source: 'BookTest',
+    q: "All companies have an operations function but it is not always called by that name. Which of the following could be an operations​ function?",
+    opts: [
+      "The quality control department in a dairy factory",
+      "The IT department in a hospital",
+      "The financial department in a large international bank",
+      "The local banks which are branches within a large international bank",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7003, ch: 1, week: 1, source: 'BookTest',
+    q: "All companies have an operations function but it is not always called by that name. This means that all companies have operations managers but they are not necessarily called by that name. Which of the following could be a name for an operations​ manager?",
+    opts: [
+      "All the managers mentioned here",
+      "Store manager​ (in a​ supermarket)",
+      "Branch manager​ (in a local​ bank)",
+      "Fleet manager​ (in a distribution​ company)",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7004, ch: 1, week: 1, source: 'BookTest',
+    q: "Statement 1: Internal and external customers may vary because internal customers often have less choice of which supplier to use.\nStatement 2: The external effect of being good at​ quality, speed, dependability and flexibility is usually to increase​ revenue, while the internal effect is usually to reduce cost.",
+    opts: [
+      "1. False, 2. False",
+      "1. False, 2. True",
+      "1. True, 2. True",
+      "1. True, 2. False",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7005, ch: 1, week: 1, source: 'BookTest',
+    q: "Consistently conforming to​ customers' expectations or​ 'doing things​ right' best summarizes the aim of which performance​ objective?",
+    opts: [
+      "Dependability",
+      "Flexibility",
+      "Speed",
+      "Quality",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7006, ch: 1, week: 1, source: 'BookTest',
+    q: "There are five basic performance objectives which apply to all types of operation. They​ are:",
+    opts: [
+      "Quality, speed,​ error-free, flexibility, price",
+      "Quality, speed,​ dependability, flexibility, cost",
+      "Quality, speed,​ dependability, flexibility, price",
+      "Quality, speed,​ adaptability, flexibility, cost",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7007, ch: 1, week: 1, source: 'BookTest',
+    q: "How would you describe supermarkets in terms of the four​ Vs?",
+    opts: [
+      "High​ volume, high​ variety, low variation and low visibility",
+      "Low​ volume, low​ variety, high variation and low visibility",
+      "High​ volume, low​ variety, low variation and high visibility",
+      "Low​ volume, high​ variety, high variation and high visibility",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7008, ch: 1, week: 1, source: 'BookTest',
+    q: "The strategic positioning of a business in relation to its​ customers, markets and competitors is​ called:",
+    opts: [
+      "Business strategy",
+      "Corporate strategy",
+      "Operations strategy",
+      "Strategic intent",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7009, ch: 1, week: 1, source: 'BookTest',
+    q: "Which of the following sentences are true about operations strategy​ implementation?",
+    opts: [
+      "If a strategy is ambiguous it is difficult to translate strategic intent into specific actions",
+      "The way of implementing any strategy is relatively independent of the nature of that strategy",
+      "By nature strategies are always relatively abstract and therefore rather ambiguous",
+      "All answers are true",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7010, ch: 1, week: 1, source: 'BookTest',
+    q: "In a company that sells and delivers spare parts to car​ workshops, the rule is that a spare part ordered before lunch needs to be delivered before the end of the​ day, and if ordered after lunch it needs to be delivered before lunch the next day. It does not matter to customers if the spare parts are delivered sooner than that. This means that speed of delivery​ is:",
+    opts: [
+      "None of the other answers",
+      "A less important objective",
+      "A qualifying objective",
+      "An​ order-winning objective",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7011, ch: 1, week: 1, source: 'BookTest',
+    q: "Qualifying competitive factors are those​ which:",
+    opts: [
+      "Are relatively unimportant compared with the others.",
+      "May not win extra business if the operation improves its performance but can certainly lose business if performance falls below a particular point.",
+      "Need to be better than a good industry standard.",
+      "Directly win business for the operation.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7012, ch: 1, week: 1, source: 'BookTest',
+    q: "The main role of the operations function within the organisation is​ to:",
+    opts: [
+      "Produce products and services.",
+      "Implement, support and drive strategy.",
+      "Make things cheaply.",
+      "Do what the market requires.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7013, ch: 1, week: 1, source: 'BookTest',
+    q: "Which of the following is NOT a partial measure of​ dependability?",
+    opts: [
+      "Cycle time",
+      "Mean deviation from promised arrival",
+      "Proportion of products in stock",
+      "Schedule adherence",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7014, ch: 1, week: 1, source: 'BookTest',
+    q: "Which of the following statements is​ true?",
+    opts: [
+      "Operations management is more important in large organisations than small ones",
+      "All are false",
+      "Managing the operations in a government organisation is fundamentally different from managing commercial organisations",
+      "Managing the operations in a charity organisation is fundamentally different from managing commercial organisations",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7015, ch: 1, week: 1, source: 'BookTest',
+    q: "The dominant operation for a bank​ is:",
+    opts: [
+      "Processing materials",
+      "Processing customers",
+      "Processing complaints",
+      "Processing information",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7016, ch: 1, week: 1, source: 'BookTest',
+    q: "What are the input resources to any transformation​ process?",
+    opts: [
+      "Processes, people and parts.",
+      "People and machines.",
+      "Only transformed resources.",
+      "Staff, facilities,​ materials, information and customers.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7017, ch: 1, week: 1, source: 'BookTest',
+    q: "Think about an​ airline's online booking system. Customer details are needed in the process of booking a flight. After being used for the booking the contact details are stored and used, in another process, by the airline to send marketing material about special holiday offers. Select the sentence that applies to this situation.",
+    opts: [
+      "Data went from being a transformed resource to a transforming resource.",
+      "Data went from being a transforming resource to a transformed resource.",
+      "Data went from being a marketing resource to a data resource.",
+      "Data went from being a data resource to a transformed resource.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7018, ch: 1, week: 1, source: 'BookTest',
+    q: "Disneyland Paris is one of the largest and best-known theme parks in Europe. How can the four Vs​ (volume, variety,​ variation, visibility) be best described? Considering that the number of people can be reasonably predicted based on forecasted sales (i.e., day passes), there is some remaining dependency on the actual weather outlook, and Disneyland’s operations are complex because it combines mass service with experience customization. Its main challenge is balancing efficiency, capacity, and service quality while guests are watching every part of the process. As a result, ticket prices are considered high.",
+    opts: [
+      "High​ volume, low​ variety, medium variation, low visibility.",
+      "Low volume, high​ variety, low​ variation, very high visibility.",
+      "High​ volume, high​ variety, high​ variation, low visibility.",
+      "High​ volume, high​ variety, medium​ variation, very high visibility.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7019, ch: 1, week: 1, source: 'BookTest',
+    q: "Time to market is a typical partial measure of which performance​ objective?",
+    opts: [
+      "Dependability",
+      "Cost",
+      "Flexibility",
+      "Quality",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7020, ch: 10, week: 3, source: 'BookTest',
+    q: "What form of planning and control uses partially disaggregated demand​ forecasts?",
+    opts: [
+      "Medium-term planning and​ control",
+      "Short-term planning and control",
+      "None of the presented solutions",
+      "Long-term planning and​ control",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7021, ch: 10, week: 3, source: 'BookTest',
+    q: "The process of coping with changes from what was expected to happen. Deals with… 1.\nThe formalisation of what is intended to happen at some time in the future.  Deals with… 2.",
+    opts: [
+      "1. Planning 2. Control",
+      "1. Control 2. Planning",
+      "1. Control 2. Control",
+      "1. Planning 2. Planning",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7022, ch: 10, week: 3, source: 'BookTest',
+    q: "One way of characterising the graduation between resource-to-order (or make-to-order) and make-to-stock is:",
+    opts: [
+      "The D:R ratio",
+      "The R:P ratio",
+      "The P:R ratio",
+      "The P:D ratio",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7023, ch: 10, week: 3, source: 'BookTest',
+    q: "Which of the following statements does not apply to independent demand (for a product)?",
+    opts: [
+      "Can be forecast.",
+      "Is often predicted on the basis of past demand.",
+      "Is dependent on the demand for other related products and services.",
+      "Can apply equally to services.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7024, ch: 10, week: 3, source: 'BookTest',
+    q: "The task of making sure there are sufficient numbers of people working at any point in time is​ termed:",
+    opts: [
+      "Sequencing",
+      "Loading",
+      "Job scheduling",
+      "​Rostering",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7025, ch: 10, week: 3, source: 'BookTest',
+    q: "Statement 1: As managers move from​ long-term to​ short-term planning and control the emphasis becomes more focused on planning rather than​ control, because in the short term there is little that can be done to control things that are not going to plan.\nStatement 2: Valuable operating time is the amount of productive working time available from a machine, once various losses have been factored in.",
+    opts: [
+      "1. True 2. False.",
+      "1. False 2. False.",
+      "1. ​True 2. True.",
+      "1. False 2. True.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7026, ch: 10, week: 3, source: 'BookTest',
+    q: "Which is a measure of (processing) capacity:",
+    opts: [
+      "A 1,000 litre mixing tank.",
+      "A theatre that can seat​ 1,500 customers.",
+      "A cinema can serves 1500 customers/evening.",
+      "A petrol filling station with 10​ pumps.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7027, ch: 10, week: 3, source: 'BookTest',
+    q: "Put the steps in capacity and planning control in order, starting with the step that comes first chronologically.",
+    opts: [
+      "Identify the alternative capacity plans, measure aggregate demand and capacity, choose the most appropriate capacity plan.",
+      "Identify the alternative capacity plans, choose the most appropriate capacity plan, measure aggregate demand and capacity.",
+      "Measure aggregate demand and capacity, choose the most appropriate capacity plan, identify the alternative capacity plans.",
+      "Measure aggregate demand and capacity, identify the alternative capacity plans, choose the most appropriate capacity plan.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7028, ch: 10, week: 3, source: 'BookTest',
+    q: "Measurement has revealed the following information about an operations system. Design capacity was 84 units per hour, planned losses were 12 units per hour, and actual output was 65 units per hour. What were the utilisation and efficiency of the operation respectively?",
+    opts: [
+      "90% and 84%",
+      "90% and 77%",
+      "84% and 90%",
+      "77% and 90%",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7029, ch: 10, week: 3, source: 'BookTest',
+    q: "Which of the following capacity plans may be most appropriate when capacity is relatively​ fixed, services are sold in advance and the marginal cost of making a sale is relatively​ low?",
+    opts: [
+      "Chase demand plan",
+      "Level plan",
+      "Yield​ management, as a specialized form of demand management",
+      "Provide plan",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7030, ch: 13, week: 6, source: 'BookTest',
+    q: "The key statistic in calculating how much safety stock to allow is to incorporate certainty and unpredictability using a probability distribution. This probability distribution​ is used to model:",
+    opts: [
+      "Buffer stocks",
+      "Total capacity",
+      "Lead-time usage",
+      "Holding costs",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7031, ch: 13, week: 6, source: 'BookTest',
+    q: "An MRP system that provides feedback to the capacity plan, master production schedule, and production plans is called",
+    opts: [
+      "MPS system.",
+      "Closed-loop MRP.",
+      "The calculation of the economic order quantity (EOQ).",
+      "Make to order approach.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7032, ch: 13, week: 6, source: 'BookTest',
+    q: "Enterprise resource planning​ (ERP) has been criticised on a number of grounds. Which of the following is NOT a common criticism of​ ERP?",
+    opts: [
+      "It can have a disruptive effect on the operations of an organisation.",
+      "The effect it has on businesses is disappointing.",
+      "Implementation is expensive.",
+      "It ​ doesn't allow decisions and databases from all parts of the organisation to be integrated.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7033, ch: 13, week: 6, source: 'BookTest',
+    q: "Which of the following costs generally increase as order size is​ increased?",
+    opts: [
+      "Stock-out costs",
+      "Storage costs",
+      "Cost of placing the​ order",
+      "Order costs (price discount costs)",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7034, ch: 13, week: 6, source: 'BookTest',
+    q: "The​ re-order point​ (often denoted by ‘s’) is computed as",
+    opts: [
+      "The level inventory will have reached when delivery is made.",
+      "The point at which stock will fall to zero minus​ lead-time.",
+      "The point when stock reaches zero.",
+      "Answer\t The point when one unit of stock remains in stock.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7035, ch: 13, week: 6, source: 'BookTest',
+    q: "What system helps to make calculations regarding the volume and timing of materials​ needed?",
+    opts: [
+      "Product plan",
+      "Materials scheduling",
+      "Materials requirements planning",
+      "Materials resource planning",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7036, ch: 13, week: 6, source: 'BookTest',
+    q: "The figures that should replace each X​ are:\n \n\n\n\n\nWeek\n\n\n0\n\n\n1\n\n\n2\n\n\n3\n\n\n4\n\n\n5\n\n\n6\n\n\n7\n\n\n\n\nGross\nRequirement\n\n \n\n12\n\n\n22\n\n\n16\n\n\n10\n\n\n17\n\n\n10\n\n\n25\n\n\n\n\nScheduled\nReceipts\n\n \n\n0\n\n\n35\n\n\n0\n\n\n20\n\n\n30\n\n\n0\n\n\n30\n\n\n\n\nAvailable\nBalance\n\n\n24\n\n\nX\n\n\nX\n\n\nX\n\n\nX\n\n\nX\n\n\nX\n\n\nX",
+    opts: [
+      "12​ / 25​ / 19​ / 9​ / 22​ / 32​ / 27",
+      "36​ / 13​ / 29​ / 19​ / 6​ / 16​ / 11",
+      "12​ / 25​ / 9​ / 19​ / 32​ / 22​ / 27",
+      "36​ / 49​ / 33​ / 43​ / 56​ / 46​ / 51",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7037, ch: 13, week: 6, source: 'BookTest',
+    q: "Inventory used to compensate for the uncertainties inherent in supply and demand is known​ as:",
+    opts: [
+      "Pipeline inventory",
+      "Buffer​  inventory",
+      "Anticipation inventory",
+      "Cycle inventory or cycle stock",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7038, ch: 13, week: 6, source: 'BookTest',
+    q: "A queue of people is an accumulation of​ customers, and, in the example of people waiting on a phone to speak to a customer adviser from a service​ helpline, can be considered as inventory.",
+    opts: [
+      "Yes, because also a buffer of people in the form of a queue can be considered as inventory.",
+      "No, since such a queue is part of queuing theory and is considered as a buffer of customers to be efficiently served by the process; utilization versus variability.",
+      "No, because only physical stock can be considered inventory.",
+      "No, because this problem deals with capacity management and therefore cannot be considered as real inventory.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7039, ch: 13, week: 6, source: 'BookTest',
+    q: "Which one of the following sentences is true about an ERP​ implementation?",
+    opts: [
+      "It is popular among the employees",
+      "It does not require much training",
+      "It involves crossing organisational boundaries",
+      "It is often a cheap solution",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7040, ch: 15, week: 7, source: 'BookTest',
+    q: "Lean synchronisation means keeping the flow of items through processes and operations at the lowest possible cost. Which of these is NOT a key principle of perfect​ synchronisation?",
+    opts: [
+      "Delivering the correct quantity with no​ extra/waste.",
+      "Delivering exactly what the customer wants.",
+      "Delivering at the cheapest possible sale price.",
+      "Delivering the products precisely when they are needed.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7041, ch: 15, week: 7, source: 'BookTest',
+    q: "Using insulating inventory, i.e., buffers, between stages in a​ process, as in a traditional approach to managing​ flow, has a number of disadvantages. Which of the following is a commonly quoted disadvantage of the traditional​ approach?",
+    opts: [
+      "Problems at one stage will not be immediately apparent elsewhere.",
+      "Problems in the process have to be managed using a holistic approach.",
+      "Capacity utilisation is lowered.",
+      "Stages struggle to cope with a surge in demand from one stage to the next.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7042, ch: 15, week: 7, source: 'BookTest',
+    q: "Activities that cause waste because they do not add value to the operation or the customer​ (e.g. problems caused by poor​ communication, misunderstanding requirements or inefficient use of​ resources).",
+    opts: [
+      "Muri",
+      "Mura",
+      "Mudi",
+      "Muda",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7043, ch: 15, week: 7, source: 'BookTest',
+    q: "Levelled scheduling ​(heijunka) is the​ Japanese-derived term for levelling the production schedule so​ that:",
+    opts: [
+      "Volume and yield are even over time.",
+      "Mix and volume level are even over time.",
+      "Mix and yield level are even over time.",
+      "Mix and quality level are even over time.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7044, ch: 15, week: 7, source: 'BookTest',
+    q: "The theory of constraints​ (TOC) has been developed to focus attention on which parts of a process or​ operation?",
+    opts: [
+      "Wasteful processes",
+      "Production constraints",
+      "Bottlenecks",
+      "Costly processes",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7045, ch: 15, week: 7, source: 'BookTest',
+    q: "What do the letters​ 'D' and​ 'I' stand for in the DMAIC​ cycle?",
+    opts: [
+      "Design and Improve",
+      "Develop and Implement",
+      "Design and Implement",
+      "Define and Improve",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7046, ch: 15, week: 7, source: 'BookTest',
+    q: "Technically​ speaking, six sigma involves driving towards how many defective parts per​ million?",
+    opts: [
+      "6200",
+      "230",
+      "3.4",
+      "1",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7047, ch: 15, week: 7, source: 'BookTest',
+    q: "Ishikawa Diagram is another name for what technique of ​ improvement?",
+    opts: [
+      "Cause-effect diagram",
+      "Scatter diagram",
+      "Process map",
+      "Input-output analysis",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7048, ch: 15, week: 7, source: 'BookTest',
+    q: "Although much operations improvement will take place at​ an operational ​level, it may be small scale and  incremental.​ Nevertheless, it must be placed in some kind of context. That​ is, it is important for the operation...",
+    opts: [
+      "where improvement is happening as well as what it consists of.",
+      "how improvement is happening as well as what it consists of.",
+      "why improvement is happening as well as what it consists of.",
+      "when improvement is happening as well as what it consists of.",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7049, ch: 15, week: 7, source: 'BookTest',
+    q: "Your colleague has presented your boss with a cause-effect diagram that has found what they believe to be a root cause of a problem in an operation. This needs​ improving, but before the company can go​ ahead, your boss likes to be thorough and has asked you to use another method of finding the root cause of the problem to see if you can reach the same results. Which method might you​ choose?",
+    opts: [
+      "Why-why analysis",
+      "Pareto diagrams",
+      "Gantt charts",
+      "Process mapping",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7050, ch: 17, week: 8, source: 'BookTest',
+    q: "Statement 1: The biggest obstacle to measuring quality in medical services is that it is often difficult for patients to judge tangible outcomes of medical​ treatment, except insofar as they do not get any more trouble from their​ injuries/illnesses. The patient is more likely to perceive quality in terms of the manners and behavior of the practitioner and nursing staff and how they were treated.\nStatement 2: Mean time between failures is calculated as the number of hours that the product is working divided by the amount of downtime.",
+    opts: [
+      "1. False 2. True.",
+      "1. True 2. False.",
+      "1. ​True 2. True.",
+      "1. False 2. False.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7051, ch: 17, week: 8, source: 'BookTest',
+    q: "In terms of volume and variety, projects are ...",
+    opts: [
+      "high-volume, high-variety operations",
+      "high-volume, low-variety operations",
+      "low-volume, high-variety operations",
+      "low-volume, low-variety operations",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7052, ch: 17, week: 8, source: 'BookTest',
+    q: "Statement 1: The Critical Path is an activity​ (or series of​ activities) that, if​ delayed, will delay the whole project.\nStatement 2: A Gantt chart is used to show a project timeline diagrammatically.",
+    opts: [
+      "1. ​True 2. True.",
+      "1. False 2. True.",
+      "1. True 2. False.",
+      "1. False 2. False.",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7053, ch: 17, week: 8, source: 'BookTest',
+    q: "As projects increase in​ complexity, which of the following statements is NOT true?",
+    opts: [
+      "The activities involved get harder to monitor.",
+      "The risk of overlooking something increases.",
+      "They require more effort to control.",
+      "Projects should follow the DMAIC approach.",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7054, ch: 17, week: 8, source: 'BookTest',
+    q: "Crashing activities in projects is the process​ of:",
+    opts: [
+      "all other answers are parts of crashing activities.",
+      "reducing time spans of critical path activities so that the project is completed in less time.",
+      "finding unnecessary activities in a project in order to eliminate them.",
+      "finding activities in a project where cost can be reduced.",
+      "Don't know"
+    ],
+    ans: 1
+  },
+  { id: 7055, ch: 17, week: 8, source: 'BookTest',
+    q: "Which of the following is NOT a type of mitigation​ action?",
+    opts: [
+      "Loss reduction",
+      "Mitigation planning",
+      "5S",
+      "Substitution",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7056, ch: 17, week: 8, source: 'BookTest',
+    q: "If a system is composed of 400 interdependent components that each have individual reliability of​ 99%, the overall system reliability will be less than​",
+    opts: [
+      "50%",
+      "25%",
+      "5%",
+      "75%",
+      "Don't know"
+    ],
+    ans: 2
+  },
+  { id: 7057, ch: 17, week: 8, source: 'BookTest',
+    q: "Which two type of nodes can be found on a fault tree analysis​ diagram?",
+    opts: [
+      "AND​  & OR",
+      "AND​  & IF",
+      "NOT​  & OR",
+      "IF​  & OR",
+      "Don't know"
+    ],
+    ans: 0
+  },
+  { id: 7058, ch: 17, week: 8, source: 'BookTest',
+    q: "If a batch of 200 electronic components is tested for 400 hours and 5 fail during the​ test, what is the failure rate as a​ percentage?",
+    opts: [
+      "1.25%",
+      "5%",
+      "10%",
+      "2.5%",
+      "Don't know"
+    ],
+    ans: 3
+  },
+  { id: 7059, ch: 17, week: 8, source: 'BookTest',
+    q: "TQM expands on earlier approaches to quality management. Which of the following choices is ordered correctly from earlier to later ideas concerning quality management?",
+    opts: [
+      "Quality​ Assurance, Quality​ Control, Inspection, Total Quality Management",
+      "Quality​ Assurance, Inspection, Quality​ Control, Total Quality Management",
+      "Quality ​ Control, Inspection, Quality​ Assurance, Total Quality Management",
+      "Inspection, Quality​ Control, Quality​ Assurance, Total Quality Management",
+      "Don't know"
+    ],
+    ans: 3
+  },
+];
+QUESTIONS = QUESTIONS.concat(QUESTIONS_BOOK_TEST);
+
+// ============== QUESTIONS_HOMEWORK ==============
+var QUESTIONS_HOMEWORK = [
+  { id: 8000, ch: 1, week: 1, source: 'Homework',
+    q: "In general, if the visibility of the operations goes from low to high, then the unit cost typically...",
+    opts: [
+      "Increases.",
+      "Cannot be answered.",
+      "Decreases.",
+      "Remains the same.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "- **Visibility（可視性）** = 顧客がオペレーションプロセスに接する度合い（4V framework）\n- 高visibility = 高顧客接触 = カスタマー対応に時間・スキル・柔軟性が必要 = **標準化・自動化困難**\n- そのため単位コストは**上昇**する\n- 例: フロントオフィス（high visibility, 高コスト）vs バックオフィス（low visibility, 低コスト）\n\n**他選択肢が誤り:**\n- B) 答えられる質問。 \n- C) 逆。高visibilityは標準化を阻害しコスト増。\n- D) 4Vの影響として一定ではあり得ない。",
+    memory: "**4V (Volume/Variety/Variation/Visibility)** — Visibility↑だけがコスト↑（他3つはコスト↓方向）"
+  },
+  { id: 8001, ch: 1, week: 1, source: 'Homework',
+    q: "Suppose a call center succeeds in adapting their capacity easily to match demand during working hours. This is an example of...",
+    opts: [
+      "Delivery flexibility.",
+      "Product flexibility.",
+      "Mix flexibility.",
+      "Volume flexibility.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "- **4種類のFlexibility (Slack)**:\n  - **Product/Service**: 新製品/サービスを導入できる柔軟性\n  - **Mix**: 製品ミックス（種類の割合）を変えられる\n  - **Volume**: 生産量を増減できる\n  - **Delivery**: 納期を変更できる\n- 「需要に合わせて容量を調整」= **量の調整** = **Volume flexibility**\n\n**他選択肢が誤り:**\n- A) Delivery = 納期の柔軟性（時間軸の調整）\n- B) Product = 新製品導入の柔軟性\n- C) Mix = 製品種類比率の調整",
+    memory: "**PMVD** = Product / Mix / Volume / Delivery"
+  },
+  { id: 8002, ch: 1, week: 1, source: 'Homework',
+    q: "Considering two retailers of electronics, an online retailer (CoolBlue) and a local, 'offline' retailer, on which performance dimension(s) are they primarily competing?",
+    opts: [
+      "Dependability and speed.",
+      "Speed and flexibility.",
+      "Only cost.",
+      "Only flexibility.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "- 電子製品小売は標準品（品質・コストはqualifier）\n- **Online (CoolBlue)**: 高速配送・確実な納品 = **Speed + Dependability**\n- **Offline**: 即入手可能（Speed）+ 確実な営業時間（Dependability）\n- どちらも品質はある程度確保、価格も競争的だが、決定打は「いつ手に入るか」と「約束通り届くか」\n\n**他選択肢が誤り:**\n- B) Flexibilityは小売では補助的（品揃え程度）、主軸ではない\n- C) Costのみではない（オンラインも実店舗もコスト勝負だけではない）\n- D) Flexibilityのみは不適切",
+    memory: "**小売 = 信頼性×速度の競争**。商品自体は同じ → 配達速度と確実性で勝負"
+  },
+  { id: 8003, ch: 1, week: 1, source: 'Homework',
+    q: "People that go to IKEA want good-looking, but most of all affordable furniture, more than that they require the products to be durable or uniquely designed. This means that the looks of furniture is what kind of competitive factor for IKEA?",
+    opts: [
+      "Less important factor.",
+      "Order-qualifying factor.",
+      "Order-winning factor.",
+      "Very important factor.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "- **Hill (1985) framework**:\n  - **Order-winner**: 購買決定の決め手（IKEA= **affordability / price**）\n  - **Order-qualifier**: 最低限満たすべき条件（IKEA= **looks** が「悪くない」必要）\n  - **Less important**: ほぼ影響しない（IKEA= durability, unique designなど）\n- 顧客は「good-looking」は必要だが、「most of all affordable」と言うほど価格優先 → looksは**入場券レベル**\n\n**他選択肢が誤り:**\n- A) Less important = durability / unique designが該当\n- C) Order-winner = price/affordability\n- D) \"Very important\"はHillの用語ではない",
+    memory: "**Order-winner=決め手、Qualifier=入場券、Less important=おまけ**"
+  },
+  { id: 8004, ch: 1, week: 1, source: 'Homework',
+    q: "Considering teaching, what is a good example of a transformed resource?",
+    opts: [
+      "Teacher.",
+      "Student.",
+      "Calculator.",
+      "Flow.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "- **Transformed resources（変えられる資源）**: 操作によって状態が変化する = **Material / Information / Customer**\n- **Transforming resources（変える資源）**: 操作を実行する = **Facilities / Staff**\n- 教育プロセスでは:\n  - Teacher = transforming (教える人)\n  - **Student = transformed** (無知 → 知識ある状態に変わる \"customer-as-input\")\n  - Calculator = transforming (道具)\n\n**他選択肢が誤り:**\n- A) Teacher = transforming (操作を行う人)\n- C) Calculator = transforming (道具・設備)\n- D) Flow = 概念であり資源ではない",
+    memory: "**サービスでは顧客自身が原料**（病院では患者、教育では学生、レストランでは空腹の客）"
+  },
+  { id: 8005, ch: 1, week: 1, source: 'Homework',
+    q: "In healthcare it is increasingly more common to organize standard procedures as part of clinical pathways, in which all transformed resources are organized / grouped together for more or less the same treatment. However this cannot be done for all services in a hospital (yet), especially not for complex cases. From the theory of operations management is this new decision to organize routine processes in a clinical pathway a good strategy for large hospitals?",
+    opts: [
+      "No, large hospitals should focus only on the specialist process as there are the margins the largest.",
+      "Yes, but in the end the complex cases should also be handled in the clinical pathways.",
+      "Yes, because you have two operations that can focus on their own operations strategy and you still have some synergies, e.g., sharing of personnel.",
+      "No, large hospitals should focus only on clinical pathways. As they have the highest volumes.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **Skinner の Focused Factory 原則 / Service shop 分類** の応用\n- 病院の業務を2つに分割:\n  - **Clinical pathway**: 定型処置（高Volume、低Variety）→ Mass service的に効率化\n  - **Complex cases**: 専門治療（低Volume、高Variety）→ Professional service的に個別対応\n- 各オペレーションが**異なる5PO**を追求できる（pathwayはCost/Speed、complexはQuality/Flexibility）\n- 人員・設備の共有でシナジーも維持\n\n**他選択肢が誤り:**\n- A) 専門のみは多くの患者ニーズを失う + 標準処置の効率化機会を逃す\n- B) 複雑症例はカスタム性が必要、無理にpathway化すると品質低下\n- D) Pathwayのみは複雑症例対応不可、大病院の使命に反する",
+    memory: "**Volume/Varietyで処置を分けて、それぞれ別オペレーション設計** = Skinner's focused operations"
+  },
+  { id: 8006, ch: 1, week: 1, source: 'Homework',
+    q: "In general, is a top-down operations strategy needed?",
+    opts: [
+      "Yes, because management should be aware of the capabilities of the resources.",
+      "Yes, it gives a sense of purpose and direction.",
+      "No, not really. Emergent strategies will be enough to steer the operations the right way automatically.",
+      "No, a top-down strategy can be substituted by a wisely-chosen combination of bottom-up strategies.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "- **4視点 of Operations Strategy (Slack)**:\n  - **Top-down**: 企業戦略から派生（方向性付与）\n  - **Bottom-up**: 現場経験から創発（学習）\n  - **Outside-in**: 市場要求から（顧客視点）\n  - **Inside-out**: 自社能力から（資源視点）\n- すべての視点が**補完的**に必要だが、**Top-downが目的・方向性を与える**役割を果たす\n- Emergent (bottom-up) のみでは戦略的方向性を欠く → 一貫性なし\n\n**他選択肢が誤り:**\n- A) Resources awareness は inside-out / bottom-up に近い理由づけ。Top-downの本質的役割（方向性）ではない\n- C) Emergent戦略は補完的、単独では不十分\n- D) Bottom-upの組合せでは整合性確保困難、Top-downの「方向付け」機能を代替できない",
+    memory: "**4視点は全て必要、相補的**。Top-down = 「どこに向かうか」を決める北極星"
+  },
+  { id: 8007, ch: 5, week: 2, source: 'Homework',
+    q: "VanMoof bicycle lease plan — VanMoof produces bikes, Friesland Lease handles financial. How best describe the relationship?",
+    opts: [
+      "Two diadic interactions.",
+      "Off shoring.",
+      "Triadic interaction.",
+      "Diadic interaction.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **Dyadic (二者間)** = 2当事者の直接関係（顧客 ⇔ 1社）\n- **Triadic (三者間)** = 3当事者が相互依存的に関わる関係\n- VanMoof × Friesland Lease × 顧客 の3者がすべて相互依存:\n  - 顧客 ↔ Friesland Lease (リース契約・支払い)\n  - 顧客 ↔ VanMoof (自転車使用・サポート)\n  - VanMoof ↔ Friesland Lease (パートナーシップ・卸取引)\n- 単純な2つのdyadではなく、3者全員のサービス提供が統合されている → Triadic\n\n**他選択肢が誤り:**\n- A) \"Two diadic\" は3者を独立した2組に分解した見方、Triadicの方が正確\n- B) Offshoring = 海外移転 (無関係)\n- D) Dyadic = 2者間のみ (3者存在のため不正確)",
+    memory: "**Triadic = 3者の相互依存サービス**（プラットフォーム経済の典型）"
+  },
+  { id: 8008, ch: 5, week: 2, source: 'Homework',
+    q: "4Vs along horizontal and vertical axes of layout diagram",
+    opts: [
+      "1. Volume; 2. Visibility.",
+      "1. Volume; 2. Variety.",
+      "1. Visibility; 2. Volume.",
+      "1. Variety; 2. Volume.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "- Slack教科書の **Layout positioning diagram** (Volume-Variety matrix):\n  - 横軸 (X): **Volume** (low → high)\n  - 縦軸 (Y): **Variety** (low → high, often inverted)\n- 4種類のLayoutが対角線上に位置:\n  - 左上 (低Vol×高Var): **Fixed-position** (船舶、ビル建設)\n  - 中上 (低-中Vol×中-高Var): **Functional** (病院、印刷所)\n  - 中下 (中Vol×中Var): **Cell** (専門製造セル)\n  - 右下 (高Vol×低Var): **Product/Line** (自動車組立、化学プラント)\n\n**他選択肢が誤り:**\n- A) Visibilityはレイアウト分類の主軸ではない\n- C) 順序が逆\n- D) 順序が逆",
+    memory: "**Vol-Var matrix で対角線**：低Vol高Var→Fixed、高Vol低Var→Line"
+  },
+  { id: 8009, ch: 5, week: 2, source: 'Homework',
+    q: "On what performance metrics does variability have an impact? (Multiple steps process)",
+    opts: [
+      "Only utilization.",
+      "Average throughput, utilization, average waiting time.",
+      "Average processing and waiting time.",
+      "Only waiting time.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "- **Kingman's formula**: 変動性は待ち時間とフロー全般に影響\n- 変動が影響するもの:\n  - **Average waiting time** ↑ (Kingman: 待ち ∝ 変動² × 利用率)\n  - **Effective throughput** ↓ (変動でボトルネック能力が低下)\n  - **Required utilization** (達成目標稼働率は変動でブレる)\n- 影響**しない**もの: \n  - Processing time (work content自体) は固定 → Cが誤り\n\n**他選択肢が誤り:**\n- A) 待ち時間も影響大、限定的すぎる\n- C) Processing time（実作業時間）は変動の影響を受けない\n- D) Throughput、Utilizationにも影響",
+    memory: "**変動 → 待ち時間 × 稼働 × 実効スループット全部に影響**"
+  },
+  { id: 8010, ch: 5, week: 2, source: 'Homework',
+    q: "Key disadvantage of a fully synchronized line layout?",
+    opts: [
+      "It is much slower than other layouts.",
+      "It requires a lot more management than any other type of layout.",
+      "It is sensitive to disruption and variability in the process.",
+      "The WIP in between process steps is way higher.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **Synchronized line layout** = 全工程が同じCycle timeで連動する流れ生産（バッファなし）\n- 1箇所故障 → **ドミノ倒し**で全工程停止\n- 変動への耐性が低い：Cycle time差が出ると全体が遅延\n- これがLeanで小バッファを残す根拠\n\n**他選択肢が誤り:**\n- A) 逆。Lineは大量生産で**最速**になる\n- B) 管理は比較的シンプル（標準化されているため）\n- D) 逆。Lineは**WIPが最小**になる（バッファなしのため）",
+    memory: "**Synchronized Line = 速いが脆弱**。1箇所止まれば全停止"
+  },
+  { id: 8011, ch: 5, week: 2, source: 'Homework',
+    q: "LaPlace restaurant — indoor food market with multiple cuisine stands, central cashier, then seating. What layout?",
+    opts: [
+      "Cell layout.",
+      "Product layout.",
+      "Functional layout.",
+      "Fixed-position layout.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **Functional layout (Process layout)**: 類似機能ごとにエリアを分け、顧客/製品が必要な機能間を移動\n- LaPlace:\n  - イタリアン stand (機能1: 一種の料理)\n  - アジアン stand (機能2)\n  - 飲料 stand (機能3)\n  - キャッシャー (機能4)\n  - 着席エリア (機能5)\n- 顧客は **選択に応じて機能エリアを移動** = Functional layout の典型パターン\n- スーパーマーケットの「青果」「精肉」「乳製品」セクション分けと同じ\n\n**他選択肢が誤り:**\n- A) Cell = 単一製品ファミリーのための専用ゾーン（1セル内で完結）。LaPlaceは複数stand間を移動するためCellではない\n- B) Product/Line = 単一の直線的フロー（全員同じ順序）。LaPlaceは顧客が自由に選ぶ\n- D) Fixed-position = 製品/顧客が動かない（病室で看護師が来る等）。レストランは顧客が移動",
+    memory: "**顧客が機能エリア間を選んで移動 = Functional**。スーパー/病院型\n\n> ⚠️ **注**: 一部の解釈では「各cuisine stand = 1つのCell（全資源を集約）」とも見える。教科書のスーパー類例から**Functional**が標準解答。"
+  },
+  { id: 8012, ch: 5, week: 2, source: 'Homework',
+    q: "What kind of service is 1-on-1 tutoring?",
+    opts: [
+      "Mass service.",
+      "Professional service.",
+      "Continuous service.",
+      "Service shop.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "- **Schmenner / Slack のサービス3分類**:\n  - **Professional service**: 高接触・低Volume・高カスタム・専門人材中心（弁護士、コンサル、医師、**個別チューター**）\n  - **Service shop**: 中間（ホテル、銀行支店、レンタカー）\n  - **Mass service**: 低接触・高Volume・標準化（スーパー、コールセンター、空港）\n- 1-on-1 tutoring:\n  - 接触: 極めて高い（1対1）\n  - Volume: 低い（個別）\n  - カスタム: 完全個別対応\n  - 専門性: 高い\n  - → **Professional service**\n\n**他選択肢が誤り:**\n- A) Mass = 標準化された大量サービス（チューターは個別）\n- C) \"Continuous service\" はサービス分類の正式用語ではない\n- D) Service shop = 中規模・中接触（個別チューターは更に接触度が高い）",
+    memory: "**接触度↑＋Volume↓＋カスタム↑ = Professional**"
+  },
+  { id: 8013, ch: 5, week: 2, source: 'Homework',
+    q: "Tata Steel relocates production from IJmuiden (NL) to India (HQ). What dimension?",
+    opts: [
+      "Offshoring.",
+      "Outsourcing.",
+      "Vertical integration.",
+      "Disintermediation.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "- **Offshoring**: 自社オペレーションを**国外に移転**（同じ会社内、地理的移転）\n- **Outsourcing**: 外部企業に**委託**（社外移転、所有権変化）\n- Tata Steel = 同じ会社、生産拠点を**インドに移転** → Offshoring\n- Outsourcing ではない理由: 別会社に委託しているわけではない (Tata内部)\n\n**他選択肢が誤り:**\n- B) Outsourcing = 他社への委託（Tataは自社内で移転）\n- C) Vertical integration = サプライチェーン上下流を内部化（無関係）\n- D) Disintermediation = 中間業者の排除（無関係）",
+    memory: "- **Offshoring** = 場所の移動（国外、同一会社）\n- **Outsourcing** = 会社の移動（他社委託、同国/国外問わず）\n- 2軸の4象限: Onshore/Offshore × In-house/Outsourced"
+  },
+  { id: 8014, ch: 5, week: 2, source: 'Homework',
+    q: "Theme park entrance: 80 families waiting at opening, 1.5 min/group service. Cashiers needed to serve all within 10 min on average? (Hint: TH = CT × WIP)",
+    opts: [
+      "11.",
+      "12.",
+      "6.",
+      "8.",
+      "Don't know"
+    ],
+    ans: 1,
+    memory: "**TH = (CT × WIP) ÷ 並列リソース数**。並列で総時間を削減"
+  },
+  { id: 8015, ch: 5, week: 2, source: 'Homework',
+    q: "Eye clinic: 2 clinicians, 15 min/client average, 7 hours/day. Design capacity?",
+    opts: [
+      "28 clients/clinician.",
+      "7 hours/day.",
+      "7.5 minutes.",
+      "56 clients/day.",
+      "Don't know"
+    ],
+    ans: 3,
+    memory: "**Design capacity = 稼働時間 × リソース数 ÷ 単位処理時間**"
+  },
+  { id: 8016, ch: 10, week: 3, source: 'Homework',
+    q: "What is false with regard to planning within planning and control?",
+    opts: [
+      "A plan is often based on expectations.",
+      "A plan can be considered as a statement of intention.",
+      "A good plan guarantees that control is not necessary.  (これがFalse)",
+      "During implementation things do not always happen as expected.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- 「Planning **AND** Control」は2セット — 計画だけでは不十分\n- どんなに良い計画でも、実行中の monitoring & control は必須\n- 不確実性(D)があるからこそ統制が必要\n\n**他選択肢:** A, B, D は全て計画の特性として正しい",
+    memory: "**計画は意図、統制は調整。両輪。**"
+  },
+  { id: 8017, ch: 10, week: 3, source: 'Homework',
+    q: "Deciding how much homework you can do in a day = what activity?",
+    opts: [
+      "Scheduling.",
+      "Monitoring and control.",
+      "Loading.",
+      "Sequencing.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **Loading** = リソース(自分)にどれだけの仕事量を割り当てるか → \"how much\"\n- **Scheduling** = いつ何をやるか → タイムテーブル\n- **Sequencing** = どの順番で → 順序\n- **Monitoring** = 実行状況の確認",
+    memory: "**LSSM** = Load(量)・Sequence(順)・Schedule(時)・Monitor(確認)"
+  },
+  { id: 8018, ch: 10, week: 3, source: 'Homework',
+    q: "Responsiveness metric: balance between delivery & production",
+    opts: [
+      "D : P",
+      "D × P",
+      "P × D",
+      "P : D",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "- **D : P ratio** (Demand : Production)\n  - D = Demand time (顧客が待てる時間)\n  - P = Production lead time (生産に必要な時間)\n- D : P < 1 → MTO (customers wait, production time exceeds demand window)\n- D : P ≥ 1 → MTS (production fits within demand window)\n- D が分子、P が分母の慣行",
+    memory: "**D:P比** = 顧客忍耐 ÷ 生産時間。1未満なら見越し生産必要"
+  },
+  { id: 8019, ch: 10, week: 3, source: 'Homework',
+    q: "MRI bottleneck, what sets the drum in drum-buffer-rope?",
+    opts: [
+      "Clients.",
+      "Dressing rooms.",
+      "Reception.",
+      "Appointment schedule.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "- **Drum** = ボトルネックの稼働ペース(リズム)。システム全体の鼓動を決める\n- MRIがボトルネック → MRIの**予約スケジュール** = 全体のペースを設定 = drum\n- **Buffer** = ボトルネック直前のWIP buffer (患者待機エリア等)\n- **Rope** = 上流の release を制御する信号 (受付での新規受入制限)\n\n**他選択肢が誤り:**\n- A) Clientsはdrumの「素材」、ペース設定ではない\n- B) Dressing rooms = bufferスペース\n- C) Reception = rope(入り口制御)",
+    memory: "**Drum = ボトルネックのリズム、Buffer = 直前在庫、Rope = 上流制御**"
+  },
+  { id: 8020, ch: 10, week: 3, source: 'Homework',
+    q: "Consultancy with hard-to-adjust staffing — strategy ruled out?",
+    opts: [
+      "Chase-demand strategy.",
+      "Level plan.",
+      "Little's plan.",
+      "Demand management.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "- **Chase-demand** = 容量を需要に合わせて変える戦略 → 採用/解雇/シフト変更が必要\n- スタッフィングが固いなら**実行不可能** → 除外\n- Level plan = 容量一定で在庫/待ち行列で吸収 (採用変更不要、OK)\n- Demand management = 価格・予約で需要を平準化 (容量変更不要、OK)\n- \"Little's plan\" = 存在しない用語 (distractor)",
+    memory: "**Chase = 容量を追随、採用柔軟性必須**。固い組織には不適合"
+  },
+  { id: 8021, ch: 10, week: 3, source: 'Homework',
+    q: "Capacity metric that gives processing capability?",
+    opts: [
+      "24 litre/vessel.",
+      "14 cashiers.",
+      "2 clients/hour.",
+      "8 working hours/day.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **Processing capability** = 単位時間あたりの処理能力 (throughput rate)\n- 必須要素: 数量 / 時間\n- C) \"2 clients/hour\" は時間あたり処理量 = 正しい capacity 表現\n\n**他選択肢が誤り:**\n- A) \"24 litre/vessel\" = 静的容量（タンクサイズ）、処理能力ではない\n- B) \"14 cashiers\" = リソース数（capacityの構成要素だが metric ではない）\n- D) \"8 working hours/day\" = 稼働時間（処理能力ではなく可用性）",
+    memory: "**Capacity metric = output ÷ time**"
+  },
+  { id: 8022, ch: 10, week: 3, source: 'Homework',
+    q: "VUT formula: V=1, U=1, T=2 → average waiting time?",
+    opts: [
+      "1.",
+      "2.",
+      "Infinity as U component cannot be 1.",
+      "1.33.",
+      "Don't know"
+    ],
+    ans: 1,
+    memory: "**W_q = V × U × T**。3要素掛け算"
+  },
+  { id: 8023, ch: 10, week: 3, source: 'Homework',
+    q: "Why does throughput time decrease dramatically with bottleneck work standardization?",
+    opts: [
+      "Via Little's law (PT/m reduction).",
+      "Via processing time only.",
+      "Via VUT formula — variation AND processing time reduced, exponential waiting time decrease at bottleneck.",
+      "Via throughput efficiency.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **Standardization の効果は二重**:\n  1. **V (variation)** 削減 → VUT formula で waiting time 直接削減\n  2. **T (processing time)** 削減 → サービス時間直接削減\n- ボトルネックでの待ち時間は throughput time の**最大部分** → ここを削れば全体に効く\n- Wait time = V × U × T → V↓ AND T↓ → 指数関数的(非線形)に削減\n\n**他選択肢が誤り:**\n- A) Little's law だけでは variation の影響を捉えられない\n- B) \"Variation は関係ない\" は明確に誤り。変動こそが Kingman の核\n- D) Throughput efficiency は別の指標、TT削減の説明にならない",
+    memory: "**標準化は VUT の V と T を両方削る** → 待ち時間が劇的に縮む"
+  },
+  { id: 8024, ch: 13, week: 6, source: 'Homework',
+    q: "When does the optimum order size (EOQ) increase?",
+    opts: [
+      "If the safety stock decreases.",
+      "If the holding cost decreases.",
+      "If the demand decreases.",
+      "If the order cost decreases.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "- **EOQ = √(2 C₀ D / Ch)**\n- 分子: C₀ (発注費), D (需要)\n- 分母: Ch (保管費)\n- EOQ ↑ になる条件:\n  - C₀ ↑ (発注費高い → まとめて発注)\n  - D ↑ (需要高い → 大量発注効率良し)\n  - **Ch ↓** (保管安い → 大量保管OK) ✅\n\n**他選択肢が誤り:**\n- A) Safety stock は EOQ の式に**含まれない**\n- C) D 減 → EOQ ↓\n- D) C₀ 減 → EOQ ↓",
+    memory: "**EOQは分子↑か分母↓で大きくなる**"
+  },
+  { id: 8025, ch: 13, week: 6, source: 'Homework',
+    q: "Typical reason for ERP implementation failure?",
+    opts: [
+      "Too many IT background people.",
+      "Quality issues with system.",
+      "Poor change management.",
+      "Implementation costs overestimated.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- ERP導入失敗の三大要因:\n  1. **Poor change management** (組織変革が伴わない) ← 最頻\n  2. Inadequate top management commitment\n  3. Inaccurate data / business process not redesigned\n- ERPは技術導入というより**業務プロセス再設計+組織変革**プロジェクト\n\n**他選択肢が誤り:**\n- A) IT人材多すぎは問題にならない(むしろ事業部門の関与不足が問題)\n- B) 既存ERPは品質安定(SAP, Oracle等)\n- D) 通常はコスト**過小評価**で失敗 (逆ではない)",
+    memory: "**ERP失敗 = 技術ではなく組織変革の失敗**"
+  },
+  { id: 8026, ch: 13, week: 6, source: 'Homework',
+    q: "MPS + BOM + inventory → orders + materials plan = ?",
+    opts: [
+      "Exploding the MPS.",
+      "...",
+      "Materials Requirement Planning (MRP).",
+      "Finding bottleneck in MPS.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **MRP の3つの入力**:\n  1. **MPS** (Master Production Schedule) — 完成品のいつ何個\n  2. **BOM** (Bill of Materials) — 部品構成\n  3. **Inventory records** — 現在庫\n- 出力: 発注書(purchase orders) + 製造指示(work orders) + 材料計画(materials plan)\n- これが古典的 **MRP I**",
+    memory: "**MRP = MPSを部品レベルに分解**"
+  },
+  { id: 8027, ch: 13, week: 6, source: 'Homework',
+    q: "Not a form of inventory?",
+    opts: [
+      "Components for assembly.",
+      "Customers waiting for delivery.",
+      "Work floor employees.",
+      "Customer's details in database.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **在庫 = Transformed resources (Material / Information / Customers) が流れの中で停滞している状態**\n- A) 組立部品 = Material inventory ✓\n- B) 待っている顧客 = Customer inventory (queue) ✓\n- D) DBの顧客情報 = Information inventory ✓\n- **C) 従業員 = Transforming resource (変える側)**, 在庫ではない",
+    memory: "**在庫 = 変えられる資源の停滞、人/設備 ≠ 在庫**"
+  },
+  { id: 8028, ch: 13, week: 6, source: 'Homework',
+    q: "Good reason to have larger queues?",
+    opts: [
+      "It compensates for the differences in timing between supply and demand.",
+      "Requires waiting areas.",
+      "Pressure on staff, quality compromised.",
+      "Wastes customer's time.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "- Queues (待ち行列) のメリット = **buffering 役割**\n- 供給と需要のタイミング不一致を吸収 = 安定運用\n- 例: 銀行で混雑時間の待ち行列 → サーバを満稼働できる\n- B, C, D は queue の **デメリット**",
+    memory: "**Queue は時間 buffer** (空間 buffer = inventory, capacity buffer = idle resources)"
+  },
+  { id: 8029, ch: 13, week: 6, source: 'Homework',
+    q: "Q=1000, C₀=800, Ch=10, D=4000 — costs comparison",
+    opts: [
+      "Yearly ordering > holding.",
+      "Need ROL.",
+      "Yearly holding > ordering.",
+      "Equal at Q=400.",
+      "Don't know"
+    ],
+    ans: 2,
+    memory: "**Q > EOQ なら Holding > Ordering、逆も然り**。EOQで両コスト交差"
+  },
+  { id: 8030, ch: 13, week: 6, source: 'Homework',
+    q: "WDE 3 warehouses NL — pool warehouses worth it?",
+    opts: [
+      "No, diseconomies of scale.",
+      "No, safety stock unchanged + transport higher.",
+      "Yes, NL shipping fast + pooling reduces overall safety stock.",
+      "No, reduces flexibility.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **Risk pooling effect (Statistical)**: 複数地点の需要を集約 → 全体σが減る\n  - 3拠点合算 σ_combined = √(σ₁²+σ₂²+σ₃²) < σ₁+σ₂+σ₃ (独立な場合)\n  - Safety stock = Z·σ → 大幅削減\n- オランダは小国 (~300km) → 集約しても輸送LT短い → デメリット小\n- メリット(SS削減) > デメリット(輸送) → **Pool worth it**\n\n**他選択肢が誤り:**\n- A) 規模の経済が出る、diseconomies は反対\n- B) Pooling は SS 削減効果あり (統計則)\n- D) 中央倉庫からの分配でも柔軟性は維持可能",
+    memory: "**Central > Decentral (在庫効率)、Decentral > Central (即応性)**。小国なら Central 有利"
+  },
+  { id: 8031, ch: 13, week: 6, source: 'Homework',
+    q: "What is FALSE about JIT?",
+    opts: [
+      "JIT achieves minimal inventories.",
+      "JIT requires low variability.",
+      "JIT can only be applied when making products.  (これがFalse)",
+      "JIT = right product, right place, right time.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- C) \"Only when making products\" は**誤り**\n- JIT は**サービス業にも適用可能**:\n  - 銀行: JIT書類処理 (必要な時に処理)\n  - 病院: JIT薬剤補充\n  - レストラン: 注文後調理\n  - 印刷: print-on-demand\n- A, B, D は全て JIT の正しい特徴\n  - A) ✓ 最小在庫が目的\n  - B) ✓ 変動性低減が前提 (Lean SC、サプライヤー近接化)\n  - D) ✓ JIT の本質定義",
+    memory: "**JIT は哲学、業種を選ばない**"
+  },
+  { id: 8032, ch: 15, week: 7, source: 'Homework',
+    q: "When important to consider operations improvement?",
+    opts: [
+      "Only high vol low var.",
+      "Only when costs can be reduced.",
+      "Only when not yet lean.",
+      "Always, because times are changing and competitors will keep improving.",
+      "Don't know"
+    ],
+    ans: 3,
+    expl: "- **Continuous Improvement (Kaizen)** の核心:\n  - 競争環境は変化し続ける\n  - 競合も改善し続ける\n  - 「現状維持」= 相対的後退\n- Improvement は **業種・状態を問わず常に必要**\n- A, B, C はそれぞれ条件を限定しすぎ → 不適切",
+    memory: "**改善に終わりなし — 走り続ける**"
+  },
+  { id: 8033, ch: 15, week: 7, source: 'Homework',
+    q: "Tax Office minister response — what is NOT a valid concern?",
+    opts: [
+      "Operations improvement applies to production not services.  (これがInvalid)",
+      "Only 1 week is too short.",
+      "No clear definition, unaccountable promises.",
+      "Quality/efficiency too vague, need specification.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "- A) **誤った前提** — Operations improvement は**サービス業にも完全に適用可能**\n  - 病院、銀行、政府機関すべてに OM 適用例多数\n  - Tax Office は典型的なサービス・オペレーション\n- B, C, D は**すべて妥当な改善管理上の懸念**:\n  - B) 1週間で根本対策は非現実 → 妥当\n  - C) 計測可能な目標設定なし → 妥当 (DMAIC の Define不足)\n  - D) 抽象的指標を具体化必要 → 妥当 (KPI設定)",
+    memory: "**OM はサービスにも適用される**。Production限定は古い誤解"
+  },
+  { id: 8034, ch: 15, week: 7, source: 'Homework',
+    q: "Old guard's negative reaction to Six Sigma?",
+    opts: [
+      "Working too long, negative.",
+      "They understand Lean is more appropriate.",
+      "Employees feel uncertain about what change means for them.",
+      "They are ignorant.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **変革抵抗の心理学** (Kotter, Lewin の change management):\n  - 変化への抵抗の根本 = **自分の役割・将来への不安**\n  - 「自分の仕事がどうなる?」「新しいスキル要求?」「失敗したら?」\n- 旧スタッフが「Six Sigma は hype」と否定 = 表面理由\n- 真の理由 = 変化への心理的恐怖\n- 改善活動の障害として最も典型的・教科書的\n\n**他選択肢が誤り:**\n- A) 年功 = 表面要因、本質的でない\n- B) 合理化 = 後付け理由\n- D) 「無知」決めつけは管理者の傲慢、change management では避ける",
+    memory: "**変革抵抗の根 = 不安**。Kotter 8ステップで対処"
+  },
+  { id: 8035, ch: 15, week: 7, source: 'Homework',
+    q: "Pareto chart purpose?",
+    opts: [
+      "Reduces variation.",
+      "Provides solutions.",
+      "Helps focus on the most important issues.",
+      "Identifies root cause.",
+      "Don't know"
+    ],
+    ans: 2,
+    expl: "- **Pareto 原則 (80/20 rule)**: 20%の原因が80%の問題を生む\n- Pareto chart = 原因別の問題件数を**降順に積み上げ棒グラフ**\n- 目的: **「vital few」を識別**して優先順位付け\n- 「あの20%に集中せよ」\n\n**他選択肢が誤り:**\n- A) Variation削減はSPC/Control chart の役割\n- B) 解決策提供はFishbone/5Whys後の人間判断\n- D) Root cause特定は Fishbone diagram / 5 Whys の役割",
+    memory: "**Pareto = 重要少数を可視化** (どこに集中すべきか)"
+  },
+  { id: 8036, ch: 15, week: 7, source: 'Homework',
+    q: "Mortgage in-person verification — which waste does NOT relate?",
+    opts: [
+      "Defects  (Doesn't really relate)",
+      "Waiting time.",
+      "Over-processing.",
+      "Transport.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "- **7 wastes (TIMWOOD)** の定義:\n  - **Defects** = 製品/サービスの**品質エラー** (不良品、誤情報) → モーゲージ事例では該当しない (デジタル選択肢の欠如は「設計不備」だが古典的 Defect ではない)\n  - **Waiting** = 顧客が認証完了を待つ ✓ 該当\n  - **Over-processing** = デジタルで十分なのに対面要求 = 過剰処理 ✓ 該当\n  - **Transport** = 顧客が支店まで移動 = 不要な移動 ✓ 該当\n- Defects は「製品/サービス品質の欠陥」を指し、「機能の欠如」とは区別される",
+    memory: "**Defects = 品質エラー、機能欠如は別カテゴリ**。TIMWOOD で「機能不足」は厳密には waste 7種には入らない"
+  },
+  { id: 8037, ch: 15, week: 7, source: 'Homework',
+    q: "Which principle is TRUE about bottlenecks?",
+    opts: [
+      "Never use DBR for bottleneck.",
+      "Bottlenecks govern throughput AND inventory.",
+      "Hour lost at bottleneck = not a big loss.",
+      "Hour saved at non-bottleneck = waste reduction.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "- **TOC (Theory of Constraints) 原則** (Goldratt):\n  - ボトルネックは**throughput** (全体スループット) を決定 ✓\n  - ボトルネック前に WIP が溜まる → **inventory** も決定 ✓\n  - 両方を支配 → 投資価値最大\n\n**他選択肢が誤り:**\n- A) DBR (Drum-Buffer-Rope) はボトルネック管理の**標準手法**、不要ではない\n- C) ボトルネックで失った1時間 = **システム全体で失った1時間** (TOCの黄金律) → 大損失\n- D) 非ボトルネックでの1時間節約 = **無駄削減ではなく蜃気楼** (どうせ全体スループットは不変)",
+    memory: "**ボトルネック1時間ロス = 全社1時間ロス** (Goldratt's golden rule)"
+  },
+  { id: 8038, ch: 15, week: 7, source: 'Homework',
+    q: "Process manager focused on customer journey, breaking silos = which methodology?",
+    opts: [
+      "BPR (Business Process Reengineering).",
+      "Six Sigma.",
+      "TQM.",
+      "Lean.",
+      "Don't know"
+    ],
+    ans: 0,
+    expl: "- **BPR (Hammer & Champy)**: \n  - **抜本的**(radical)なプロセス再設計\n  - **横断的**(cross-functional) — 部門の壁(silos)を破る\n  - **顧客中心**(customer-focused) — 顧客ジャーニー全体最適化\n  - **プロセスオーナー** (process manager) を配置\n- まさに問題文の描写そのもの\n\n**他選択肢が誤り:**\n- B) Six Sigma = ばらつき削減、DMAIC的アプローチ (部門横断より統計的)\n- C) TQM = 全社品質文化 (部門横断要素はあるが、process manager配置は特徴的でない)\n- D) Lean = 無駄削減、流れ重視 (BPRより漸進的)",
+    memory: "**BPR = サイロを壊して顧客視点で再設計**"
+  },
+  { id: 8039, ch: 15, week: 7, source: 'Homework',
+    q: "EOQ formula — which wastes linked?",
+    opts: [
+      "Waiting and transport.",
+      "Inventory and transport.",
+      "Over-production and over-processing.",
+      "Inventory and waiting.",
+      "Don't know"
+    ],
+    ans: 1,
+    expl: "- **EOQ のtrade-off**:\n  - **Q が大きい** → ロットサイズ大 → **Inventory waste** (在庫過多)\n  - **Q が小さい** → 発注頻度高 → **Transport waste** (配送回数多)\n- EOQ はこの2つの waste の最適バランス点を求める\n- TIMWOOD 用語: **Inventory** ⇔ **Transport**\n\n**他選択肢が誤り:**\n- A) Waiting は EOQ の主軸ではない\n- C) Over-production はEOQの考慮外 (デマンド一定前提)\n- D) Inventory ⇔ Waiting は別文脈 (stock outによる顧客待ち)",
+    memory: "**EOQ = 在庫コスト ⇔ 輸送コスト の天秤**"
+  },
+];
+QUESTIONS = QUESTIONS.concat(QUESTIONS_HOMEWORK);
+
 
 
 
