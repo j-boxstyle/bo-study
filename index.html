@@ -7839,10 +7839,16 @@ function setQuizChFilter(ch) {
 }
 
 function getPassSources(passMode) {
-  if (passMode === 1) return ['授業'];
-  if (passMode === 2) return ['授業', '過去問'];
-  if (passMode === 3) return ['教科書', 'Mock+Original'];
-  return null; // all
+  // passMode は単数 or 配列のどちらかを受ける
+  var arr = Array.isArray(passMode) ? passMode : (Array.isArray(quizState.passModes) ? quizState.passModes : [passMode]);
+  if (arr.indexOf(0) >= 0 || arr.length === 0) return null; // 全範囲＝フィルタなし
+  var src = {};
+  arr.forEach(function(m){
+    if (m === 1) ['授業'].forEach(function(s){ src[s]=1; });
+    if (m === 2) ['授業','過去問'].forEach(function(s){ src[s]=1; });
+    if (m === 3) ['教科書','Mock+Original'].forEach(function(s){ src[s]=1; });
+  });
+  return Object.keys(src);
 }
 
 function buildPool(ratings) {
