@@ -8005,8 +8005,8 @@ function buildPool(ratings) {
   for (var i = 0; i < QUESTIONS.length; i++) {
     var q = QUESTIONS[i];
     if (q.broken) continue; // skip broken (missing figure/data) questions
-    // Mock Final Exam 1 のみに絞る（source="過去問" && exam="final" = 40問）
-    if (mockFinal1Only && !(q.source === "過去問" && q.exam === "final")) continue;
+    // Mock Final Exam 1 のみに絞る（ID 5001-5040 かつ source="過去問" = 40問。Canvas問題(source='Canvas')はID範囲が被るが除外）
+    if (mockFinal1Only && !(q.id >= 5001 && q.id <= 5040 && q.source === "過去問")) continue;
     // Calc filter: 'calc' | 'noncalc' | 'all'
     if (quizState.calcMode === 'calc' && !q.isCalc) continue;
     if (quizState.calcMode === 'noncalc' && q.isCalc) continue;
@@ -18701,6 +18701,7 @@ var QUESTIONS_MOCK = [
     id: 3068,
     ch: 6,
     week: 2,
+    broken: true,  // 図表（各Stepのcapacity数値）が欠落しているため解答不能
     q: "A process has steps with given capacities. Takt rate = 100 per hr. What is the bottleneck?",
     opts: [
       "There is no bottleneck.",
