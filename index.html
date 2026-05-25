@@ -6179,6 +6179,50 @@ function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+// ─── 日本式数式変換 ───────────────────────────────────
+// √(...) → 上線つき平方根、A÷B / A/B → 二段分数
+// テキスト断片に対して適用（HTMLタグ内は触らない）
+function _jpMathOnText(t) {
+  if (!t || (t.indexOf('√')<0 && t.indexOf('÷')<0 && t.indexOf('/')<0)) return t;
+  // 1) √(EXPR) — 1段ネストまでの括弧対応。中身にも再帰適用。
+  var prev;
+  for (var loop=0; loop<3; loop++) {
+    prev = t;
+    t = t.replace(/√\(((?:[^()]|\([^()]*\))*)\)/g, function(_, inner) {
+      return '<span class="fml"><span class="sqrt"><span class="radicand">' +
+             _jpMathOnText(inner) + '</span></span></span>';
+    });
+    if (t === prev) break;
+  }
+  // 2) √TOKEN（数字 or 単一識別子）
+  t = t.replace(/√([0-9][0-9,.]*|[A-Za-zπμσ])/g,
+    '<span class="fml"><span class="sqrt"><span class="radicand">$1</span></span></span>');
+  // 3) A÷B / A/B — TOKEN: 識別子、数字（カンマ・小数）、(...) 一段
+  //    ただし URL や日付/分数表記の暴発を避けるため、A÷B では ÷、A/B は両側が数学トークンの時だけ
+  var fracTok = '(?:[A-Za-zπμσΦλ_][A-Za-z0-9πμσ_]*|[0-9][0-9,.]*|\\([^()]*\\))';
+  var fracRe = new RegExp(fracTok + '÷' + fracTok, 'g');
+  for (var li=0; li<3; li++) {
+    prev = t;
+    t = t.replace(fracRe, function(m) {
+      var idx = m.indexOf('÷');
+      var num = m.slice(0, idx), den = m.slice(idx+1);
+      return '<span class="fml"><span class="frac"><span class="num">' + num +
+             '</span><span class="den">' + den + '</span></span></span>';
+    });
+    if (t === prev) break;
+  }
+  return t;
+}
+function applyJpMath(html) {
+  if (!html) return html;
+  // HTMLタグ列とテキスト列に分割（タグ内は触らない）
+  var parts = html.split(/(<[^>]*>)/);
+  for (var i = 0; i < parts.length; i++) {
+    if (i % 2 === 0) parts[i] = _jpMathOnText(parts[i]);
+  }
+  return parts.join('');
+}
+
 function renderMd(str) {
   if (!str) return '';
   var s = String(str);
@@ -6220,6 +6264,7 @@ function renderMd(str) {
   s = s.replace(/SAFETAG(\d+)/g, function(_, i){
     return safeTags[parseInt(i, 10)];
   });
+  s = applyJpMath(s);
   return s;
 }
 
