@@ -9000,7 +9000,7 @@ function generateSingleQAIPrompt(qIdx, chosen, correct) {
   lines.push('');
   lines.push('## 結果');
   lines.push('');
-  if {
+  if (correct) {
     lines.push('**正解しましたが、より深く理解したいです。**');
   } else if (isDontKnow) {
     lines.push('**「わからない」を選びました。** 解説を一から教えてください。');
