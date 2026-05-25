@@ -1019,10 +1019,12 @@ body{
           body.dataset.loaded = '1';
 
           // モーダル内の検索ボックスにフィルタロジックを取り付ける
-          var modalSearch = body.querySelector('input[type="text"][placeholder*="検索"]');
+          // モーダル内の検索入力（より広い selector で確実に取得）
+          var modalSearch = body.querySelector('input[type="text"]');
           if (modalSearch) {
             modalSearch.value = '';
-            modalSearch.addEventListener('input', function(){
+            // IME（日本語入力）も含めて確実に発火させる
+            var doFilter = function(){
               var q = this.value.toLowerCase().trim();
               var rooms = body.querySelectorAll('.room');
               rooms.forEach(function(room){
@@ -1051,7 +1053,11 @@ body{
                 });
                 room.style.display = (q === '' || anyMatch) ? '' : 'none';
               });
-            });
+                        };
+            modalSearch.addEventListener('input', doFilter);
+            modalSearch.addEventListener('keyup', doFilter);
+            modalSearch.addEventListener('compositionend', doFilter);
+            modalSearch.addEventListener('change', doFilter);
           }
 
           // モーダル内のフィルタボタンも繋ぐ（.filter-btn の onclick は属性で残るが、再renderには対応せず）
@@ -6067,6 +6073,10 @@ document.addEventListener('DOMContentLoaded', function(){
   if (currentActiveTab && currentActiveTab !== 'tab-textbook') {
     try { switchTab(currentActiveTab); } catch(e) {}
   }
+  // クイズ進行中ならその状態を復元
+  if (currentActiveTab === 'tab-quiz') {
+    try { restoreQuizState(); } catch(e){}
+  }
 });
 
 function switchTab(tabName) {
@@ -7851,6 +7861,7 @@ function startQuiz(n) {
   quizState.blockResults = [];
   quizState.answered = false;
   quizState.active = true;
+  saveQuizState();
 
   if (quizState.currentBlock.length === 0) {
     alert('No questions match the filter. Try a different mode or week.');
@@ -7872,9 +7883,54 @@ function getSourceBadge(q) {
   return '<span style="background:' + col + '33;color:' + col + ';border:1px solid ' + col + ';padding:3px 10px;border-radius:20px;font-size:15px;font-weight:700;margin-right:8px;">' + src + examTag + '</span>';
 }
 
+function saveQuizState(){
+  try {
+    if (!quizState.active) { localStorage.removeItem('quiz_progress'); return; }
+    localStorage.setItem('quiz_progress', JSON.stringify({
+      currentBlock: quizState.currentBlock,
+      currentIndex: quizState.currentIndex,
+      blockResults: quizState.blockResults,
+      answered: quizState.answered,
+      active: quizState.active,
+      passMode: quizState.passMode,
+      mode: quizState.mode,
+      calcMode: quizState.calcMode,
+      weekFilters: quizState.weekFilters,
+      ts: Date.now()
+    }));
+  } catch(e){}
+}
+function restoreQuizState(){
+  try {
+    var saved = localStorage.getItem('quiz_progress');
+    if (!saved) return false;
+    var s = JSON.parse(saved);
+    if (!s.active || !s.currentBlock || s.currentBlock.length === 0) return false;
+    // 12時間以上経過していたら破棄
+    if (Date.now() - (s.ts || 0) > 12*60*60*1000) {
+      localStorage.removeItem('quiz_progress');
+      return false;
+    }
+    quizState.currentBlock = s.currentBlock;
+    quizState.currentIndex = s.currentIndex || 0;
+    quizState.blockResults = s.blockResults || [];
+    quizState.answered = false; // 進行中の回答状態は保存しない（再回答可）
+    quizState.active = true;
+    if (s.passMode !== undefined) quizState.passMode = s.passMode;
+    if (s.mode !== undefined) quizState.mode = s.mode;
+    if (s.calcMode !== undefined) quizState.calcMode = s.calcMode;
+    if (s.weekFilters !== undefined) quizState.weekFilters = s.weekFilters;
+    document.getElementById('quiz-home').classList.add('hidden');
+    document.getElementById('quiz-active').classList.remove('hidden');
+    renderQuestion();
+    return true;
+  } catch(e){ return false; }
+}
+
 function renderQuestion() {
   var idx = quizState.currentBlock[quizState.currentIndex];
   var q = QUESTIONS[idx];
+  saveQuizState();
 
   // ── 選択肢をランダムシャッフル ──
   // 末尾が "Don't know" / "わからない" の場合はそれを最後に固定し、それ以外をシャッフル
@@ -8127,6 +8183,8 @@ function rateAnswer(rating) {
 
   quizState.currentIndex++;
   if (quizState.currentIndex >= quizState.currentBlock.length) {
+    quizState.active = false;
+    saveQuizState();
     showBlockReview();
   } else {
     renderQuestion();
@@ -8586,6 +8644,8 @@ function continueQuiz(n) {
 }
 
 function quitQuiz() {
+  try { localStorage.removeItem('quiz_progress'); } catch(e){}
+  quizState.active = false;
   // Confirm only if user has answered at least one in the current block
   if (quizState.blockResults.length > 0) {
     if (!confirm('クイズを途中で終了してメニューに戻りますか？\n(回答済みの問題は記録されています)')) return;
