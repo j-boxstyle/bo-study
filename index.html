@@ -917,6 +917,19 @@ body{
 <script>
 // ロードマップを別パネルから呼び出して全画面モーダル表示
 (function(){
+  // 概念モーダル(#modal-bg)を body 直下に移動して、どのタブからでも表示可能にする
+  function relocateConceptModal(){
+    var mb = document.getElementById('modal-bg');
+    if (mb && mb.parentElement !== document.body) {
+      document.body.appendChild(mb);
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', relocateConceptModal);
+  } else {
+    relocateConceptModal();
+  }
+
   var opened = false;
   window.toggleRoadmapModal = function() {
     var modal = document.getElementById('roadmap-modal');
