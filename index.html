@@ -417,6 +417,17 @@ a{color:#3b82f6;text-decoration:none;}
   flex:1;overflow-y:auto;overflow-x:hidden;
   background:#0a0e1a;
 }
+/* モーダル内では tab-roadmap からクローンされた重複ヘッダー(brown gradient)を非表示 */
+.roadmap-modal-body header.hero { display: none !important; }
+/* 検索/フィルタバーは modal 上端に固定（元の top:168px は page header 用なので無効化） */
+.roadmap-modal-body .controls {
+  position: sticky !important;
+  top: 0 !important;
+  padding: 10px 16px !important;
+  background: #0f1726 !important;
+  border-bottom: 1px solid #243047 !important;
+}
+.roadmap-modal-body .roadmap { padding: 16px 20px 60px !important; }
 @media (max-width: 600px) {
   .roadmap-fab { width: 48px; height: 48px; font-size: 22px; bottom: 140px; right: 14px; }
   .roadmap-modal { top: 1vh; height: 98vh; width: 98vw; border-radius: 10px; }
