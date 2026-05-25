@@ -7638,7 +7638,8 @@ var quizState = {
   chFilter: 0,
   weekFilter: 0,       // legacy (single) — kept for backwards compat
   weekFilters: [],     // NEW: multi-week filter. empty = all weeks
-  passMode: 0,   // 0=全て, 1=1周目(授業), 2=2周目(授業+過去問), 3=3周目(全範囲)
+  passMode: 0,   // 後方互換（先頭の値を保持）
+  passModes: [0], // 0=全範囲, 1=授業, 2=授業+過去問, 3=教科書+Mock+Original（複数選択可）
   calcMode: 'all', // 'all' | 'calc' | 'noncalc'
   currentBlock: [],
   currentIndex: 0,
@@ -7683,13 +7684,18 @@ function renderQuizHome() {
     { id: 2, label: '📖 2周目', desc: '授業 + 過去問' },
     { id: 3, label: '🎓 3周目', desc: '教科書 + オリジナル' }
   ];
+  // 配列化（後方互換）
+  if (!Array.isArray(quizState.passModes)) {
+    quizState.passModes = [quizState.passMode || 0];
+  }
   for (var i = 0; i < passes.length; i++) {
-    var act = quizState.passMode === passes[i].id ? ' active' : '';
+    var act = (quizState.passModes.indexOf(passes[i].id) >= 0) ? ' active' : '';
     html += '<div class="mode-btn' + act + '" style="flex-direction:column;padding:10px 14px;" onclick="setPassMode(' + passes[i].id + ')">';
     html += '<span style="font-weight:700;">' + passes[i].label + '</span>';
     html += '<span style="font-size:13px;color:#94a3b8;margin-top:3px;">' + passes[i].desc + '</span>';
     html += '</div>';
   }
+  html += '<div style="color:#64748b;font-size:13px;margin-top:6px;">複数選択可（タップでトグル）。全範囲を選ぶと他は解除されます。</div>';
   html += '</div></div>';
 
   // ── Mode selector ──
@@ -7774,7 +7780,25 @@ function renderQuizHome() {
 }
 
 function setPassMode(p) {
-  quizState.passMode = p;
+  // 複数選択：トグル方式。0（全範囲）は単独選択／他と排他。
+  if (!Array.isArray(quizState.passModes)) {
+    quizState.passModes = [quizState.passMode || 0];
+  }
+  if (p === 0) {
+    // 全範囲を押した → 全範囲のみ選択
+    quizState.passModes = [0];
+  } else {
+    // 0 を解除して、p をトグル
+    var arr = quizState.passModes.filter(function(x){ return x !== 0; });
+    var i = arr.indexOf(p);
+    if (i >= 0) arr.splice(i, 1);
+    else arr.push(p);
+    // 全部解除されたら 全範囲に戻す
+    if (arr.length === 0) arr = [0];
+    quizState.passModes = arr;
+  }
+  // 後方互換：passMode（単数）も先頭値で保持
+  quizState.passMode = quizState.passModes[0];
   renderQuizHome();
 }
 
@@ -7822,7 +7846,7 @@ function getPassSources(passMode) {
 }
 
 function buildPool(ratings) {
-  var allowedSources = getPassSources(quizState.passMode);
+  var allowedSources = getPassSources(quizState.passModes || quizState.passMode);
   var pool = [];
   for (var i = 0; i < QUESTIONS.length; i++) {
     var q = QUESTIONS[i];
