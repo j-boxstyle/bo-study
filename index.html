@@ -1016,9 +1016,70 @@ body{
             var dup = body.querySelector('#'+id);
             if (dup) dup.removeAttribute('id');
           });
-          // クローンした roadmap div の中身を空に → 新規renderRoadmapで描画し直し
-          // ただし元の renderRoadmap は #roadmap を探すので、こちらも別IDで再描画
           body.dataset.loaded = '1';
+
+          // モーダル内の検索ボックスにフィルタロジックを取り付ける
+          var modalSearch = body.querySelector('input[type="text"][placeholder*="検索"]');
+          if (modalSearch) {
+            modalSearch.value = '';
+            modalSearch.addEventListener('input', function(){
+              var q = this.value.toLowerCase().trim();
+              var rooms = body.querySelectorAll('.room');
+              rooms.forEach(function(room){
+                var anyMatch = false;
+                var allLeaves = room.querySelectorAll('.leaf');
+                allLeaves.forEach(function(leaf){
+                  var txt = leaf.textContent.toLowerCase();
+                  var match = (q === '' || txt.indexOf(q) >= 0);
+                  // 親リーフ（.leaf.parent）が match なら子の part も全部表示
+                  leaf.style.display = match ? '' : 'none';
+                  if (match) anyMatch = true;
+                });
+                // サブルーム・孫部屋も中身が空なら非表示
+                var subs = room.querySelectorAll('.branch');
+                subs.forEach(function(br){
+                  var hasVisibleLeaf = false;
+                  br.querySelectorAll('.leaf').forEach(function(lf){
+                    if (lf.style.display !== 'none') hasVisibleLeaf = true;
+                  });
+                  // サブブランチに表示中のリーフがなく、自身がリーフでもないなら隠す
+                  if (!br.querySelector('.leaf:not([style*="display: none"])') && !br.classList.contains('leaf')) {
+                    br.style.display = 'none';
+                  } else {
+                    br.style.display = '';
+                  }
+                });
+                room.style.display = (q === '' || anyMatch) ? '' : 'none';
+              });
+            });
+          }
+
+          // モーダル内のフィルタボタンも繋ぐ（.filter-btn の onclick は属性で残るが、再renderには対応せず）
+          // → ボタンを押すと、表示中の部屋を切り替える
+          var modalFilters = body.querySelectorAll('.filter-btn');
+          modalFilters.forEach(function(btn){
+            btn.onclick = function(e){
+              e.preventDefault();
+              var dom = btn.getAttribute('data-dom');
+              modalFilters.forEach(function(b){ b.classList.remove('active'); });
+              btn.classList.add('active');
+              // ROOM_AREAS を window 経由で参照（IIFE 内のものは見えないため、idベースでフィルタ）
+              // 各部屋の id="tree-r_xxx" から推測
+              var AREA_KEYWORDS = {
+                strategy: ['r_define','r_perf','r_strategy','r_csr'],
+                design: ['r_network','r_capdesign','r_process','r_throughput','r_layout'],
+                planning: ['r_planbasic','r_schedule','r_control','r_orderstrat','r_capmgmt','r_queue'],
+                inventory: ['r_invbasic','r_order','r_invsys'],
+                lean: ['r_leanphil','r_leantech','r_improve','r_tpm'],
+                quality: ['r_quality','r_qualdim','r_risk','r_reliability','r_project']
+              };
+              body.querySelectorAll('.room').forEach(function(room){
+                var rid = (room.id || '').replace('tree-','');
+                var matches = (dom === 'all') || (AREA_KEYWORDS[dom] && AREA_KEYWORDS[dom].indexOf(rid) >= 0);
+                room.style.display = matches ? '' : 'none';
+              });
+            };
+          });
         }
       }
       modal.classList.add('open');
