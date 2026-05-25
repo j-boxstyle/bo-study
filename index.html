@@ -640,8 +640,40 @@ a{color:#3b82f6;text-decoration:none;}
   border-radius:12px;cursor:pointer;font-size:26px;color:#e2e8f0;transition:all .2s;
 }
 .q-opt:hover{border-color:#3b82f6;background:#1e3a5f;}
-.q-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);color:#22c55e;}
-.q-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.15);color:#ef4444;}
+.q-opt.correct{border:3px solid #22c55e;background:rgba(34,197,94,0.2);color:#22c55e;box-shadow:0 0 16px rgba(34,197,94,0.4);font-weight:700;}
+.q-opt.correct::before{content:"⭕ ";font-size:1.2em;}
+.q-opt.wrong{border:3px solid #ef4444;background:rgba(239,68,68,0.2);color:#ef4444;box-shadow:0 0 16px rgba(239,68,68,0.4);font-weight:700;}
+.q-opt.wrong::before{content:"❌ ";font-size:1.2em;}
+
+/* 判定バナー（問題の最上部に大きく表示） */
+.verdict-banner{
+  display:flex;align-items:center;justify-content:center;gap:18px;
+  padding:24px 32px;margin:0 0 16px;border-radius:14px;
+  font-size:42px;font-weight:900;
+  animation: verdictPulse 0.6s ease-out;
+  border:3px solid;
+}
+.verdict-banner .verdict-icon{font-size:64px;line-height:1;}
+.verdict-banner .verdict-text{letter-spacing:0.05em;}
+.verdict-correct{
+  background:linear-gradient(135deg,rgba(16,185,129,0.3) 0%,rgba(16,185,129,0.1) 100%);
+  border-color:#10b981;color:#34d399;
+  box-shadow:0 0 30px rgba(16,185,129,0.5),inset 0 0 20px rgba(16,185,129,0.1);
+}
+.verdict-wrong{
+  background:linear-gradient(135deg,rgba(239,68,68,0.3) 0%,rgba(239,68,68,0.1) 100%);
+  border-color:#ef4444;color:#f87171;
+  box-shadow:0 0 30px rgba(239,68,68,0.5),inset 0 0 20px rgba(239,68,68,0.1);
+}
+@keyframes verdictPulse {
+  0%{transform:scale(0.5);opacity:0;}
+  60%{transform:scale(1.08);opacity:1;}
+  100%{transform:scale(1);opacity:1;}
+}
+@media (max-width: 600px) {
+  .verdict-banner{padding:18px 20px;font-size:28px;gap:12px;}
+  .verdict-banner .verdict-icon{font-size:42px;}
+}
 .q-opt.dimmed{opacity:0.4;}
 .q-exp{margin:16px 0;padding:16px;background:rgba(59,130,246,0.08);border-left:4px solid #3b82f6;border-radius:8px;}
 .q-we{margin:8px 0;padding:12px;background:rgba(239,68,68,0.06);border-left:3px solid #ef4444;border-radius:6px;font-size:26px;color:#f87171;}
@@ -7916,6 +7948,20 @@ function selectOption(chosen) {
   // 元の選択肢インデックスを取得（正答インデックスを expl 表示にも使う）
   var chosenOrigIdx = quizState.currentShuffle[chosen];
   // フィードバック：判定 + 公式/覚えるべきこと（memory）
+  // 巨大な判定バナーを問題の最上部に挿入（クイックフィードバック）
+  var topBanner = document.createElement('div');
+  topBanner.className = 'verdict-banner ' + (correct ? 'verdict-correct' : 'verdict-wrong');
+  topBanner.innerHTML = correct
+    ? '<div class="verdict-icon">⭕</div><div class="verdict-text">正解！</div>'
+    : '<div class="verdict-icon">❌</div><div class="verdict-text">不正解</div>';
+  var quizActive = document.getElementById('quiz-active');
+  // 既存のバナーがあれば削除
+  var oldBanner = quizActive.querySelector('.verdict-banner');
+  if (oldBanner) oldBanner.remove();
+  quizActive.insertBefore(topBanner, quizActive.firstChild);
+  // バナーまでスクロール（画面上部）してフェードイン
+  setTimeout(function(){ window.scrollTo({top:0, behavior:'smooth'}); }, 50);
+
   var verdict = correct
     ? '<span style="color:#10b981;text-shadow:0 0 10px rgba(16,185,129,0.5);">⭕ 正解</span>'
     : '<span style="color:#ef4444;text-shadow:0 0 10px rgba(239,68,68,0.5);">❌ 不正解</span>';
@@ -8023,6 +8069,8 @@ function rateAnswer(rating) {
     showBlockReview();
   } else {
     renderQuestion();
+    // 新問題に進んだら必ず一番上に戻す
+    window.scrollTo({top:0, behavior:'auto'});
   }
 }
 
