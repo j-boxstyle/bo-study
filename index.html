@@ -6139,9 +6139,18 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 // クイズ進行中ならその状態を復元（init の renderQuizHome 後に実行されるよう load イベント＋setTimeout）
 window.addEventListener('load', function(){
+  // フィルタ（周回モード等）は最優先で復元 → restoreQuizState や renderQuizHome の前に
+  try { loadFilterState(); } catch(e){}
   setTimeout(function(){
     if (currentActiveTab === 'tab-quiz') {
       try { restoreQuizState(); } catch(e){}
+      // クイズホーム画面が既にレンダリング済みなら、復元後の状態で再描画
+      try {
+        if (!quizState.active && document.getElementById('quiz-home') &&
+            !document.getElementById('quiz-home').classList.contains('hidden')) {
+          renderQuizHome();
+        }
+      } catch(e){}
     }
   }, 0);
 });
@@ -7987,21 +7996,25 @@ function setPassMode(p) {
   }
   // 後方互換：passMode（単数）も先頭値で保持
   quizState.passMode = quizState.passModes[0];
+  saveFilterState();
   renderQuizHome();
 }
 
 function setQuizMode(mode) {
   quizState.mode = mode;
+  saveFilterState();
   renderQuizHome();
 }
 function setCalcMode(m) {
   quizState.calcMode = m;
+  saveFilterState();
   renderQuizHome();
 }
 
 function setWeekFilter(w) {
   // Legacy single-select (kept for compat)
   quizState.weekFilter = w;
+  saveFilterState();
   renderQuizHome();
 }
 
@@ -8013,11 +8026,13 @@ function toggleWeekFilter(w) {
   } else {
     quizState.weekFilters.splice(idx, 1);
   }
+  saveFilterState();
   renderQuizHome();
 }
 
 function setAllWeeks() {
   quizState.weekFilters = [];
+  saveFilterState();
   renderQuizHome();
 }
 
@@ -8124,11 +8139,35 @@ function saveQuizState(){
       answered: quizState.answered,
       active: quizState.active,
       passMode: quizState.passMode,
+      passModes: quizState.passModes, // 配列も保存（Mock Final 1 等の複数モード対応）
       mode: quizState.mode,
       calcMode: quizState.calcMode,
       weekFilters: quizState.weekFilters,
       ts: Date.now()
     }));
+  } catch(e){}
+}
+// 周回モード（passModes 配列）をフィルタ設定として localStorage に常時保存
+function saveFilterState() {
+  try {
+    localStorage.setItem('quiz_filters', JSON.stringify({
+      passModes: quizState.passModes,
+      passMode: quizState.passMode,
+      mode: quizState.mode,
+      calcMode: quizState.calcMode,
+      weekFilters: quizState.weekFilters
+    }));
+  } catch(e){}
+}
+function loadFilterState() {
+  try {
+    var s = JSON.parse(localStorage.getItem('quiz_filters') || 'null');
+    if (!s) return;
+    if (Array.isArray(s.passModes)) quizState.passModes = s.passModes;
+    if (s.passMode !== undefined) quizState.passMode = s.passMode;
+    if (s.mode !== undefined) quizState.mode = s.mode;
+    if (s.calcMode !== undefined) quizState.calcMode = s.calcMode;
+    if (Array.isArray(s.weekFilters)) quizState.weekFilters = s.weekFilters;
   } catch(e){}
 }
 function restoreQuizState(){
@@ -8148,6 +8187,7 @@ function restoreQuizState(){
     quizState.answered = false; // 進行中の回答状態は保存しない（再回答可）
     quizState.active = true;
     if (s.passMode !== undefined) quizState.passMode = s.passMode;
+    if (Array.isArray(s.passModes)) quizState.passModes = s.passModes; // 配列も復元
     if (s.mode !== undefined) quizState.mode = s.mode;
     if (s.calcMode !== undefined) quizState.calcMode = s.calcMode;
     if (s.weekFilters !== undefined) quizState.weekFilters = s.weekFilters;
