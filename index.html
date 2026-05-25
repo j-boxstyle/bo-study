@@ -684,6 +684,18 @@ a{color:#3b82f6;text-decoration:none;}
 .opt-wrong-exp{background:rgba(248,113,113,0.08);border-left:3px solid #f87171;color:#fca5a5;}
 .opt-wrong-exp strong{color:#f87171;}
 /* 公式・覚えるべきこと欄 */
+
+/* 参照テーブル：Z値・正規分布表など */
+.q-reference-table{margin:14px 0;padding:14px 18px;background:rgba(34,197,94,0.06);border-left:4px solid #22c55e;border-radius:10px;}
+.q-reference-table .q-ref-title{font-size:16px;color:#22c55e;font-weight:700;margin-bottom:8px;}
+.q-reference-table table{width:auto;border-collapse:collapse;font-size:15px;background:#0a1220;}
+.q-reference-table th, .q-reference-table td{padding:6px 12px;border:1px solid #2d3a55;text-align:center;color:#e2e8f0;}
+.q-reference-table th{background:#1a2940;color:#22c55e;font-weight:700;}
+.q-reference-table .q-ref-formula{margin-top:8px;padding:8px 12px;background:#0a1220;border-radius:6px;font-family:'Courier New',monospace;color:#6ab0ff;font-size:14px;}
+@media (max-width: 600px) {
+  .q-reference-table table{font-size:13px;}
+  .q-reference-table th,.q-reference-table td{padding:5px 8px;}
+}
 .q-memory{margin:14px 0;padding:18px 22px;background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(245,158,11,0.05) 100%);border-left:6px solid #f59e0b;border-radius:10px;font-size:19px;color:#fde68a;line-height:1.7;}
 .q-memory strong{color:#fbbf24;font-size:20px;display:block;margin-bottom:8px;text-shadow:0 0 8px rgba(251,191,36,0.4);}
 .q-memory b, .q-memory strong:not(:first-child){background:linear-gradient(transparent 60%,rgba(251,191,36,0.35) 60%);padding:0 2px;font-weight:800;color:#fff;}
@@ -7965,6 +7977,45 @@ function restoreQuizState(){
     renderQuestion();
     return true;
   } catch(e){ return false; }
+}
+
+
+// 質問テキストに参照テーブルが必要な場合、それを返す（HTML）
+function getReferenceTableHTML(q) {
+  var qtext = (q.q || '') + ' ' + (q.expl || '');
+  var blocks = [];
+  // Z表（正規分布）
+  if (/z[-\s]?value|service level|normal distribution|reorder|safety stock|ROL|standard deviation|σ/i.test(qtext)
+      && /Z[-\s]?(table|values?)|service\s*level|normal/i.test(qtext)) {
+    blocks.push('<div class="q-reference-table"><div class="q-ref-title">📊 標準正規分布 Z 値（参照表）</div>' +
+      '<table><thead><tr><th>サービス水準</th><th>Z 値</th></tr></thead><tbody>' +
+      '<tr><td>50%</td><td>0.00</td></tr>' +
+      '<tr><td>80%</td><td>0.84</td></tr>' +
+      '<tr><td>85%</td><td>1.04</td></tr>' +
+      '<tr><td>90%</td><td>1.28</td></tr>' +
+      '<tr><td>95%</td><td>1.65</td></tr>' +
+      '<tr><td>97.5%</td><td>1.96</td></tr>' +
+      '<tr><td>99%</td><td>2.33</td></tr>' +
+      '<tr><td>99.5%</td><td>2.58</td></tr>' +
+      '</tbody></table>' +
+      '<div class="q-ref-formula">ROL = d̄·LT + Z·σ·√LT　／　SS = Z·σ·√LT</div></div>');
+  }
+  // VUT formula
+  if (/VUT(\s+formula)?/i.test(qtext) && /(utiliz|variability|waiting)/i.test(qtext)) {
+    blocks.push('<div class="q-reference-table"><div class="q-ref-title">📊 VUT（Kingman の公式）参照</div>' +
+      '<div class="q-ref-formula">Wq ≈ V × U × T<br>V = (Cₐ² + Cₛ²) ÷ 2　（変動係数の平均）<br>U = ρ ÷ (1−ρ)　（ρ = λ/μ = 利用率）<br>T = Tₛ　（平均サービス時間）</div></div>');
+  }
+  // Little's Law
+  if (/Little.{0,5}(law|formula|theorem)/i.test(qtext)) {
+    blocks.push('<div class="q-reference-table"><div class="q-ref-title">📊 Little の法則（参照）</div>' +
+      '<div class="q-ref-formula">WIP = TH × T　／　T = WIP ÷ TH　／　CT = 1 ÷ TH<br>WIP = 仕掛り　TH = 単位時間あたり処理量　T = 通過時間</div></div>');
+  }
+  // EOQ/EBQ
+  if (/EOQ|EBQ|economic (order|batch)/i.test(qtext)) {
+    blocks.push('<div class="q-reference-table"><div class="q-ref-title">📊 EOQ / EBQ（参照）</div>' +
+      '<div class="q-ref-formula">EOQ = √(2·D·C₀ ÷ Cₕ)<br>EBQ = √(2·D·C₀ ÷ [Cₕ·(1−d/p)])<br>D = 年間需要　C₀ = 1回発注費　Cₕ = 単位保管費／年　d = 日次需要　p = 日次生産率</div></div>');
+  }
+  return blocks.join('');
 }
 
 function renderQuestion() {
@@ -25093,7 +25144,7 @@ function detectTopics(q){
     q.isCalc=isCalc;
   }
   // Mark known broken questions (figure/process map referenced but no visual field)
-  var brokenIds = [3030, 3051];
+  var brokenIds = [3030, 3051, 6027];
   // Conceptual questions wrongly placed in CALC array — force noncalc
   var conceptualInCalc = [4036, 4037, 4038, 4040];
   for(var i=0;i<QUESTIONS.length;i++){
