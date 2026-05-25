@@ -1584,7 +1584,13 @@ header .sub { font-size: 14px; opacity: 0.9; }
 /* Scope roadmap styles to its panel only */
 #tab-roadmap .roadmap { padding-top: 8px; }
 #tab-roadmap header.hero { display: none !important; }
-#tab-roadmap .controls { position: relative; top: 0; }
+/* 検索バーをタブナビ(63px)直下に sticky pin（スクロールしても常に同じ位置に固定） */
+#tab-roadmap .controls {
+  position: sticky;
+  top: 63px;
+  z-index: 40;
+  background: #0f1726;
+}
 </style>
 <div class="panel" id="tab-roadmap" style="padding:0;margin:0;max-width:none;">
 
