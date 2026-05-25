@@ -8634,11 +8634,21 @@ function generateAIPrompt(scope) {
   lines.push("## ステップ3: 試験直前30秒チェックリスト");
   lines.push("上記3弱点それぞれに対し、見直しポイントを1行ずつ計3行だけ。");
   lines.push("");
+  lines.push("## 📐 数式表記ルール（厳守）");
+  lines.push("出力に数式を含める時は **必ず LaTeX 記法**（KaTeX/MathJax 互換）を使う。ASCII の `÷`・`√()` 直書きは禁止。");
+  lines.push("- インライン: `$...$`（例: `$Q^* = \\sqrt{\\dfrac{2C_oD}{C_h}}$`）");
+  lines.push("- ブロック: `$$...$$`");
+  lines.push("- 分数は必ず `\\dfrac{分子}{分母}`（二段表示）");
+  lines.push("- 平方根は `\\sqrt{...}`（上線つき）");
+  lines.push("- 添字は `_{...}`、上付は `^{...}`");
+  lines.push("- 例: ROL は `$ROL = \\mu_{LT} + Z \\cdot \\sigma_{LT}$`、EOQ は `$EOQ = \\sqrt{\\dfrac{2C_oD}{C_h}}$`");
+  lines.push("");
   lines.push("## ❌ 禁止事項");
   lines.push("- ステップ2以降で各選択肢の長い解説禁止");
   lines.push("- 教科書全般のまとめ禁止");
   lines.push("- 例題の追加禁止");
   lines.push("- 「勉強しましょう」等の一般論禁止");
+  lines.push("- 数式の ASCII 直書き禁止（必ず LaTeX）");
   lines.push("- **ステップ2以降の総文字数 1500字以内**（`<details>` 内は字数制限なし）");
 
   return lines.join("\n");
@@ -8779,11 +8789,20 @@ function buildPromptFromRecords(records, title) {
   out += '### 2. ...（同形式）\n### 3. ...（同形式）\n\n';
   out += '## ステップ3: 試験直前30秒チェックリスト\n';
   out += '上記3弱点それぞれに対し、見直しポイントを1行ずつ計3行だけ。\n\n';
+  out += '## 📐 数式表記ルール（厳守）\n';
+  out += '出力に数式を含める時は **必ず LaTeX 記法**（KaTeX/MathJax 互換）を使う。ASCII の `÷`・`√()` 直書きは禁止。\n';
+  out += '- インライン: `$...$`（例: `$Q^* = \\sqrt{\\dfrac{2C_oD}{C_h}}$`）\n';
+  out += '- ブロック: `$$...$$`\n';
+  out += '- 分数は必ず `\\dfrac{分子}{分母}`（二段表示）\n';
+  out += '- 平方根は `\\sqrt{...}`（上線つき）\n';
+  out += '- 添字は `_{...}`、上付は `^{...}`\n';
+  out += '- 例: ROL は `$ROL = \\mu_{LT} + Z \\cdot \\sigma_{LT}$`、EOQ は `$EOQ = \\sqrt{\\dfrac{2C_oD}{C_h}}$`\n\n';
   out += '## ❌ 禁止事項\n';
   out += '- ステップ2以降で各選択肢の長い解説禁止\n';
   out += '- 教科書全般のまとめ禁止\n';
   out += '- 例題追加禁止\n';
   out += '- 「もう一度勉強しましょう」系の一般論禁止\n';
+  out += '- 数式の ASCII 直書き禁止（必ず LaTeX）\n';
   out += '- **ステップ2以降の総文字数 1500字以内**（`<details>` 内は字数制限なし）\n';
   return out;
 }
