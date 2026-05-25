@@ -269,12 +269,85 @@ header .sub { font-size: 14px; opacity: 0.9; }
 }
 .mini-flow .arrow { color: #6ab0ff; font-size: 22px; }
 
-@media (max-width: 768px) {
-  header.hero { padding: 20px; }
-  .controls { padding: 10px 20px; }
-  .roadmap { padding: 20px; }
-  .concept-grid { grid-template-columns: 1fr 1fr; }
-  .week-story { font-size: 11px; }
+/* ====== TABLET / SMALL DESKTOP ====== */
+@media (max-width: 900px) {
+  .rooms-grid { grid-template-columns: 1fr; gap: 14px; }
+  .roadmap { padding: 14px; }
+  .room { padding: 18px 16px; border-left-width: 4px; }
+  .room-head .nm { font-size: 24px; }
+  .room-head .icn { font-size: 30px; }
+  .room-head .jp { font-size: 13px; }
+}
+
+/* ====== MOBILE (iPhone等) ====== */
+@media (max-width: 600px) {
+  /* ヘッダー圧縮 */
+  header.hero { padding: 16px; }
+  header.hero h1 { font-size: 20px; }
+  header.hero .sub { font-size: 11px; }
+  .company-box { font-size: 11px; padding: 10px 12px; line-height: 1.5; }
+
+  /* コントロール圧縮 */
+  .controls { padding: 8px 12px; top: 0; }
+  .controls input { width: 100%; font-size: 13px; padding: 6px 10px; }
+  .filter-btn { font-size: 11px; padding: 5px 10px; }
+  .legend { display: none; }
+
+  /* ロードマップ余白圧縮 */
+  .roadmap { padding: 10px 8px 60px; }
+  .rooms-grid { gap: 12px; }
+
+  /* 部屋圧縮 */
+  .room { padding: 14px 10px; margin-bottom: 16px; border-radius: 10px; border-left-width: 3px; }
+  .room-head { gap: 8px; padding-bottom: 10px; margin-bottom: 6px; }
+  .room-head .icn { font-size: 22px; }
+  .room-head .nm { font-size: 18px; line-height: 1.2; }
+  .room-head .jp { font-size: 11px; display: block; margin: 4px 0 0; }
+
+  /* 家系図の枝（インデント圧縮） */
+  .branches { padding-left: 14px; margin-left: 6px; }
+  .branch { padding-top: 6px; }
+  .branch::before { left: -14px; top: 18px; width: 14px; }
+  .branch::after { left: -14px; }
+  .branch:last-child::after { height: 18px; }
+
+  /* ノード文字圧縮 */
+  .sub-node { font-size: 14px; padding: 4px 0; }
+  .subsub-node { font-size: 13px; padding: 3px 0; }
+  .leaf { font-size: 13px; padding: 6px 10px; border-radius: 6px; }
+  .leaf.part { font-size: 12px; padding: 4px 8px; }
+  .leaf.parent::after { font-size: 10px; }
+
+  /* モーダル圧縮 */
+  .modal-bg { padding: 8px; }
+  .modal { border-radius: 10px; max-height: 95vh; }
+  .modal-header { padding: 14px 16px; }
+  .modal-title { font-size: 18px; line-height: 1.2; }
+  .modal-meta { font-size: 11px; }
+  .modal-body { padding: 14px 16px; }
+  .modal-section { margin-bottom: 16px; }
+  .modal-section h3 { font-size: 13px; }
+  .modal-section p, .modal-section li { font-size: 14px; line-height: 1.6; }
+  .example-box { font-size: 13px; padding: 10px 12px; }
+  .formula-box { font-size: 15px; padding: 12px 14px; }
+  .memo-box li { font-size: 13px; }
+  .compare-table { font-size: 12px; }
+  .compare-table th, .compare-table td { padding: 8px 10px; }
+  .related-chip { font-size: 12px; padding: 5px 10px; }
+  .parts-list li { font-size: 13px; padding: 8px 10px; }
+  .parts-list li b { font-size: 14px; }
+  .close-btn { width: 32px; height: 32px; font-size: 18px; }
+}
+
+/* ====== 超小画面（iPhone SE等） ====== */
+@media (max-width: 380px) {
+  .room-head .nm { font-size: 16px; }
+  .sub-node { font-size: 13px; }
+  .leaf { font-size: 12px; padding: 5px 8px; }
+  .leaf.part { font-size: 11px; padding: 3px 6px; }
+  .branches { padding-left: 10px; margin-left: 4px; }
+  .branch::before { left: -10px; width: 10px; }
+  .branch::after { left: -10px; }
 }
 </style>
 </head>
