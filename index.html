@@ -666,6 +666,17 @@ a{color:#3b82f6;text-decoration:none;}
 .verdict-quick-copy .vqc-title{
   font-size:18px;font-weight:800;color:#60a5fa;margin-bottom:10px;
 }
+.verdict-quick-copy .vqc-row{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:rgba(0,0,0,0.25);border-radius:8px;margin-bottom:8px;}
+.verdict-quick-copy .vqc-row.vqc-row-verify{background:rgba(168,85,247,0.10);border:1px solid rgba(168,85,247,0.3);}
+.verdict-quick-copy .vqc-row-label{font-size:14px;color:#cbd5e1;}
+.verdict-quick-copy .vqc-row-label b{color:#fff;}
+.vqc-btn-verify{
+  background:#a855f7;color:#fff;border:none;padding:10px 18px;border-radius:10px;
+  font-size:15px;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 12px rgba(168,85,247,0.4);
+  flex:1;min-width:140px;
+}
+.vqc-btn-verify:hover{background:#9333ea;}
 .verdict-quick-copy .vqc-actions{
   display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;
 }
@@ -8217,12 +8228,16 @@ function selectOption(chosen) {
     var quickCopy = document.createElement('div');
     quickCopy.className = 'verdict-quick-copy';
     quickCopy.innerHTML =
-      '<div class="vqc-title">🤖 この問題を AI に解説してもらう</div>' +
-      '<div class="vqc-actions">' +
-        '<button class="vqc-btn-primary" onclick="copySingleQPromptInline(' + idx + ', ' + chosen + ', false, this)">📋 プロンプトを即コピー</button>' +
-        '<button class="vqc-btn-secondary" onclick="showSingleQAIPrompt(' + idx + ', ' + chosen + ', false)">👁 プレビュー</button>' +
-      '</div>' +
-      '<div class="vqc-hint">タップ → クリップボードにコピー → Claude / ChatGPT に貼り付けて徹底解説を取得</div>';
+      '<div class="vqc-title">🤖 AIに依頼するプロンプトを2種類用意</div>' +
+      '<div class="vqc-row"><div class="vqc-row-label">📖 <b>分析用</b>：解説・なぜ間違えたか</div><div class="vqc-actions">' +
+        '<button class="vqc-btn-primary" onclick="copySingleQPromptInline(' + idx + ', ' + chosen + ', false, this)">📋 即コピー</button>' +
+        '<button class="vqc-btn-secondary" onclick="showSingleQAIPrompt(' + idx + ', ' + chosen + ', false)">👁</button>' +
+      '</div></div>' +
+      '<div class="vqc-row vqc-row-verify"><div class="vqc-row-label">🎯 <b>確認テスト用</b>：同じ概念で新問題5問</div><div class="vqc-actions">' +
+        '<button class="vqc-btn-verify" onclick="copySingleQVerifyInline(' + idx + ', ' + chosen + ', false, this)">📋 即コピー</button>' +
+        '<button class="vqc-btn-secondary" onclick="showSingleQVerifyAIPrompt(' + idx + ', ' + chosen + ', false)">👁</button>' +
+      '</div></div>' +
+      '<div class="vqc-hint">Claude / ChatGPT に貼り付け。分析用＝なぜ間違えたか／確認テスト用＝5択を5問新規生成</div>';
     topBanner.parentNode.insertBefore(quickCopy, topBanner.nextSibling);
   }
   // バナーまでスクロール（画面上部）してフェードイン
@@ -8579,15 +8594,17 @@ function showBatchPicker() {
     var range = getBatchRange(b, batches);
     var label = (b.sealed ? '🔒 バッチ ' : '✏️ バッチ（進行中）') + b.id + '：' + range.start + '〜' + range.end + ' 問目（' + b.records.length + '問）';
     rowsHtml += '<div style="display:flex;gap:10px;align-items:center;padding:12px 14px;background:#1a2940;border-radius:10px;border:1px solid #1e3a5f;">';
-    rowsHtml += '<div style="flex:1;color:#e2e8f0;font-size:15px;font-weight:600;">' + label + '</div>';
-    rowsHtml += '<button onclick="copyBatch(' + b.id + ', this)" style="background:#f97316;color:#0f1c2e;border:none;padding:8px 14px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;">📋 コピー</button>';
+    rowsHtml += '<div style="flex:1 1 100%;color:#e2e8f0;font-size:15px;font-weight:600;margin-bottom:6px;">' + label + '</div>';
+    rowsHtml += '<button onclick="copyBatch(' + b.id + ', this)" style="background:#f97316;color:#0f1c2e;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;">📖 分析用</button>';
+    rowsHtml += '<button onclick="copyBatchVerify(' + b.id + ', this)" style="background:#a855f7;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;">🎯 確認テスト</button>';
     rowsHtml += '</div>';
   });
 
   if (totalCount > 0) {
     rowsHtml += '<div style="display:flex;gap:10px;align-items:center;padding:12px 14px;background:#1e293b;border-radius:10px;border:2px dashed #3b82f6;margin-top:6px;">';
-    rowsHtml += '<div style="flex:1;color:#a5b4fc;font-size:15px;font-weight:700;">📚 全バッチまとめてコピー（' + totalCount + '問）</div>';
-    rowsHtml += '<button onclick="copyAllBatches(this)" style="background:#3b82f6;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;">📋 全部</button>';
+    rowsHtml += '<div style="flex:1 1 100%;color:#a5b4fc;font-size:15px;font-weight:700;margin-bottom:6px;">📚 全バッチまとめて（' + totalCount + '問）</div>';
+    rowsHtml += '<button onclick="copyAllBatches(this)" style="background:#3b82f6;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;">📖 分析用</button>';
+    rowsHtml += '<button onclick="copyAllBatchesVerify(this)" style="background:#a855f7;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;">🎯 確認テスト</button>';
     rowsHtml += '</div>';
   }
   if (rowsHtml === '') {
@@ -8732,6 +8749,172 @@ function copyAIPrompt() {
     }, 2000);
   }
 }
+
+
+// === 確認テスト用プロンプト（同じ概念で別の問題を出してもらう） ===
+function generateSingleQVerifyPrompt(qIdx, chosen, correct) {
+  var q = QUESTIONS[qIdx];
+  if (!q) return null;
+  var letters = ['A','B','C','D','E','F'];
+  var chosenOrigIdx = (quizState.currentShuffle && quizState.currentShuffle[chosen] !== undefined) ? quizState.currentShuffle[chosen] : chosen;
+  var lines = [];
+  lines.push('# UvA Business Operations — 概念理解の確認テスト依頼');
+  lines.push('');
+  lines.push('以下の問題で扱われている概念について、私が本当に理解しているかを **新しい5択問題** で確認してください。');
+  lines.push('');
+  lines.push('## 元の問題（参考）');
+  lines.push('');
+  lines.push('**Ch ' + q.ch + ' · Week ' + (q.week || '?') + '**');
+  lines.push('');
+  lines.push(q.q);
+  lines.push('');
+  lines.push('正解: ' + letters[q.ans] + ') ' + (q.opts[q.ans] || ''));
+  if (!correct) {
+    lines.push('私の解答: ' + letters[chosenOrigIdx] + ') ' + (q.opts[chosenOrigIdx] || '') + ' （**間違えた**）');
+  }
+  lines.push('');
+  if (q.memory) {
+    lines.push('## 関連の覚えるべきポイント');
+    lines.push(q.memory);
+    lines.push('');
+  }
+  lines.push('## あなたへの依頼');
+  lines.push('');
+  lines.push('上の問題で扱う **核心概念** を私が本当に理解しているか確認するため、**全く別の5択問題を5問** 作ってください。');
+  lines.push('');
+  lines.push('### 作問ルール');
+  lines.push('');
+  lines.push('1. **同じ概念**を聞くが、**シナリオ・数値・文脈は全て新しく**作る（元問題のコピペは禁止）。');
+  lines.push('2. **5択**（A〜E）+ 「F) わからない」の **計6選択肢**。');
+  lines.push('3. 正解は **ランダムにA〜Eに分散**（全部Cにしないこと）。');
+  lines.push('4. 誤答は **典型的な誤解パターン** を反映（公式の取り違え、適用範囲の誤り、定義の混同など）。');
+  lines.push('5. 計算問題なら **選択肢は数式（substitution形式）** で書く。例：「√(2·D·Co/Ch) = √(2·1000·50/0.4)」 ←最終結果は書かない。');
+  lines.push('6. 知識問題なら、明確に正誤が判断できる選択肢にする。');
+  lines.push('7. 各問題は **難易度を上げていく**：Q1は基礎理解、Q5は応用・落とし穴ありの試験本番レベル。');
+  lines.push('');
+  lines.push('### フォーマット');
+  lines.push('');
+  lines.push('各問題は以下の形式で：');
+  lines.push('```');
+  lines.push('## Q1 (基礎)');
+  lines.push('[問題文]');
+  lines.push('');
+  lines.push('A) [選択肢1]');
+  lines.push('B) [選択肢2]');
+  lines.push('C) [選択肢3]');
+  lines.push('D) [選択肢4]');
+  lines.push('E) [選択肢5]');
+  lines.push('F) わからない');
+  lines.push('');
+  lines.push('<details>');
+  lines.push('<summary>解答と解説</summary>');
+  lines.push('');
+  lines.push('**正解: X**');
+  lines.push('');
+  lines.push('解説: [なぜ正解か、各誤答がなぜ違うか、覚えるべき公式・概念]');
+  lines.push('</details>');
+  lines.push('```');
+  lines.push('');
+  lines.push('5問全部終わったら、最後に **「総合判定」** として、各問題への正答率に応じてどのレベルの理解か（基礎理解 / 応用可 / 試験本番OK）を判定してください。');
+  lines.push('');
+  lines.push('**重要**：解説は日本語で。問題本文は元と同じ言語（英語）で書いて構いません。');
+  return lines.join('\n');
+}
+
+function copySingleQVerifyInline(qIdx, chosen, correct, btn) {
+  var prompt = generateSingleQVerifyPrompt(qIdx, chosen, correct);
+  if (!prompt) { alert('プロンプト生成に失敗しました'); return; }
+  copyTextToClipboard(prompt, btn);
+}
+
+function showSingleQVerifyAIPrompt(qIdx, chosen, correct) {
+  var prompt = generateSingleQVerifyPrompt(qIdx, chosen, correct);
+  if (!prompt) { alert('プロンプト生成に失敗しました'); return; }
+  var existing = document.getElementById('ai-prompt-modal');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'ai-prompt-modal';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#0f1c2e;border:2px solid #a855f7;border-radius:14px;padding:18px 16px;max-width:680px;width:100%;max-height:90vh;display:flex;flex-direction:column;gap:10px;';
+  box.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+      '<div style="font-size:20px;font-weight:800;color:#a855f7;">🎯 確認テスト用プロンプト</div>' +
+      '<button onclick="document.getElementById(\'ai-prompt-modal\').remove()" style="background:transparent;border:none;color:#94a3b8;font-size:28px;cursor:pointer;line-height:1;">×</button>' +
+    '</div>' +
+    '<div style="color:#94a3b8;font-size:14px;">AI に貼り付けると、同じ概念の **新しい5択問題を5問** 作ってくれます。本当に理解しているか確認用。</div>' +
+    '<button id="verify-copy-btn" style="background:#a855f7;color:#fff;border:none;padding:10px 16px;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;width:fit-content;">📋 コピー</button>' +
+    '<textarea id="verify-prompt-text" readonly style="flex:1;min-height:300px;width:100%;background:#1a2940;color:#e2e8f0;border:1px solid #1e3a5f;border-radius:8px;padding:12px;font-size:13px;font-family:monospace;line-height:1.5;resize:none;"></textarea>';
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  document.getElementById('verify-prompt-text').value = prompt;
+  document.getElementById('verify-copy-btn').onclick = function() {
+    var ta = document.getElementById('verify-prompt-text');
+    ta.select(); ta.setSelectionRange(0, 999999);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value);
+      else document.execCommand('copy');
+      flashCopySuccess(this, true);
+    } catch(e) { flashCopySuccess(this, false); }
+  };
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+}
+
+// === バッチ用：確認テストプロンプト（バッチの全問題に対して同じ概念で新問題作成依頼） ===
+function buildVerifyPromptFromRecords(records, title) {
+  if (!records || records.length === 0) return '';
+  var lines = [];
+  lines.push('# UvA Business Operations — ' + (title || 'バッチの概念理解 確認テスト'));
+  lines.push('');
+  lines.push('以下の問題群で扱われた **核心概念** について、私が本当に理解しているか確認するため、各概念につき **新しい5択問題を5問ずつ** 作ってください。');
+  lines.push('');
+  lines.push('## 対象問題（' + records.length + '問の概念リスト）');
+  lines.push('');
+  records.forEach(function(r, i){
+    var q = QUESTIONS.find(function(x){ return x.id === r.qid; });
+    if (!q) return;
+    lines.push('### Q' + (i+1) + ' (Ch ' + q.ch + ', Week ' + (q.week||'?') + ')');
+    lines.push('元問題: ' + (q.q || '').slice(0, 200));
+    lines.push('正解: ' + (q.opts ? q.opts[q.ans] : '?'));
+    if (r.chosenOrig !== undefined && q.opts && !r.correct) {
+      lines.push('私の誤答: ' + (q.opts[r.chosenOrig] || ''));
+    }
+    lines.push('');
+  });
+  lines.push('## あなたへの依頼');
+  lines.push('');
+  lines.push('1. **頻出/重要な概念トップ5** を上のリストから抽出してください（重複した概念は1つに統合）。');
+  lines.push('2. それぞれの概念につき、**完全に新しい5択問題を5問** 作ってください（合計25問）。');
+  lines.push('3. 各問題は **同じ概念・違うシナリオ/数値**。元問題のコピペは禁止。');
+  lines.push('4. 5択（A〜E）+ 「F) わからない」、計6選択肢。');
+  lines.push('5. 計算問題なら **選択肢は数式（substitution形式）** で書く（最終結果ではなく公式に数値代入したもの）。');
+  lines.push('6. 各問題に解答 + 解説（日本語・各誤答も）を付ける。');
+  lines.push('7. 各概念の5問は、難易度が **基礎→応用** の順で上がる。');
+  lines.push('');
+  lines.push('最後に **総合判定**：私の元の正答率（' + records.filter(function(r){return r.correct;}).length + '/' + records.length + '）と新問題の結果から、各概念の理解度評価をお願いします。');
+  return lines.join('\n');
+}
+
+function copyBatchVerify(batchId, btn) {
+  var batches = getBatches();
+  var batch = batches.find(function(b){ return b.id === batchId; });
+  if (!batch) return;
+  var range = getBatchRange(batch, batches);
+  var title = 'バッチ' + batch.id + '（' + range.start + '〜' + range.end + '問目）の確認テスト';
+  var prompt = buildVerifyPromptFromRecords(batch.records, title);
+  copyTextToClipboard(prompt, btn, function(){
+    if (!batch.sealed) sealActiveBatchAndStartNew();
+  });
+}
+
+function copyAllBatchesVerify(btn) {
+  var batches = getBatches();
+  var all = [];
+  batches.forEach(function(b){ all = all.concat(b.records); });
+  var prompt = buildVerifyPromptFromRecords(all, '全バッチ統合 — 概念理解の確認テスト');
+  copyTextToClipboard(prompt, btn);
+}
+
 
 function generateSingleQAIPrompt(qIdx, chosen, correct) {
   var q = QUESTIONS[qIdx];
