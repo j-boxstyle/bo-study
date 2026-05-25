@@ -6073,10 +6073,14 @@ document.addEventListener('DOMContentLoaded', function(){
   if (currentActiveTab && currentActiveTab !== 'tab-textbook') {
     try { switchTab(currentActiveTab); } catch(e) {}
   }
-  // クイズ進行中ならその状態を復元
-  if (currentActiveTab === 'tab-quiz') {
-    try { restoreQuizState(); } catch(e){}
-  }
+});
+// クイズ進行中ならその状態を復元（init の renderQuizHome 後に実行されるよう load イベント＋setTimeout）
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    if (currentActiveTab === 'tab-quiz') {
+      try { restoreQuizState(); } catch(e){}
+    }
+  }, 0);
 });
 
 function switchTab(tabName) {
