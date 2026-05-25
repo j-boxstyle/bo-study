@@ -7824,7 +7824,8 @@ function renderQuizHome() {
     { id: 3, label: '🎓 3周目', desc: '教科書 + オリジナル' },
     { id: 4, label: '🎨 Canvas', desc: 'Canvas のクイズ' },
     { id: 5, label: '📚 BookTest', desc: '教科書付属テスト' },
-    { id: 6, label: '✏️ Homework', desc: '宿題（解説付き）' }
+    { id: 6, label: '✏️ Homework', desc: '宿題（解説付き）' },
+    { id: 7, label: '🎯 Mock Final 1', desc: 'Mock Final Exam 1 のみ (40問)' }
   ];
   // 配列化（後方互換）
   if (!Array.isArray(quizState.passModes)) {
@@ -7922,16 +7923,16 @@ function renderQuizHome() {
 }
 
 function setPassMode(p) {
-  // 複数選択：トグル方式。0（全範囲）は単独選択／他と排他。
+  // 複数選択：トグル方式。0（全範囲）と 7（Mock Final 1 のみ）は単独選択／他と排他。
   if (!Array.isArray(quizState.passModes)) {
     quizState.passModes = [quizState.passMode || 0];
   }
-  if (p === 0) {
-    // 全範囲を押した → 全範囲のみ選択
-    quizState.passModes = [0];
+  if (p === 0 || p === 7) {
+    // 排他選択
+    quizState.passModes = [p];
   } else {
-    // 0 を解除して、p をトグル
-    var arr = quizState.passModes.filter(function(x){ return x !== 0; });
+    // 0 / 7 を解除して、p をトグル
+    var arr = quizState.passModes.filter(function(x){ return x !== 0 && x !== 7; });
     var i = arr.indexOf(p);
     if (i >= 0) arr.splice(i, 1);
     else arr.push(p);
@@ -7983,7 +7984,7 @@ function setQuizChFilter(ch) {
 function getPassSources(passMode) {
   // passMode は単数 or 配列のどちらかを受ける
   var arr = Array.isArray(passMode) ? passMode : (Array.isArray(quizState.passModes) ? quizState.passModes : [passMode]);
-  if (arr.indexOf(0) >= 0 || arr.length === 0) return null; // 全範囲＝フィルタなし
+  if (arr.indexOf(0) >= 0 || arr.indexOf(7) >= 0 || arr.length === 0) return null; // 全範囲 or Mock Final 1 専用 → ソースフィルタなし（別途 ID で絞る）
   var src = {};
   arr.forEach(function(m){
     if (m === 1) ['授業'].forEach(function(s){ src[s]=1; });
@@ -7998,10 +7999,14 @@ function getPassSources(passMode) {
 
 function buildPool(ratings) {
   var allowedSources = getPassSources(quizState.passModes || quizState.passMode);
+  var pmArr = Array.isArray(quizState.passModes) ? quizState.passModes : [quizState.passMode || 0];
+  var mockFinal1Only = (pmArr.indexOf(7) >= 0);
   var pool = [];
   for (var i = 0; i < QUESTIONS.length; i++) {
     var q = QUESTIONS[i];
     if (q.broken) continue; // skip broken (missing figure/data) questions
+    // Mock Final Exam 1 のみに絞る（source="過去問" && exam="final" = 40問）
+    if (mockFinal1Only && !(q.source === "過去問" && q.exam === "final")) continue;
     // Calc filter: 'calc' | 'noncalc' | 'all'
     if (quizState.calcMode === 'calc' && !q.isCalc) continue;
     if (quizState.calcMode === 'noncalc' && q.isCalc) continue;
