@@ -8566,76 +8566,62 @@ function generateAIPrompt(scope) {
   var chapterRanking = Object.keys(byChapter).map(function(k){ return byChapter[k]; })
     .sort(function(a,b){ return (b.wrong / Math.max(1,b.total)) - (a.wrong / Math.max(1,a.total)); });
 
-  // Build the prompt
+  // Build the prompt (短く・出力フォーマット強制)
   var lines = [];
-  lines.push("# Business Operations 弱点分析リクエスト");
+  lines.push("# 苦手分野診断リクエスト（UvA Business Operations）");
   lines.push("");
-  lines.push("UvA「Business Operations and Processes」(Slack et al. 教科書) の試験対策で、自作クイズアプリで以下を解答しました。");
-  lines.push("**苦手な分野・概念を体系的に整理して、それぞれに対する明確な学び直しガイドと覚え方を教えてください。**");
+  lines.push("**解答 " + slice.length + "問 / 正解 " + correctList.length + " (" + Math.round(100 * correctList.length / Math.max(slice.length,1)) + "%) / 誤答 " + wrongList.length + "問**");
   lines.push("");
-  lines.push("## 解答サマリ (" + slice.length + "問)");
-  lines.push("");
-  lines.push("| 指標 | 値 |");
-  lines.push("|---|---|");
-  lines.push("| 総解答数 | " + slice.length + " |");
-  lines.push("| 正解 | " + correctList.length + " (" + Math.round(100 * correctList.length / slice.length) + "%) |");
-  lines.push("| 不正解 | " + wrongList.length + " |");
-  lines.push("");
-  lines.push("## 章別パフォーマンス (誤答率降順)");
-  lines.push("");
-  lines.push("| Chapter | 総問数 | 誤答 | 誤答率 |");
-  lines.push("|---|---|---|---|");
+
+  // 章別誤答率（誤答ありの章のみ、1行）
+  lines.push("## 章別誤答率（高い順）");
   for (var i = 0; i < chapterRanking.length; i++) {
     var c = chapterRanking[i];
-    var rate = Math.round(100 * c.wrong / Math.max(1,c.total));
-    lines.push("| Ch " + c.ch + " | " + c.total + " | " + c.wrong + " | " + rate + "% |");
+    if (c.wrong === 0) continue;
+    var rate = Math.round(100 * c.wrong / Math.max(1, c.total));
+    lines.push("- Ch" + c.ch + ": " + c.wrong + "/" + c.total + " (" + rate + "%)");
   }
   lines.push("");
 
-  // List each wrong question with details
-  lines.push("## 間違えた問題の詳細 (" + wrongList.length + "問)");
-  lines.push("");
+  // 誤答リスト（圧縮: 1問1行）
+  lines.push("## 誤答リスト（圧縮）");
+  var letters = ['A','B','C','D','E','F'];
   for (var i = 0; i < wrongList.length; i++) {
     var w = wrongList[i];
-    lines.push("### ❌ 誤答 " + (i+1) + "/" + wrongList.length + " — Ch" + w.ch + " (Week " + w.week + ", " + w.source + ")");
-    lines.push("");
-    lines.push("**問題**: " + (w.q || '').replace(/\n/g, ' ').substring(0, 500));
-    lines.push("");
-    var letters = ['A','B','C','D','E','F'];
-    for (var oi = 0; oi < w.opts.length; oi++) {
-      var marker = (oi === w.ans) ? '' : (oi === w.chosenOrig ? ' ← あなたの選択' : '');
-      lines.push("- **" + letters[oi] + ")** " + w.opts[oi] + marker);
-    }
-    lines.push("");
-    if (w.expl) {
-      lines.push("**公式解説**: " + w.expl.substring(0, 400));
-      lines.push("");
-    }
-    if (w.we && w.we[w.chosenOrig]) {
-      lines.push("**自分の選択がなぜ違ったか**: " + (w.we[w.chosenOrig] + "").substring(0, 300));
-      lines.push("");
-    }
-    lines.push("---");
-    lines.push("");
+    var qShort = (w.q || '').replace(/\s+/g, ' ').slice(0, 120);
+    var chosen = (w.chosenOrig !== undefined && w.chosenOrig !== null) ? letters[w.chosenOrig] : '?';
+    var ansL = letters[w.ans];
+    lines.push("- **Q" + w.qid + "** Ch" + w.ch + " | 選:" + chosen + " 正:" + ansL + " | " + qShort);
   }
+  lines.push("");
 
-  // Final ask
-  lines.push("## あなたへの依頼");
+  // 出力フォーマット強制
+  lines.push("---");
   lines.push("");
-  lines.push("以下を **長くなっても構わないので徹底的に** 教えてください:");
+  lines.push("# 出力指示（厳守）");
   lines.push("");
-  lines.push("1. **テーマ別の弱点分類**: 上記の誤答を、似た概念ごとにグループ化して整理 (例: 「在庫公式の混同」「Process Type の判別」など)。各グループのタイトルに加え、共通する誤解パターンを1段落で説明。");
-  lines.push("2. **各グループの徹底解説**: そのテーマの核心概念、Slack 教科書での扱い、関連する公式 (あれば)、典型的な exam pattern を含めて解説。");
-  lines.push("3. **覚え方 (Memory aid)**: 各テーマに対し、暗記しやすい:");
-  lines.push("   - 頭文字法 (例: QSDFC = Quality, Speed, Dependability, Flexibility, Cost)");
-  lines.push("   - 比喩・アナロジー (例: 「Critical Path は鎖の弱い輪」)");
-  lines.push("   - 図解 (ASCII でも OK、構造で記憶)");
-  lines.push("   - 数式の語呂合わせ (計算問題向け)");
-  lines.push("   を **複数案** 提示");
-  lines.push("4. **明日からの学習プラン**: この弱点を埋めるための具体的な学習順序 (3-5 ステップ)。");
-  lines.push("5. **試験当日のチェックリスト**: 試験会場で 30 秒で確認できる、この弱点に関する確認ポイント。");
+  lines.push("上記の誤答パターンから、**最も補強すべき弱点を3つだけ**特定し、以下のフォーマットで簡潔に回答:");
   lines.push("");
-  lines.push("**重要**: 単純な「もう一度勉強しましょう」では不十分です。私が試験で同じ間違いをしないよう、概念レベルで根本理解できるように深掘りして説明してください。");
+  lines.push("## 🎯 弱点 TOP 3");
+  lines.push("");
+  lines.push("### 1. [弱点名]（該当: Q####, Q####）");
+  lines.push("- **誤解パターン**: 何を勘違いしたか（1-2文）");
+  lines.push("- **正しい理解**: 核心ルール・公式（1-2文または1行式）");
+  lines.push("- **5秒判別シグナル**: 問題文にこの言葉が出たらこう判断（1行）");
+  lines.push("- **覚え方**: 暗記フック1行（語呂・頭字語・比喩のいずれか）");
+  lines.push("");
+  lines.push("### 2. ...（同フォーマット）");
+  lines.push("### 3. ...（同フォーマット）");
+  lines.push("");
+  lines.push("## ⚡ 試験直前30秒チェックリスト");
+  lines.push("上記3弱点それぞれに対し、見直しポイントを1行ずつ計3行。");
+  lines.push("");
+  lines.push("## ❌ 禁止事項");
+  lines.push("- 各選択肢の長い解説禁止");
+  lines.push("- 教科書全般のまとめ禁止");
+  lines.push("- 例題の追加禁止");
+  lines.push("- 「勉強しましょう」等の一般論禁止");
+  lines.push("- **総文字数 1500字以内**");
 
   return lines.join("\n");
 }
@@ -8718,27 +8704,58 @@ function buildPromptFromRecords(records, title) {
       });
     }
   });
-  var out = '# ' + (title || 'クイズ履歴分析') + '\n\n';
-  out += '対象問題数: ' + records.length + '問\n\n';
-  out += '## 章別の理解度\n';
-  Object.keys(byCh).sort().forEach(function(ch){
-    var c = byCh[ch];
-    out += '- ' + ch + ': ' + (c.total - c.wrong) + '/' + c.total + ' 正解 (誤答: ' + c.wrong + ')\n';
+  // 章別誤答率の高い順
+  var chOrder = Object.keys(byCh).sort(function(a, b){
+    var ra = byCh[a].wrong / Math.max(byCh[a].total, 1);
+    var rb = byCh[b].wrong / Math.max(byCh[b].total, 1);
+    return rb - ra;
   });
-  out += '\n## 間違えた問題（詳細）\n';
-  Object.keys(byCh).forEach(function(ch){
+  var totalWrong = 0;
+  chOrder.forEach(function(ch){ totalWrong += byCh[ch].wrong; });
+
+  var out = '# 苦手分野診断リクエスト\n\n';
+  out += '**解答 ' + records.length + '問 / 誤答 ' + totalWrong + '問**\n\n';
+
+  // 章別誤答率（誤答ありの章のみ、簡潔1行）
+  out += '## 章別誤答率（高い順）\n';
+  chOrder.forEach(function(ch){
+    var c = byCh[ch];
+    if (c.wrong === 0) return;
+    var pct = Math.round(100 * c.wrong / Math.max(c.total, 1));
+    out += '- ' + ch + ': ' + c.wrong + '/' + c.total + ' 誤答 (' + pct + '%)\n';
+  });
+
+  // 誤答リスト（圧縮形式：1行要約のみ）
+  out += '\n## 誤答リスト（圧縮）\n';
+  chOrder.forEach(function(ch){
     byCh[ch].items.forEach(function(item){
-      out += '\n### Q' + item.qid + ' (' + ch + ')\n';
-      out += '問題: ' + (item.q || '').slice(0, 500) + '\n';
-      out += '正解: ' + (item.opts ? item.opts[item.ans] : '?') + '\n';
-      if (item.chosenOrig !== undefined && item.opts) {
-        out += 'あなたの選択: ' + (item.opts[item.chosenOrig] || '?') + '\n';
-      }
-      if (item.expl) out += '解説: ' + item.expl.slice(0, 300) + '\n';
-      if (item.memory) out += '覚えるべき: ' + item.memory + '\n';
+      var qShort = (item.q || '').replace(/\s+/g, ' ').slice(0, 120);
+      var ansLetter = String.fromCharCode(65 + item.ans);
+      var chosenLetter = (item.chosenOrig !== undefined) ? String.fromCharCode(65 + item.chosenOrig) : '?';
+      out += '- **Q' + item.qid + '** ' + ch + ' | 選択:' + chosenLetter + ' 正解:' + ansLetter + ' | ' + qShort + '\n';
     });
   });
-  out += '\n---\n上記の誤答パターンから、特に弱い分野を3つ挙げて、それぞれに対する覚え方・公式・例題を日本語で詳しく解説してください。';
+
+  // 出力フォーマット強制
+  out += '\n---\n\n';
+  out += '# 出力指示（厳守）\n\n';
+  out += '上記の誤答パターンを分析し、**以下のフォーマットで簡潔に**回答してください。長い解説は不要。試験本番に直結する情報のみ。\n\n';
+  out += '## 🎯 弱点 TOP 3\n';
+  out += '誤答パターンから、最も補強すべき概念を3つだけ選び、各1ブロックで:\n\n';
+  out += '### 1. [弱点名]（該当Q: Q####, Q####）\n';
+  out += '- **誤解パターン**: 何を勘違いしたか（1-2文）\n';
+  out += '- **正しい理解**: 核心ルール（1-2文、公式があれば1行で）\n';
+  out += '- **5秒判別シグナル**: 問題文中のこのキーワードを見たらこう判断（1行）\n';
+  out += '- **覚え方**: 暗記フック1行\n\n';
+  out += '### 2. ...（同形式）\n### 3. ...（同形式）\n\n';
+  out += '## ⚡ 試験当日の最終チェックリスト\n';
+  out += '上記3弱点それぞれに対し、試験直前30秒で見直すべき1行を計3行だけ。\n\n';
+  out += '## ❌ 禁止事項（重要）\n';
+  out += '- 各選択肢の長い解説禁止\n';
+  out += '- 教科書全般のまとめ禁止\n';
+  out += '- 例題追加禁止\n';
+  out += '- 「もう一度勉強しましょう」系の一般論禁止\n';
+  out += '- 総文字数 1500字以内\n';
   return out;
 }
 
