@@ -8780,9 +8780,18 @@ function generateSingleQVerifyPrompt(qIdx, chosen, correct) {
     lines.push(q.memory);
     lines.push('');
   }
-  lines.push('## あなたへの依頼');
+  lines.push('## あなたへの依頼（手順を必ず踏んでください）');
   lines.push('');
-  lines.push('上の問題で扱う **核心概念** を私が本当に理解しているか確認するため、**全く別の5択問題を5問** 作ってください。');
+  lines.push('### 思考プロセス（必須）');
+  lines.push('');
+  lines.push('まず `<thinking>` タグの中で：');
+  lines.push('(a) 元問題が問うている **核心概念** を1〜2文で抽出。');
+  lines.push('(b) その概念で「学生がつまずきやすい落とし穴」を **5つ以上** 列挙。');
+  lines.push('(c) 5問の問題で **どう難易度を上げるか**（基礎理解→応用→試験本番）の設計図を書く。');
+  lines.push('(d) 各問題の「正解 + 4つの誤答パターン」を **数値計算は実際に解いて** 検算。');
+  lines.push('(e) 正解がA〜Eに **均等分散** されているか確認（全部Cは禁止）。');
+  lines.push('');
+  lines.push('上の思考が終わってから、**全く別の5択問題を5問** 作ってください。');
   lines.push('');
   lines.push('### 作問ルール');
   lines.push('');
@@ -8819,7 +8828,15 @@ function generateSingleQVerifyPrompt(qIdx, chosen, correct) {
   lines.push('');
   lines.push('5問全部終わったら、最後に **「総合判定」** として、各問題への正答率に応じてどのレベルの理解か（基礎理解 / 応用可 / 試験本番OK）を判定してください。');
   lines.push('');
-  lines.push('**重要**：解説は日本語で。問題本文は元と同じ言語（英語）で書いて構いません。');
+  lines.push('## 品質基準（出力前に自己チェック）');
+  lines.push('');
+  lines.push('- 5問が **本当に違うシナリオ**（コピペや微修正のみは禁止）。');
+  lines.push('- 計算問題は **数値を実際に計算** して正解と誤答を作る（適当な数字を並べない）。');
+  lines.push('- 各誤答に **「どの公式の取り違え/思い込みか」** を明記。');
+  lines.push('- 試験本番レベル（Q5）は **二段階の推論** を要求（例：公式適用 + 別概念との関係）。');
+  lines.push('- 出力長は最低 **2000 字以上**（5問×400字目安）。');
+  lines.push('');
+  lines.push('**重要**：解説は日本語で。問題本文は元と同じ言語（英語）で書いて構いません。Sonnet モデルでも Opus と同等品質になるよう、上の手順を必ず踏んでください。');
   return lines.join('\n');
 }
 
@@ -8958,9 +8975,18 @@ function generateSingleQAIPrompt(qIdx, chosen, correct) {
     lines.push(q.expl);
     lines.push('');
   }
-  lines.push('## あなたへの依頼');
+  lines.push('## あなたへの依頼（重要：以下の手順で必ず段階的に思考してください）');
   lines.push('');
-  lines.push('以下を **長くなっても構わないので徹底的に** 教えてください:');
+  lines.push('### 思考プロセス（必須）');
+  lines.push('');
+  lines.push('まず `<thinking>` タグの中で：');
+  lines.push('(a) 問題が問うているコア概念を1文で特定。');
+  lines.push('(b) 関連する Slack 教科書の公式・原則・例を列挙。');
+  lines.push('(c) 5つの選択肢それぞれを「正解か」「どの誤解パターンか」分類。');
+  lines.push('(d) 計算問題なら、正解の導出を step-by-step で示し、数値を一つずつ検算。');
+  lines.push('(e) 最後に「自分の説明が UvA Business Operations 試験準備者にとって過不足ないか」自己チェック。');
+  lines.push('');
+  lines.push('上の思考が終わってから、以下を **長くなっても構わないので徹底的に・体系的に・日本語で** 出力してください：');
   lines.push('');
   lines.push('1. **概念の根本理解**: この問題が問うているコア概念を、Slack教科書での扱いに沿って詳しく解説。');
   lines.push('2. **なぜ正解が正解か**: 公式・原理を含めて、論理的に説明。');
@@ -8972,7 +8998,15 @@ function generateSingleQAIPrompt(qIdx, chosen, correct) {
   lines.push((!correct && !isDontKnow ? '6' : '5') + '. **試験で同様の問題が出たときの判断手順**: 3-5ステップで「こういう聞かれ方をしたらこう考える」を明示。');
   lines.push((!correct && !isDontKnow ? '7' : '6') + '. **関連概念・公式**: この問題と関連する周辺知識を整理。');
   lines.push('');
-  lines.push('**重要**: 単純な「もう一度勉強しましょう」では不十分です。私が試験で確実に正解できるよう、概念レベルで根本理解できるように深掘りしてください。');
+  lines.push('## 品質基準（出力前にこれを自己チェック）');
+  lines.push('');
+  lines.push('- 専門用語は **日本語と英語を併記**（例：『需要平準化 (Heijunka / Level scheduling)』）。');
+  lines.push('- 公式・数式は **記号と意味の両方** を必ず示す。');
+  lines.push('- 「なぜ正解か」だけでなく **「なぜそれ以外がダメか」5つ全部** を必ず説明。');
+  lines.push('- **試験で5秒で判断できる判断手順** を明示（曖昧な抽象論ではなく具体的フロー）。');
+  lines.push('- 出力長は最低 **800 字以上**（短いと不合格）。');
+  lines.push('');
+  lines.push('**重要**: 単純な「もう一度勉強しましょう」では不十分です。私が試験で確実に正解できるよう、概念レベルで根本理解できるように深掘りしてください。Sonnet モデルでも Opus と同等品質になるよう、上の手順を必ず踏んでください。');
   return lines.join('\n');
 }
 
