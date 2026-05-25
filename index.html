@@ -419,10 +419,15 @@ a{color:#3b82f6;text-decoration:none;}
 }
 /* モーダル内では tab-roadmap からクローンされた重複ヘッダー(brown gradient)を非表示 */
 .roadmap-modal-body header.hero { display: none !important; }
-/* 検索/フィルタバーは modal 上端に固定（元の top:168px は page header 用なので無効化） */
+/* モーダル内の全 sticky 要素を流す（ついてこさせない） */
+.roadmap-modal-body .controls,
+.roadmap-modal-body header,
+.roadmap-modal-body .modal-header,
+.roadmap-modal-body .drawer-close {
+  position: static !important;
+  top: auto !important;
+}
 .roadmap-modal-body .controls {
-  position: sticky !important;
-  top: 0 !important;
   padding: 10px 16px !important;
   background: #0f1726 !important;
   border-bottom: 1px solid #243047 !important;
