@@ -3645,7 +3645,265 @@ window.flashTree = (typeof flashTree === 'function') ? flashTree : undefined;
 
 <!-- Calc Tab -->
 <div class="panel" id="tab-calc">
-  <div class="section-title">Productivity Calculator</div>
+  <!-- ════════════ Final 全計算問題ガイド ════════════ -->
+  <div class="section-title" style="background:linear-gradient(135deg,#f97316,#dc2626);color:#fff;padding:18px 22px;border-radius:14px;font-size:26px;margin-bottom:14px;">🎯 Final 全計算問題 完全マスターガイド</div>
+
+  <div style="background:#1a2940;border:2px solid #f97316;border-radius:12px;padding:18px 22px;margin-bottom:24px;color:#fde68a;font-size:18px;line-height:1.8;">
+    <div style="font-size:22px;font-weight:800;color:#fbbf24;margin-bottom:10px;">📋 試験スコア式</div>
+    <div class="formula-box" style="font-size:34px;margin:10px 0;">
+      <span class="formula-label">Score = (正解数 − 10) ÷ 3</span>
+      <span class="fml">Score <span class="eq">=</span> <span class="frac"><span class="num">正解数 − 10</span><span class="den">3</span></span></span>
+    </div>
+    <div style="color:#cbd5e1;font-size:17px;">マイナス得点防止のため <b>最低10問</b> は確実に正解。当てずっぽうは −1/3 点扱い。</div>
+  </div>
+
+  <!-- ① Little's Law -->
+  <div style="background:#0f1c2e;border:2px solid #10b981;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#10b981;margin-bottom:6px;">① Little's Law（リトルの法則）</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">Little's Law / average WIP / throughput / flow time</code></div>
+    <div class="formula-box">
+      <span class="formula-label">スループット = WIP ÷ サイクルタイム</span>
+      <span class="fml">TH <span class="eq">=</span> <span class="frac"><span class="num">WIP</span><span class="den">CT</span></span></span>
+      &nbsp;⇔&nbsp;
+      <span class="fml">WIP <span class="eq">=</span> TH <span class="op">×</span> CT</span>
+      &nbsp;⇔&nbsp;
+      <span class="fml">CT <span class="eq">=</span> <span class="frac"><span class="num">WIP</span><span class="den">TH</span></span></span>
+    </div>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q8 例題:</b> TH = 1000 pass/hr, CT = 25 min = 0.417 hr<br>
+      <span class="fml">WIP <span class="eq">=</span> 1000 <span class="op">×</span> 0.417 <span class="eq">=</span> <b style="color:#fde68a;font-size:22px;">417</b></span>
+    </div>
+    <div style="margin-top:12px;color:#cbd5e1;font-size:16px;">
+      <b style="color:#f97316;">⚠️ 注意:</b> 単位を統一（min / hr / sec）。個別工程のPTではなく<b>システム全体のCT</b>を使う。
+    </div>
+  </div>
+
+  <!-- ② Capacity -->
+  <div style="background:#0f1c2e;border:2px solid #10b981;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#10b981;margin-bottom:6px;">② Capacity（処理能力）</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">m servers / PT / pass/hour</code></div>
+    <div class="formula-box">
+      <span class="formula-label">処理能力 = 人数 ÷ 処理時間</span>
+      <span class="fml">Capacity <span class="eq">=</span> <span class="frac"><span class="num">m</span><span class="den">PT</span></span></span>
+    </div>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q9 例題:</b> PT = 0.5 min, m = 8.5<br>
+      <span class="fml">Capacity <span class="eq">=</span> <span class="frac"><span class="num">8.5</span><span class="den">0.5/60</span></span> <span class="eq">=</span> 8.5 <span class="op">×</span> 120 <span class="eq">=</span> <b style="color:#fde68a;font-size:22px;">1020 pass/hr</b></span>
+    </div>
+    <div style="margin-top:12px;color:#cbd5e1;font-size:16px;">
+      <b style="color:#f97316;">⚠️ 注意:</b> PT を hour 単位に換算（÷60）。m は小数OK（パートタイム）。
+    </div>
+  </div>
+
+  <!-- ③ Utilization -->
+  <div style="background:#0f1c2e;border:2px solid #10b981;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#10b981;margin-bottom:6px;">③ Utilization（稼働率）</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">utilization / u / % capacity</code></div>
+    <div class="formula-box">
+      <span class="formula-label">稼働率 = 需要 ÷ 処理能力</span>
+      <span class="fml">u <span class="eq">=</span> <span class="frac"><span class="num">Demand</span><span class="den">Capacity</span></span> <span class="eq">=</span> <span class="frac"><span class="num">Demand <span class="op">×</span> PT</span><span class="den">m</span></span></span>
+    </div>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q10 例題:</b> Demand = 800/hr, m=35, PT=2 min<br>
+      Capacity = 35 ÷ (2/60) = 1050/hr<br>
+      <span class="fml">u <span class="eq">=</span> <span class="frac"><span class="num">800</span><span class="den">1050</span></span> <span class="eq">≈</span> <b style="color:#fde68a;font-size:22px;">76%</b></span>
+    </div>
+    <div style="margin-top:12px;color:#cbd5e1;font-size:16px;">
+      <b style="color:#f97316;">⚠️ 注意:</b> Takt rate計算: <code style="background:#1e293b;padding:2px 6px;color:#fcd34d;">1000/hr × 80% = 800/hr</code>。u ≥ 1 → bottleneck で行列無限大。高 u × 高 variability = 待ち時間爆発。
+    </div>
+  </div>
+
+  <!-- ④ 必要サーバ数 -->
+  <div style="background:#0f1c2e;border:2px solid #10b981;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#10b981;margin-bottom:6px;">④ 必要サーバ数</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">how many lanes / target utilization</code></div>
+    <div class="formula-box">
+      <span class="formula-label">必要人数 = (需要 ÷ 目標稼働率) × 処理時間</span>
+      <span class="fml">m <span class="eq">=</span> <span class="frac"><span class="num">Demand</span><span class="den">u<sub>target</sub></span></span> <span class="op">×</span> PT</span>
+    </div>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q11 例題:</b> Demand=1000/hr, u<sub>target</sub>=0.67, PT=1 min<br>
+      Required Cap = 1000 ÷ 0.67 ≈ 1500/hr<br>
+      <span class="fml">m <span class="eq">=</span> 1500 <span class="op">×</span> <span class="frac"><span class="num">1</span><span class="den">60</span></span> <span class="eq">=</span> <b style="color:#fde68a;font-size:22px;">25 lanes</b></span>
+    </div>
+  </div>
+
+  <!-- ⑤ Coefficient of Variation -->
+  <div style="background:#0f1c2e;border:2px solid #10b981;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#10b981;margin-bottom:6px;">⑤ Coefficient of Variation（変動係数）</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">σ / μ / c_a (arrival) / c_s (service)</code></div>
+    <div class="formula-box">
+      <span class="formula-label">変動係数 = 標準偏差 ÷ 平均</span>
+      <span class="fml">c <span class="eq">=</span> <span class="frac"><span class="num">σ</span><span class="den">μ</span></span></span>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-top:14px;color:#e2e8f0;font-size:16px;">
+      <tr style="background:#1e293b;"><th style="padding:10px;border:1px solid #334155;text-align:left;">分布</th><th style="padding:10px;border:1px solid #334155;text-align:left;">c の値</th></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;">Poisson 到着</td><td style="padding:10px;border:1px solid #334155;color:#fde68a;">c<sub>a</sub> = 1</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;">Exponential service</td><td style="padding:10px;border:1px solid #334155;color:#fde68a;">c<sub>s</sub> = 1</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;">決定的（規則的）</td><td style="padding:10px;border:1px solid #334155;color:#fde68a;">c = 0</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;">Hyper-exponential</td><td style="padding:10px;border:1px solid #334155;color:#fde68a;">c &gt; 1</td></tr>
+    </table>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q12 例題:</b> σ<sub>a</sub> = 0.12, μ<sub>a</sub> = 0.06<br>
+      <span class="fml">c<sub>a</sub> <span class="eq">=</span> <span class="frac"><span class="num">0.12</span><span class="den">0.06</span></span> <span class="eq">=</span> <b style="color:#fde68a;font-size:22px;">2</b></span>
+    </div>
+  </div>
+
+  <!-- ⑥ VUT Formula -->
+  <div style="background:#0f1c2e;border:2px solid #ef4444;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#ef4444;margin-bottom:6px;">⑥ VUT Formula（待ち時間公式） <span style="font-size:14px;background:#dc2626;color:#fff;padding:3px 8px;border-radius:4px;margin-left:8px;">最重要</span></div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">W_q / waiting time / queue</code></div>
+    <div class="formula-box" style="font-size:26px;">
+      <span class="formula-label">待ち時間 = V（変動性）× U（稼働率）× T（処理時間）</span>
+      <span class="fml">W<sub>q</sub> <span class="eq">=</span> <span class="frac"><span class="num">c<sub>a</sub><sup>2</sup> + c<sub>s</sub><sup>2</sup></span><span class="den">2</span></span> <span class="op">×</span> <span class="frac"><span class="num">u<sup>√(2(m+1))−1</sup></span><span class="den">m(1−u)</span></span> <span class="op">×</span> μ<sub>s</sub></span>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:10px;justify-content:center;flex-wrap:wrap;">
+      <div style="background:#1e3a5f;padding:8px 16px;border-radius:8px;color:#fde68a;"><b>V</b> = 変動性</div>
+      <div style="background:#1e3a5f;padding:8px 16px;border-radius:8px;color:#fde68a;"><b>U</b> = 稼働率の効果</div>
+      <div style="background:#1e3a5f;padding:8px 16px;border-radius:8px;color:#fde68a;"><b>T</b> = 処理時間</div>
+    </div>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q13 例題:</b> c<sub>a</sub>=c<sub>s</sub>=√2, u=0.99, m≈8.5, μ<sub>s</sub>=0.5 min<br>
+      V = (2+2)/2 = 2 &nbsp;&nbsp;→&nbsp;&nbsp; <b style="color:#fde68a;font-size:22px;">W<sub>q</sub> ≈ 11.4 min</b>
+    </div>
+    <div style="margin-top:12px;color:#cbd5e1;font-size:16px;">
+      <b style="color:#f97316;">⚠️ 注意:</b> 計算順序 V → U → T。単一サーバ版: <span class="fml">W<sub>q</sub> <span class="eq">=</span> V <span class="op">×</span> <span class="frac"><span class="num">u</span><span class="den">1−u</span></span> <span class="op">×</span> μ<sub>s</sub></span>。<b>u→1 で指数的に発散</b>。
+    </div>
+  </div>
+
+  <!-- ⑦ EOQ -->
+  <div style="background:#0f1c2e;border:2px solid #8b5cf6;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#8b5cf6;margin-bottom:6px;">⑦ EOQ（経済的発注量）</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">EOQ / optimal order quantity / C₀ / Ch / D / order from supplier</code></div>
+    <div class="formula-box">
+      <span class="formula-label">経済的発注量（外注）</span>
+      <span class="fml">EOQ <span class="eq">=</span> <span class="sqrt"><span class="radicand"><span class="frac"><span class="num">2 <span class="op">·</span> C<sub>0</sub> <span class="op">·</span> D</span><span class="den">C<sub>h</sub></span></span></span></span></span>
+    </div>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q26 例題:</b> D = 5×5×50 = 1250 batches/yr, C₀ = €30, C<sub>h</sub> = €1<br>
+      <span class="fml">EOQ <span class="eq">=</span> <span class="sqrt"><span class="radicand"><span class="frac"><span class="num">2 <span class="op">×</span> 30 <span class="op">×</span> 1250</span><span class="den">1</span></span></span></span></span> <span class="eq">=</span> <span class="fml"><span class="sqrt"><span class="radicand">75,000</span></span></span> <span class="eq">≈</span> <b style="color:#fde68a;font-size:22px;">274 batches</b>
+    </div>
+    <div style="margin-top:12px;color:#cbd5e1;font-size:16px;line-height:1.9;">
+      <b style="color:#f97316;">⚠️ 注意:</b><br>
+      • C<sub>h</sub> は <b>年間1個あたり</b>（価格 × 25% などで算出）<br>
+      • D は <b>年間需要</b>（日次 → 年次換算: ×営業日 ×週数）<br>
+      • 平均サイクル在庫 = Q/2、年間発注回数 = D/Q
+    </div>
+  </div>
+
+  <!-- ⑧ EBQ -->
+  <div style="background:#0f1c2e;border:2px solid #8b5cf6;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#8b5cf6;margin-bottom:6px;">⑧ EBQ / EPQ（経済的生産量）</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">EBQ / production capacity P / setup cost / internal manufacturing / self-produced</code></div>
+    <div class="formula-box">
+      <span class="formula-label">経済的生産量（内製）</span>
+      <span class="fml">EBQ <span class="eq">=</span> <span class="sqrt"><span class="radicand"><span class="frac"><span class="num">2 <span class="op">·</span> C<sub>0</sub> <span class="op">·</span> D</span><span class="den">C<sub>h</sub> (1 − D/P)</span></span></span></span></span>
+    </div>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q39 例題:</b> D=600, C₀=€1500, C<sub>h</sub>=€500, P=1200<br>
+      <span class="fml">EBQ <span class="eq">=</span> <span class="sqrt"><span class="radicand"><span class="frac"><span class="num">2 <span class="op">×</span> 1500 <span class="op">×</span> 600</span><span class="den">500 (1 − 600/1200)</span></span></span></span></span> <span class="eq">=</span> <span class="fml"><span class="sqrt"><span class="radicand">7200</span></span></span> <span class="eq">≈</span> <b style="color:#fde68a;font-size:22px;">85 barrels</b>
+    </div>
+    <div style="margin-top:12px;color:#cbd5e1;font-size:16px;line-height:1.9;">
+      <b style="color:#f97316;">⚠️ 判別ルール:</b><br>
+      • 「self-produced / manufacture in-house」 → <b style="color:#10b981;">EBQ</b><br>
+      • 「order from supplier」 → <b style="color:#10b981;">EOQ</b><br>
+      • EOQとの違いは <b>(1 − D/P)</b> の補正項のみ<br>
+      • P → ∞ で EOQ に一致
+    </div>
+  </div>
+
+  <!-- ⑨ Stockout Probability -->
+  <div style="background:#0f1c2e;border:2px solid #8b5cf6;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#8b5cf6;margin-bottom:6px;">⑨ Stockout Probability（欠品確率）</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">stockout / reorder point (ROP) / lead time demand / uniform</code></div>
+    <div class="formula-box" style="font-size:22px;">
+      <span class="formula-label">Uniform分布の場合</span>
+      <span class="fml">P(stockout) <span class="eq">=</span> <span class="frac"><span class="num">LT<sub>max</sub> − ROP<sub>LT換算</sub></span><span class="den">LT<sub>max</sub> − LT<sub>min</sub></span></span></span>
+    </div>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q27 例題:</b> Q=50, LT~U(25,75), ROP=60, 需要=1/day<br>
+      <span class="fml">P <span class="eq">=</span> <span class="frac"><span class="num">75 − 60</span><span class="den">75 − 25</span></span> <span class="eq">=</span> <span class="frac"><span class="num">15</span><span class="den">50</span></span> <span class="eq">=</span> <b style="color:#fde68a;font-size:22px;">30%</b></span><br>
+      欠品サイクル間隔 ≈ <b style="color:#fde68a;">3.33ヶ月に1回</b>
+    </div>
+  </div>
+
+  <!-- ⑩ Bottleneck -->
+  <div style="background:#0f1c2e;border:2px solid #06b6d4;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#06b6d4;margin-bottom:6px;">⑩ Bottleneck（ボトルネック特定）</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">bottleneck / split / routing %</code></div>
+    <div style="background:#1a2940;border-radius:8px;padding:14px;color:#e2e8f0;font-size:17px;line-height:1.8;">
+      <b style="color:#fbbf24;">手順:</b><br>
+      1. 各stepのcapacity = m / PT<br>
+      2. 各stepへの実需要 = 全需要 × routing比率<br>
+      3. <b style="color:#10b981;">capacity − demand の余裕が最小</b>のstepがボトルネック
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-top:14px;color:#e2e8f0;font-size:16px;">
+      <tr style="background:#1e293b;"><th style="padding:10px;border:1px solid #334155;">Step</th><th style="padding:10px;border:1px solid #334155;">Capacity</th><th style="padding:10px;border:1px solid #334155;">Demand</th><th style="padding:10px;border:1px solid #334155;">余裕</th></tr>
+      <tr style="background:#7c2d12;"><td style="padding:10px;border:1px solid #334155;"><b>1 ★</b></td><td style="padding:10px;border:1px solid #334155;">110</td><td style="padding:10px;border:1px solid #334155;">100</td><td style="padding:10px;border:1px solid #334155;color:#fde68a;"><b>10 ← 最小</b></td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;">2</td><td style="padding:10px;border:1px solid #334155;">150</td><td style="padding:10px;border:1px solid #334155;">50</td><td style="padding:10px;border:1px solid #334155;">100</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;">3</td><td style="padding:10px;border:1px solid #334155;">100</td><td style="padding:10px;border:1px solid #334155;">50</td><td style="padding:10px;border:1px solid #334155;">50</td></tr>
+    </table>
+    <div style="margin-top:12px;color:#cbd5e1;font-size:16px;">
+      <b style="color:#f97316;">⚠️ 注意:</b> 分岐後は需要が割れる（分岐前のstepは全量）。u &lt; 1 でも変動性で行列発生（Q29）。
+    </div>
+  </div>
+
+  <!-- ⑪ Control Chart -->
+  <div style="background:#0f1c2e;border:2px solid #06b6d4;border-radius:14px;padding:20px 22px;margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:800;color:#06b6d4;margin-bottom:6px;">⑪ Control Chart（管理図）</div>
+    <div style="color:#94a3b8;font-size:15px;margin-bottom:14px;">キーワード: <code style="background:#1e293b;padding:2px 8px;border-radius:4px;color:#fcd34d;">UCL / LCL / μ / σ / out of control</code></div>
+    <div class="formula-box">
+      <span class="formula-label">3σ 管理図</span>
+      <span class="fml">UCL <span class="eq">=</span> μ <span class="pm">+</span> 3σ</span>
+      &nbsp;&nbsp;&nbsp;
+      <span class="fml">LCL <span class="eq">=</span> μ <span class="pm">−</span> 3σ</span>
+    </div>
+    <div style="text-align:center;color:#cbd5e1;margin-top:10px;font-size:16px;">
+      サンプル平均なら σ<sub>x̄</sub> = σ/√n
+    </div>
+    <div style="background:#1e293b;border-left:4px solid #fbbf24;padding:12px 16px;border-radius:6px;margin-top:12px;color:#e2e8f0;font-size:17px;">
+      <b style="color:#fbbf24;">Q36 例題:</b> μ=5, σ=0.1<br>
+      UCL = 5 + 3×0.1 = <b style="color:#fde68a;">5.3</b>、LCL = 5 − 3×0.1 = <b style="color:#fde68a;">4.7</b><br>
+      逸脱値: 5.62, 5.38, 4.65 → <b style="color:#fde68a;font-size:22px;">3回 out of control</b>
+    </div>
+  </div>
+
+  <!-- 早見表 -->
+  <div style="background:linear-gradient(135deg,#0f172a,#1e293b);border:2px solid #fbbf24;border-radius:14px;padding:22px 24px;margin:30px 0 20px;">
+    <div style="font-size:24px;font-weight:800;color:#fbbf24;margin-bottom:14px;">📋 キーワード → 公式 早見表</div>
+    <table style="width:100%;border-collapse:collapse;color:#e2e8f0;font-size:16px;">
+      <tr style="background:#1e293b;"><th style="padding:10px;border:1px solid #334155;text-align:left;">英語キーワード</th><th style="padding:10px;border:1px solid #334155;text-align:left;">使う公式</th></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">average WIP / flow time</code></td><td style="padding:10px;border:1px solid #334155;">WIP = TH × CT</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">m servers, PT given</code></td><td style="padding:10px;border:1px solid #334155;">Capacity = m / PT</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">utilization</code></td><td style="padding:10px;border:1px solid #334155;">u = Demand / Capacity</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">how many lanes needed</code></td><td style="padding:10px;border:1px solid #334155;">m = (Demand / u<sub>target</sub>) × PT</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">σ and μ</code></td><td style="padding:10px;border:1px solid #334155;">c = σ / μ</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">expected waiting W_q</code></td><td style="padding:10px;border:1px solid #334155;">VUT formula</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">optimal order quantity（外注）</code></td><td style="padding:10px;border:1px solid #334155;">EOQ = √(2C₀D / C<sub>h</sub>)</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">optimal batch（内製）</code></td><td style="padding:10px;border:1px solid #334155;">EBQ = √(2C₀D / C<sub>h</sub>(1−D/P))</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">stockout probability</code></td><td style="padding:10px;border:1px solid #334155;">P(LT demand &gt; ROP)</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">bottleneck</code></td><td style="padding:10px;border:1px solid #334155;">余裕最小の step</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">UCL / LCL</code></td><td style="padding:10px;border:1px solid #334155;">μ ± 3σ</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">cycle stock</code></td><td style="padding:10px;border:1px solid #334155;">Q / 2</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">orders per year</code></td><td style="padding:10px;border:1px solid #334155;">D / Q</td></tr>
+      <tr><td style="padding:10px;border:1px solid #334155;"><code style="color:#fcd34d;">safety stock</code></td><td style="padding:10px;border:1px solid #334155;">z × σ<sub>LT</sub></td></tr>
+    </table>
+  </div>
+
+  <!-- ミス TOP 5 -->
+  <div style="background:linear-gradient(135deg,#7f1d1d,#991b1b);border:3px solid #ef4444;border-radius:14px;padding:22px 24px;margin:20px 0 30px;color:#fff;">
+    <div style="font-size:24px;font-weight:800;color:#fef2f2;margin-bottom:14px;">⚠️ 計算問題ミス TOP 5</div>
+    <ol style="font-size:18px;line-height:2;margin:0;padding-left:30px;">
+      <li><b>単位ミス</b> — min / hr / sec の混同</li>
+      <li><b>年間需要への換算忘れ</b> — daily → annual (×営業日 ×週)</li>
+      <li><b>EOQ vs EBQ の判別</b> — 内製ならEBQ、外注ならEOQ</li>
+      <li><b>分岐後の需要計算</b> — split % 掛け忘れ</li>
+      <li><b>utilization の方向</b> — Demand / Capacity（逆じゃない）</li>
+    </ol>
+  </div>
+
+  <!-- ════════════ ここから既存の動的計算機 ════════════ -->
+  <div class="section-title" style="margin-top:30px;">🧮 Productivity Calculator（数値を入れて試す）</div>
   <div id="calc-content"></div>
 </div>
 
